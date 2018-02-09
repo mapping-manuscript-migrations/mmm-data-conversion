@@ -8,10 +8,7 @@ RUN mkdir -p /fuseki-base/databases/tdb \
     /fuseki-base/databases/lucene \
     /fuseki-base/databases/spatiallucene
 
-WORKDIR /jena-fuseki
-
 ENV ASSEMBLER "/fuseki-base/configuration/assembler.ttl"
-ENV TEMPDIR "/tmp/fuseki-base/databases"
 ENV JAVA_CMD java -cp "$FUSEKI_HOME/fuseki-server.jar:/javalibs/*"
 ENV TDBLOADER $JAVA_CMD tdb.tdbloader --desc=$ASSEMBLER
 
@@ -23,7 +20,7 @@ RUN $TDBLOADER --graph=http://ldf.fi/mmm-sdbm/ /tmp/output.ttl \
     && $JAVA_CMD jena.spatialindexer --desc=$ASSEMBLER \
     && $JAVA_CMD tdb.tdbstats --desc=$ASSEMBLER --graph urn:x-arq:UnionGraph > /tmp/stats.opt \
     && mv /tmp/stats.opt /fuseki-base/databases/tdb/ \
-    && rm /tmp/*	
+    && rm /tmp/*
 
 VOLUME /fuseki-base/databases
 
