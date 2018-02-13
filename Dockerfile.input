@@ -12,10 +12,10 @@ ENV ASSEMBLER "/fuseki-base/configuration/assembler.ttl"
 ENV JAVA_CMD java -cp "$FUSEKI_HOME/fuseki-server.jar:/javalibs/*"
 ENV TDBLOADER $JAVA_CMD tdb.tdbloader --desc=$ASSEMBLER
 
-COPY --chown=9008 output.ttl /tmp/output.ttl
+COPY --chown=9008 input.ttl /tmp/input.ttl
 
 # Data
-RUN $TDBLOADER --graph=http://ldf.fi/mmm-sdbm/ /tmp/output.ttl \
+RUN $TDBLOADER --graph=http://ldf.fi/mmm-sdbm/ /tmp/input.ttl \
     && $JAVA_CMD jena.textindexer --desc=$ASSEMBLER \
     && $JAVA_CMD jena.spatialindexer --desc=$ASSEMBLER \
     && $JAVA_CMD tdb.tdbstats --desc=$ASSEMBLER --graph urn:x-arq:UnionGraph > /tmp/stats.opt \

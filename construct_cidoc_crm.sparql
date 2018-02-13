@@ -1,0 +1,10 @@
+PREFIX : <https://sdbm.library.upenn.edu/>
+
+CONSTRUCT {
+  ?manuscript a :manuscripts  .
+  ?manuscript :manuscripts_location ?location .
+}
+WHERE {
+  ?manuscript a :manuscripts  .
+  OPTIONAL { ?manuscript :manuscripts_location ?location . }
+}
