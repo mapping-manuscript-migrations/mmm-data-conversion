@@ -8,4 +8,8 @@ Convert SDBM RDF data from https://drive.google.com/drive/folders/0B4mAIaZomRI4U
 
 ## Run
 
-`docker-compose up`
+`docker-compose up -d`
+
+## Logs
+
+`docker-compose logs -f`
