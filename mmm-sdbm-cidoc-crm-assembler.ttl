@@ -13,7 +13,7 @@
 @prefix :        <#> .
 
 <#mmm-sdbm-cidoc-crm>  rdf:type fuseki:Service ;
-    fuseki:name              "mmm-sdbm-cidoc-crm" ;   # http://host:port/mmm-sdbm-cidoc-crm
+    fuseki:name              "ds" ;   # http://host:port/ds
     fuseki:serviceQuery      "sparql" ;    # SPARQL query service
     #fuseki:serviceUpdate     "update" ;    # SPARQL update service
     #fuseki:serviceUpload     "upload" ;    # Non-SPARQL upload service

@@ -13,7 +13,7 @@
 @prefix :        <#> .
 
 <#mmm-sdbm>  rdf:type fuseki:Service ;
-    fuseki:name              "mmm-sdbm" ;   # http://host:port/mmm-sdbm
+    fuseki:name              "ds" ;   # http://host:port/ds
     fuseki:serviceQuery      "sparql" ;    # SPARQL query service
     #fuseki:serviceUpdate     "update" ;    # SPARQL update service
     #fuseki:serviceUpload     "upload" ;    # Non-SPARQL upload service
@@ -75,4 +75,3 @@
          [ text:field "text" ; text:predicate rdfs:label ]
          )
     .
-

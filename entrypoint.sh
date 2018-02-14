@@ -4,7 +4,7 @@
 sleep 5
 
 # run the SPARQL construct query
-echo 'query=' | cat - /tmp/construct_cidoc_crm.sparql | curl -d @- http://input:3030/mmm-sdbm/sparql -v > /tmp/cidoc.ttl
+echo 'query=' | cat - /tmp/construct_cidoc_crm.sparql | curl -d @- http://input:3030/ds/sparql -v > /tmp/cidoc.ttl
 
 # load the result to a new Fuseki
 $TDBLOADER --graph=http://ldf.fi/mmm-sdbm-cidoc-crm/ /tmp/cidoc.ttl \
