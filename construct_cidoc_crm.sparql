@@ -3,8 +3,21 @@ PREFIX : <https://sdbm.library.upenn.edu/>
 CONSTRUCT {
   ?manuscript a :manuscripts  .
   ?manuscript :manuscripts_location ?location .
+
+  ?entry a :entries .
+  ?entry :entries_manuscript ?manuscript .
+  ?entry :entry_manuscripts_relation_type ?relation_type .
+  ?entry ?entry_p ?entry_o .
 }
 WHERE {
   ?manuscript a :manuscripts  .
   OPTIONAL { ?manuscript :manuscripts_location ?location . }
+
+  ?entry_manuscript a :entry_manuscripts .
+  ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
+  ?entry_manuscript :entry_manuscripts_entry_id ?entry .
+  ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
+
+  ?entry a :entries .
+  ?entry ?entry_p ?entry_o .
 }
