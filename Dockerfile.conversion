@@ -10,6 +10,7 @@ USER 9008
 
 ENV PATH "$PATH:/jena-fuseki/bin"
 
+COPY fuseki-config.ttl /fuseki-base/config.ttl
 COPY mmm-sdbm-cidoc-assembler.ttl /fuseki-base/configuration/assembler.ttl
 COPY construct_cidoc_crm.sparql /tmp/construct_cidoc_crm.sparql
 

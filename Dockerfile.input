@@ -2,6 +2,7 @@ FROM secoresearch/fuseki
 
 ENV PATH "$PATH:/jena-fuseki/bin"
 
+COPY fuseki-config.ttl /fuseki-base/config.ttl
 COPY mmm-sdbm-assembler.ttl /fuseki-base/configuration/assembler.ttl
 
 RUN mkdir -p /fuseki-base/databases/tdb \
