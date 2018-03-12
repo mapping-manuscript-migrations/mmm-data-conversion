@@ -1,0 +1,8 @@
+#!/bin/bash
+java_cmd="java -cp $FUSEKI_HOME/fuseki-server.jar:/javalibs/*"
+$java_cmd tdb.tdbloader --desc=$ASSEMBLER $* \
+  && $java_cmd jena.textindexer --desc=$ASSEMBLER \
+  && $java_cmd jena.spatialindexer --desc=$ASSEMBLER \
+  && $java_cmd tdb.tdbstats --desc=$ASSEMBLER --graph urn:x-arq:UnionGraph > /tmp/stats.opt \
+  && mv /tmp/stats.opt $FUSEKI_BASE/databases/tdb/ \
+

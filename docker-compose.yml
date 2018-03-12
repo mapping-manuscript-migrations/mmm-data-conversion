@@ -2,15 +2,25 @@ version: '3.5'
 services:
     input:
         build:
-            dockerfile: Dockerfile.input
+            dockerfile: input/Dockerfile
             context: .
         ports:
             - 3033:3030
-    conversion:
+        volumes:
+            - ./data:/staging
+            - mmm-simple:/fuseki-base/databases
+        restart: unless-stopped
+    crm:
         build:
-            dockerfile: Dockerfile.conversion
+            dockerfile: crm/Dockerfile
             context: .
         ports:
             - 3034:3030
         depends_on:
-          - "input"
+          - input
+        volumes:
+            - mmm-crm:/fuseki-base/databases
+        restart: unless-stopped
+volumes:
+    mmm-crm:
+    mmm-simple:
