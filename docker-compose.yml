@@ -6,6 +6,7 @@ services:
             context: .
         ports:
             - 3033:3030
+        restart: "unless-stopped"
         volumes:
             - ./data:/staging
             - mmm-simple:/fuseki-base/databases
@@ -16,6 +17,7 @@ services:
             context: .
         ports:
             - 3034:3030
+        restart: "unless-stopped"
         depends_on:
           - input
         volumes:
