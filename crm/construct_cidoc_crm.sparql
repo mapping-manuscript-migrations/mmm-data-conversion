@@ -1,23 +1,33 @@
 PREFIX : <https://sdbm.library.upenn.edu/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
-  ?manuscript a :manuscripts  .
-  ?manuscript :manuscripts_location ?location .
+  ?manuscript a frbroo:F1_Work  .
 
-  ?entry a :entries .
-  ?entry :entries_manuscript ?manuscript .
-  ?entry :entry_manuscripts_relation_type ?relation_type .
-  ?entry ?entry_p ?entry_o .
+  ?entry a frbroo:F4_Manifestation_Singleton .
+  ?expression_creation frbroo:R18_created ?entry .
+  
+  ?entry skos:prefLabel ?title .
+  #?entry frbroo:P102_has_title ?e35_title .
 }
 WHERE {
-  ?manuscript a :manuscripts  .
+  { SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1 }
   OPTIONAL { ?manuscript :manuscripts_location ?location . }
 
   ?entry_manuscript a :entry_manuscripts .
   ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
   ?entry_manuscript :entry_manuscripts_entry_id ?entry .
   ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
-
+  
   ?entry a :entries .
-  ?entry ?entry_p ?entry_o .
+  ?entry_title :entry_titles_entry_id ?entry .
+  ?entry_title :entry_titles_title ?title .
+
+  BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
+
+  BIND(IRI(CONCAT(STR(mmm:), "expression_creations/", ?entry_id)) as ?expression_creation)
+#  BIND(IRI(CONCAT(STR(mmm:), "titles/", ?entry_id)) as ?e35_title)
 }
