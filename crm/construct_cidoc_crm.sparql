@@ -1,31 +1,103 @@
 PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+
+# TODO:
+# - create instances of sources and people (separate SPARQL CONSTRUCT?)
 
 CONSTRUCT {
-  ?manuscript a frbroo:F1_Work  .
+  ?work a frbroo:F1_Work  .
 
-  ?entry a frbroo:F4_Manifestation_Singleton .
-  ?expression_creation frbroo:R18_created ?entry .
-  
-  ?entry skos:prefLabel ?title .
+  ?expression a frbroo:F2_Expression .
+
+  ?expression_creation frbroo:R18_created ?expression ;
+    crm:P14_carried_out_by ?author .
+
+  ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
+    rdfs:label ?title ;
+    dc:source ?manuscript ;
+    crm:P48_has_preferred_identifier ?manuscript_id ;
+    crm:P45_consists_of ?material .
+
+  ?production a frbroo:E12_Production .
+
+  [ a rdf:Statement;
+  	rdf:subject ?manifestation_singleton;
+  	rdf:predicate rdfs:label;
+    rdf:object ?title ;
+    dc:source ?source
+  ] .
+
+  [ a rdf:Statement;
+      rdf:subject ?manifestation_singleton;
+      rdf:predicate crm:P48_has_preferred_identifier;
+      rdf:object ?manuscript_id ;
+      dc:source :
+  ] .
+
+  [ a rdf:Statement;
+  	rdf:subject ?manifestation_singleton;
+  	rdf:predicate crm:P45_consists_of;
+    rdf:object ?material ;
+    dc:source ?source
+  ] .
+
+  [ a rdf:Statement;
+  	rdf:subject ?manifestation_singleton;
+  	rdf:predicate crm:P14_carried_out_by;
+    rdf:object ?author ;
+    :observed_author ?observed_author ;
+    dc:source ?source
+  ] .
+
 }
 WHERE {
-  { SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1 }
-  OPTIONAL { ?manuscript :manuscripts_location ?location . }
+  BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
+  #{ SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1 }
+
+  # manuscripts_location is a deprecated field in SDBM
+  # OPTIONAL { ?manuscript :manuscripts_location ?location . }
 
   ?entry_manuscript a :entry_manuscripts .
   ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
   ?entry_manuscript :entry_manuscripts_entry_id ?entry .
   ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
-  
+
   ?entry a :entries .
+
+  ?entry_title a :entry_titles .
   ?entry_title :entry_titles_entry_id ?entry .
   ?entry_title :entry_titles_title ?title .
 
-  BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
+  ?entry_material a :entry_materials .
+  ?entry_material :entry_materials_entry_id ?entry .
+  ?entry_material :entry_materials_material ?mat .
+  BIND(STRLANG(?mat, 'en') AS ?material)
 
-  BIND(IRI(CONCAT(STR(mmm:), "expression_creations/", ?entry_id)) as ?expression_creation)
+  ?entry_author a :entry_authors .
+  ?entry_author :entry_authors_entry_id ?entry .
+  ?entry_author :entry_authors_author_id/:names_id ?author_id .
+  ?entry_author :entry_authors_observed_name ?observed_author .
+
+  ?entry :entries_source_id/:sources_id ?source_id .
+
+  # replace reification blank nodes with entry IDs?
+  #BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
+
+  # generate IRIs in LDF.fi namespace
+  ?manuscript :manuscripts_id ?manuscript_id_int .
+  BIND(STR(?manuscript_id_int) AS ?manuscript_id)
+  BIND(IRI(CONCAT(STR(mmm:), "work/", ?manuscript_id)) as ?work)
+  BIND(IRI(CONCAT(STR(mmm:), "expression/", ?manuscript_id)) as ?expression)
+  BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", ?manuscript_id)) as ?expression_creation)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
+  BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
+  BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
+  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?author_id))) as ?author)
 }
