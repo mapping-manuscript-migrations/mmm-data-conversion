@@ -39,10 +39,13 @@ docker volume rm mmmsdbmdata_mmm-crm
 # Build the CRM container again (with updated SPARQL CONSTRUCT)
 docker-compose build crm
 
+# Start the input Fuseki
+docker-compose up -d input
+
 # Convert to CRM
 docker-compose run --rm crm ./convert.sh
 
-# Start Fuseki with converted data
+# Start the CRM Fuseki with converted data
 docker-compose up -d crm
 ```
 
