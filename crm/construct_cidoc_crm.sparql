@@ -14,12 +14,21 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
 
-  ?expression a frbroo:F2_Expression .
+  ?expression a frbroo:F2_Expression ;
+    crm:P72_has_language ?language .
 
-  ?expression_creation frbroo:R18_created ?expression ;
-    crm:P14_carried_out_by ?author .
+  ?expression_creation frbroo:R17_created ?expression ;
+    frbroo:R18_created ?manifestation_singleton ;
+    frbroo:R19_created_a_realisation_of ?work ;
+    crm:P14_carried_out_by ?author ;
+    crm:P4_has_time_span ?creation_timespan .
+
+  ?creation_timespan a crm:E52_Time-Span ;
+    crm:P79_beginning_is_qualified_by ?creation_date_start;
+    crm:P80_end_is_qualified_by ?creation_date_end .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
+    crm:P128_carries ?expression ;
     rdfs:label ?title ;
     dc:source ?manuscript ;
     crm:P48_has_preferred_identifier ?manuscript_id ;
@@ -59,7 +68,7 @@ CONSTRUCT {
 }
 WHERE {
   #BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
-  { SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1000 }
+  { SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1 }
 
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
@@ -71,19 +80,84 @@ WHERE {
 
   ?entry a :entries .
 
-  ?entry_title a :entry_titles .
+  ## MANUSCRIPT DETAILS ##
+
+  # title
   ?entry_title :entry_titles_entry_id ?entry .
   ?entry_title :entry_titles_title ?title .
 
-  ?entry_material a :entry_materials .
-  ?entry_material :entry_materials_entry_id ?entry .
-  ?entry_material :entry_materials_material ?mat .
-  BIND(STRLANG(?mat, 'en') AS ?material)
+  # author
+  OPTIONAL {
+    ?entry_author :entry_authors_entry_id ?entry .
+    ?entry_author :entry_authors_author_id/:names_id ?author_id .
+    ?entry_author :entry_authors_observed_name ?observed_author .
+  }
 
-  ?entry_author a :entry_authors .
-  ?entry_author :entry_authors_entry_id ?entry .
-  ?entry_author :entry_authors_author_id/:names_id ?author_id .
-  ?entry_author :entry_authors_observed_name ?observed_author .
+  # creation date
+  OPTIONAL {
+    ?entry_date :entry_dates_entry_id ?entry .
+    ?entry_date :entry_dates_id ?creation_date_id .
+    ?entry_date :entry_dates_date_normalized_start ?creation_date_start .
+    ?entry_date :entry_dates_date_normalized_end ?creation_date_end .
+    ?entry_date :entry_dates_observed_date ?creation_date_observed .
+  }
+
+  # artist
+
+  # scribe
+
+  # language
+  OPTIONAL {
+    ?entry_language :entry_languages_entry_id ?entry .
+    ?entry_language :entry_languages_language_id/:languages_id ?language_id .
+    ?entry_language :entry_languages_language_id/:languages_name ?language_ .
+    BIND(STRLANG(?language_, 'en') AS ?language)
+  }
+
+  # place
+
+  # material
+  OPTIONAL {
+    ?entry_material :entry_materials_entry_id ?entry .
+    ?entry_material :entry_materials_material ?material_ .
+    BIND(STRLANG(?material_, 'en') AS ?material)
+  }
+
+  # use
+
+  # folios
+
+  # lines
+
+  # columns
+
+  # height
+
+  # width
+
+  # alternate size
+
+  # full-page miniatures
+
+  # large miniatures
+
+  # small miniatures
+
+  # unspec. sized miniatures
+
+  # historiated initials
+
+  # decorated initials
+
+  # binding
+
+  # manuscript link
+
+  # other Info
+
+  ## /MANUSCRIPT DETAILS ##
+
+  ## SOURCE ##
 
   ?entry :entries_source_id/:sources_id ?source_id .
 
@@ -100,4 +174,5 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?author_id))) as ?author)
+  BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
 }
