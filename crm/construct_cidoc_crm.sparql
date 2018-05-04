@@ -58,8 +58,8 @@ CONSTRUCT {
 
 }
 WHERE {
-  BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
-  #{ SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1 }
+  #BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
+  { SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1000 }
 
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }

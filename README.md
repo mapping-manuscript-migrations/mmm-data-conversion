@@ -27,28 +27,30 @@ docker-compose run --rm crm ./convert.sh
 docker-compose up -d crm
 ```
 
-Update CRM conversion:
+## After building at least once
+
+Avoid rebuilding the input Fuseki.
+
+Convert again and run:
+
+`./convert_again.sh`
+
+Or manually:
 
 ```bash
 # Stop the services
 docker-compose down
-
 # Remove the old CRM volume
 docker volume rm mmmsdbmdata_mmm-crm
-
 # Build the CRM container again (with updated SPARQL CONSTRUCT)
 docker-compose build crm
-
 # Start the input Fuseki
 docker-compose up -d input
-
 # Convert to CRM
 docker-compose run --rm crm ./convert.sh
-
 # Start the CRM Fuseki with converted data
 docker-compose up -d crm
 ```
-
 
 ## Logs
 
