@@ -24,6 +24,7 @@ CONSTRUCT {
     crm:P4_has_time_span ?creation_timespan .
 
   ?creation_timespan a crm:E52_Time-Span ;
+    rdfs:label ?creation_date_label ;
     crm:P79_beginning_is_qualified_by ?creation_date_start;
     crm:P80_end_is_qualified_by ?creation_date_end .
 
@@ -86,8 +87,8 @@ CONSTRUCT {
 
 }
 WHERE {
-  BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
-  #{ SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1 }
+  #BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
+  { SELECT ?manuscript { ?manuscript a :manuscripts } }
 
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
@@ -193,4 +194,5 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?author_id))) as ?author)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
+  BIND(CONCAT(STR(?creation_date_start),"-",STR(?creation_date_end)) as ?creation_date_label)
 }
