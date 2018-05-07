@@ -31,7 +31,7 @@ CONSTRUCT {
     crm:P128_carries ?expression ;
     rdfs:label ?title ;
     dc:source ?manuscript ;
-    crm:P48_has_preferred_identifier ?manuscript_id ;
+    crm:P1_is_identified_by ?manuscript ;
     crm:P45_consists_of ?material .
 
   ?production a frbroo:E12_Production .
@@ -40,6 +40,7 @@ CONSTRUCT {
   	rdf:subject ?manifestation_singleton;
   	rdf:predicate rdfs:label;
     rdf:object ?title ;
+    mmm:entry ?entry ;
     dc:source ?source
   ] .
 
@@ -54,21 +55,39 @@ CONSTRUCT {
   	rdf:subject ?manifestation_singleton;
   	rdf:predicate crm:P45_consists_of;
     rdf:object ?material ;
+    mmm:entry ?entry ;
     dc:source ?source
   ] .
 
   [ a rdf:Statement;
-  	rdf:subject ?manifestation_singleton;
+  	rdf:subject ?expression_creation;
   	rdf:predicate crm:P14_carried_out_by;
     rdf:object ?author ;
+    mmm:entry ?entry ;
     :observed_author ?observed_author ;
+    dc:source ?source
+  ] .
+
+  [ a rdf:Statement;
+  	rdf:subject ?expression_creation;
+  	rdf:predicate crm:P4_has_time_span;
+    rdf:object ?creation_timespan ;
+    mmm:entry ?entry ;
+    dc:source ?source
+  ] .
+
+  [ a rdf:Statement;
+    rdf:subject ?expression;
+    rdf:predicate crm:P72_has_language;
+    rdf:object ?language ;
+    mmm:entry ?entry ;
     dc:source ?source
   ] .
 
 }
 WHERE {
-  #BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
-  { SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1 }
+  BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
+  #{ SELECT ?manuscript { ?manuscript a :manuscripts } LIMIT 1 }
 
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
@@ -78,7 +97,7 @@ WHERE {
   ?entry_manuscript :entry_manuscripts_entry_id ?entry .
   ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
 
-  ?entry a :entries .
+  #?entry a :entries .
 
   ## MANUSCRIPT DETAILS ##
 
@@ -158,7 +177,6 @@ WHERE {
   ## /MANUSCRIPT DETAILS ##
 
   ## SOURCE ##
-
   ?entry :entries_source_id/:sources_id ?source_id .
 
   # replace reification blank nodes with entry IDs?
