@@ -6,12 +6,13 @@
 
 
 :entry a rdf:Property;
-  rdfs:label "Source entry"@en ;
+  rdfs:label "Source entry in SDBM"@en ;
   rdfs:domain rdf:Statement .
+
+:manuscript_record a rdf:Property;
+  rdfs:label "Source manuscript record in SDBM"@en ;
+  rdfs:domain frbroo:F4_Manifestation_Singleton .
 
 :Width a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
   rdfs:label "Width"@en .
-
-
-  
