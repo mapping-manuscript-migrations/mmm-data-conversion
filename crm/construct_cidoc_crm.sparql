@@ -36,14 +36,22 @@ CONSTRUCT {
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     crm:P128_carries ?expression ;
     rdfs:label ?title ;
-    dc:source ?manuscript ;
     crm:P1_is_identified_by ?manuscript ;
     crm:P43_has_dimension ?width_uri ;
-    crm:P45_consists_of ?material .
+    crm:P45_consists_of ?material ;
+    mmm-schema:manuscript_record ?manuscript . # for showing a link to SDBM UI in faceter
 
   ?width_uri a mmm-schema:Width ;
     crm:P90_has_value ?width_value ;
     crm:P91_has_unit "mm"@en .
+
+  #?acquisition_uri a frbroo:E8_Acquisition ;
+  #  crm:P24_transferred_title_of ?manifestation_singleton ;
+  #  crm:P23_transferred_title_from ?seller ;
+  #  crm:P22_transferred_title_to ?buyer ;
+  #  crm:P14_carried_out_by ?selling_agent ;
+  #  mmm-schema:entry ?entry ;
+  #  dc:source ?source .
 
   ?production a frbroo:E12_Production .
 
@@ -167,7 +175,24 @@ WHERE {
   ?entry_manuscript :entry_manuscripts_entry_id ?entry .
   ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
 
-  #?entry a :entries .
+  ## TRANSACTION INFORMATION
+
+  #OPTIONAL {
+  #  ?sales_entry :sales_entry_id ?entry .
+  #  ?sales_entry :sales_id ?sales_id .
+  #  OPTIONAL {
+  #    ?seller_agent :sale_agents_role "seller_or_holder" .
+  #    ?seller_agent :sale_agents_agent_id/:names_id ?seller_id .
+  #  }
+  #  OPTIONAL {
+  #    ?buyer_agent :sale_agents_role "buyer" .
+  #    ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
+  #  }
+  #  OPTIONAL {
+  #    ?selling_agent_agent :sale_agents_role "selling_agent" .
+  #    ?selling_agent_agent :sale_agents_agent_id/:names_id ?selling_agent_id .
+  #  }
+  #}
 
   ## MANUSCRIPT DETAILS ##
 
@@ -269,8 +294,12 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?author_id))) as ?author)
+  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?seller_id))) as ?seller)
+  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?buyer_id))) as ?buyer)
+  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?selling_agent_id))) as ?selling_agent)
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_id))) as ?place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
+  BIND(IRI(CONCAT(STR(mmm:), "acquisition/", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "width/", ?entry_id)) as ?width_uri)
   BIND(CONCAT(STR(?creation_date_start),"-",STR(?creation_date_end)) as ?creation_date_label)
 }
