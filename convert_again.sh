@@ -1,6 +1,6 @@
 #!/bin/bash
 docker-compose down \
-  && docker volume rm mmmsdbmdata_mmm-crm \
+  && docker volume rm mmm-sdbm-data_mmm-crm \
   && docker-compose build crm \
   && docker-compose up -d input \
   && sleep 5 \
