@@ -5,6 +5,7 @@ curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_cidoc_crm.sparql)" 
 
 # load the result to a new Fuseki
 $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-sdbm-cidoc-crm/ /tmp/cidoc.ttl \
-    && rm /tmp/*
+  && $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-sdbm-cidoc-crm/ /tmp/mmm-schema.ttl \
+  && rm /tmp/*
 
 exec "$@"

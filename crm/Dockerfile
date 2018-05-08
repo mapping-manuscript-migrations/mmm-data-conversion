@@ -16,6 +16,7 @@ RUN mkdir -p $FUSEKI_BASE/databases/tdb \
 
 COPY fuseki-config.ttl $FUSEKI_BASE/config.ttl
 COPY crm/assembler.ttl $FUSEKI_BASE/configuration/assembler.ttl
+COPY crm/mmm-schema.ttl /tmp/mmm-schema.ttl
 COPY crm/construct_cidoc_crm.sparql $FUSEKI_HOME/construct_cidoc_crm.sparql
 
 COPY --chown=9008 crm/convert.sh tdbloader $FUSEKI_HOME/

@@ -1,0 +1,17 @@
+@prefix : <http://ldf.fi/mmm/schema/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
+
+
+:entry a rdf:Property;
+  rdfs:label "Source entry"@en ;
+  rdfs:domain rdf:Statement .
+
+:Width a rdfs:Class ;
+  rdfs:subClassOf crm:E54_Dimension ;
+  rdfs:label "Width"@en .
+
+
+  
