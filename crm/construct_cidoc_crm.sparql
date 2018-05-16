@@ -13,7 +13,6 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 # - create instances of sources, people and places (separate SPARQL CONSTRUCT?)
 # - generate URIs: material, language, dimension unit
 
-
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
 
@@ -45,13 +44,13 @@ CONSTRUCT {
     crm:P90_has_value ?width_value ;
     crm:P91_has_unit "mm"@en .
 
-  #?acquisition_uri a frbroo:E8_Acquisition ;
-  #  crm:P24_transferred_title_of ?manifestation_singleton ;
-  #  crm:P23_transferred_title_from ?seller ;
-  #  crm:P22_transferred_title_to ?buyer ;
-  #  crm:P14_carried_out_by ?selling_agent ;
-  #  mmm-schema:entry ?entry ;
-  #  dc:source ?source .
+  ?acquisition_uri a frbroo:E8_Acquisition ;
+    crm:P24_transferred_title_of ?manifestation_singleton ;
+    crm:P23_transferred_title_from ?seller ;
+    crm:P22_transferred_title_to ?buyer ;
+    crm:P14_carried_out_by ?selling_agent ;
+    mmm-schema:entry ?entry ;
+    dc:source ?source .
 
   ?production a frbroo:E12_Production .
 
@@ -165,7 +164,8 @@ CONSTRUCT {
 }
 WHERE {
   #BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
-  { SELECT ?manuscript { ?manuscript a :manuscripts } }
+  #BIND (<https://sdbm.library.upenn.edu/manuscripts/13354> AS ?manuscript) # manuscript with sales information: buyer, seller, sales agent known
+  #?manuscript a :manuscripts .
 
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
@@ -177,22 +177,25 @@ WHERE {
 
   ## TRANSACTION INFORMATION
 
-  #OPTIONAL {
-  #  ?sales_entry :sales_entry_id ?entry .
-  #  ?sales_entry :sales_id ?sales_id .
-  #  OPTIONAL {
-  #    ?seller_agent :sale_agents_role "seller_or_holder" .
-  #    ?seller_agent :sale_agents_agent_id/:names_id ?seller_id .
-  #  }
-  #  OPTIONAL {
-  #    ?buyer_agent :sale_agents_role "buyer" .
-  #    ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
-  #  }
-  #  OPTIONAL {
-  #    ?selling_agent_agent :sale_agents_role "selling_agent" .
-  #    ?selling_agent_agent :sale_agents_agent_id/:names_id ?selling_agent_id .
-  #  }
-  #}
+  OPTIONAL {
+    ?sales_entry :sales_entry_id ?entry .
+    ?sales_entry :sales_id ?sales_id .
+    OPTIONAL {
+      ?seller_agent :sale_agents_sale_id ?sales_entry .
+      ?seller_agent :sale_agents_role "seller_or_holder" .
+      ?seller_agent :sale_agents_agent_id/:names_id ?seller_id .
+    }
+    OPTIONAL {
+      ?buyer_agent :sale_agents_sale_id ?sales_entry .
+      ?buyer_agent :sale_agents_role "buyer" .
+      ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
+    }
+    OPTIONAL {
+      ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
+      ?selling_agent_agent :sale_agents_role "selling_agent" .
+      ?selling_agent_agent :sale_agents_agent_id/:names_id ?selling_agent_id .
+    }
+  }
 
   ## MANUSCRIPT DETAILS ##
 
@@ -249,12 +252,12 @@ WHERE {
 
   # columns
 
-  # height
+  # width
   OPTIONAL {
     ?entry :entries_width ?width_value .
   }
 
-  # width
+  # height
 
   # alternate size
 
