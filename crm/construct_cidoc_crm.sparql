@@ -39,6 +39,7 @@ CONSTRUCT {
     crm:P1_is_identified_by ?manuscript ;
     crm:P43_has_dimension ?width_uri ;
     crm:P45_consists_of ?material ;
+#    crm:P51_has_former_or_current_owner ?prov_agent ;
     mmm-schema:manuscript_record ?manuscript . # for showing a link to SDBM UI in faceter
 
   ?width_uri a mmm-schema:Width ;
@@ -54,6 +55,17 @@ CONSTRUCT {
     dc:source ?source .
 
   ?production a frbroo:E12_Production .
+
+  # provenance reification
+  #[ a rdf:Statement ;
+  #  rdf:subject ?manifestation_singleton ;
+  #  rdf:predicate crm:P51_has_former_or_current_owner ;
+  #  rdf:object ?prov_agent ;
+  #  mmm-schema:order ?prov_order ;
+  #  rdfs:comment ?prov_comment ;
+  #  mmm-schema:entry ?entry ;
+  #  dc:source ?source
+  #] .
 
   # title reification
   [ a rdf:Statement ;
@@ -207,6 +219,13 @@ WHERE {
 
   ## MANUSCRIPT DETAILS ##
 
+#  OPTIONAL {
+#    ?provenance_entry :provenance_entry_id ?entry ;
+#                      :provenance_provenance_agent_id/:names_id ?prov_agent_id ;
+#                      :provenance_order ?prov_order .
+#    OPTIONAL { ?provenance_entry :provenance_comment ?prov_comment . }
+#  }
+
   # title
   ?entry_title :entry_titles_entry_id ?entry .
   ?entry_title :entry_titles_title ?title .
@@ -308,6 +327,7 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?seller_id))) as ?seller)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?buyer_id))) as ?buyer)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?selling_agent_id))) as ?selling_agent)
+#  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?prov_agent_id))) as ?prov_agent)
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_id))) as ?place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
   BIND(IRI(CONCAT(STR(mmm:), "acquisition/", ?entry_id)) as ?acquisition_uri)

@@ -13,6 +13,11 @@
   rdfs:label "Source manuscript record in SDBM"@en ;
   rdfs:domain frbroo:F4_Manifestation_Singleton .
 
+:order a rdf:Property;
+  rdfs:label "Ordering number"@en ;
+  rdfs:comment "Used, e.g., for ordering of provenance information"@en ;
+  rdfs:domain rdf:Statement .
+
 :Width a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
   rdfs:label "Width"@en .
