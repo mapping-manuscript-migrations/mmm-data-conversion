@@ -27,7 +27,7 @@ docker-compose run --rm crm ./convert.sh
 docker-compose up -d crm
 ```
 
-## After building at least once
+## Rebuild after updating CONSTRUCT queries
 
 Avoid rebuilding the input Fuseki.
 
@@ -51,6 +51,13 @@ docker-compose run --rm crm ./convert.sh
 # Start the CRM Fuseki with converted data
 docker-compose up -d crm
 ```
+
+## Rebuild after updating input data
+
+```bash
+./rebuild.sh
+```
+
 
 ## Logs
 
