@@ -14,10 +14,19 @@ CONSTRUCT {
   ?person a mmm-schema:Person ;
     skos:prefLabel ?name ;
     mmm-schema:viaf ?viaf_id ;
+    mmm-schema:person_place ?mmm_place
 } WHERE {
   ?name_id a :names ;
-             :names_name ?name ;
-             :names_id ?person_id .
+           :names_name ?name ;
+           :names_id ?person_local_id .
   OPTIONAL { ?name_id :names_viaf_id ?viaf_id . }
-  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?person_id))) as ?person)
+  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?person_local_id))) as ?person)
+
+  OPTIONAL {
+    ?name_place_id :name_places_name_id ?name_id ;
+                   :name_places_place_id ?place_id ;
+                   a :name_places .
+    ?place_id :places_id ?place_local_id .
+    BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?mmm_place)
+  }
 }
