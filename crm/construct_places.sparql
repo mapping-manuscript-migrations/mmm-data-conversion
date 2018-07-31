@@ -1,0 +1,32 @@
+PREFIX wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX : <https://sdbm.library.upenn.edu/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+
+CONSTRUCT {
+  ?place a mmm-schema:Place ;
+    skos:prefLabel ?name ;
+    mmm-schema:parent ?parent ;
+    dc:source ?authority_source ;
+    wgs:lat ?lat ;
+    wgs:long ?long ;
+} WHERE {
+  ?place_id a :places ;
+            :places_id ?local_id ;
+            :places_name ?name .
+  OPTIONAL {
+    ?place_id :places_parent_id ?parent_id .
+    BIND(IRI(CONCAT(STR(mmm:), "place/", REPLACE(STR(?parent_id), "^(.*)places/(.*)$", "$2"))) as ?parent)
+  }
+  OPTIONAL { ?place_id :places_authority_source ?authority_source . }
+  OPTIONAL { ?place_id :places_latitude ?lat . }
+  OPTIONAL { ?place_id :places_longitude ?long . }
+  BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?local_id))) as ?place)
+}
