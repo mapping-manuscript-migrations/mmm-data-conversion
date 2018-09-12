@@ -1,6 +1,8 @@
 # Schoenberg Database of Manuscripts docker
 
-Convert SDBM RDF data from https://drive.google.com/drive/folders/0B4mAIaZomRI4UTZRN2F3WS02bGs into a new data model using SPARQL CONSTRUCT.
+Convert SDBM RDF data into a new data model using SPARQL CONSTRUCT.
+Before running the scripts, download the RDF Dataset (.ttl) file from https://sdbm.library.upenn.edu/downloads (you have to be logged in)
+into `data` directory, and rename it as `input.ttl`.
 
 ## Build, convert, and run
 
