@@ -17,7 +17,9 @@ CONSTRUCT {
     dc:source ?authority_source ;
     wgs:lat ?lat ;
     wgs:long ?long ;
-} WHERE {
+    crm:P1_is_identified_by ?authority_uri ;
+}
+WHERE {
   ?place_id a :places ;
             :places_id ?local_id ;
             :places_name ?name .
@@ -25,7 +27,11 @@ CONSTRUCT {
     ?place_id :places_parent_id ?parent_id .
     BIND(IRI(CONCAT(STR(mmm:), "place/", REPLACE(STR(?parent_id), "^(.*)places/(.*)$", "$2"))) as ?parent)
   }
-  OPTIONAL { ?place_id :places_authority_source ?authority_source . }
+  OPTIONAL {
+    ?place_id :places_authority_source ?authority_source .
+    ?place_id :places_authority_id ?authority_localname .
+  }
+  BIND(URI(STR(?authority_source) + STR("/") + STR(?authority_localname)) as ?authority_uri) .
   OPTIONAL { ?place_id :places_latitude ?lat . }
   OPTIONAL { ?place_id :places_longitude ?long . }
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?local_id))) as ?place)
