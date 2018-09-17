@@ -32,7 +32,15 @@ WHERE {
     ?place_id :places_authority_id ?authority_localname .
   }
   BIND(URI(STR(?authority_source) + STR("/") + STR(?authority_localname)) as ?authority_uri) .
-  OPTIONAL { ?place_id :places_latitude ?lat . }
-  OPTIONAL { ?place_id :places_longitude ?long . }
+  OPTIONAL {
+    ?place_id :places_latitude ?lat_ .
+    FILTER(STR(?lat_) != "")
+    ?place_id :places_latitude ?lat .
+  }
+  OPTIONAL {
+    ?place_id :places_latitude ?long_ .
+    FILTER(STR(?long_) != "")
+    ?place_id :places_latitude ?long .
+  }
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?local_id))) as ?place)
 }
