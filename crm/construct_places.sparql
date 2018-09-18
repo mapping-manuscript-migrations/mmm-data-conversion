@@ -31,7 +31,7 @@ WHERE {
     ?place_id :places_authority_source ?authority_source .
     ?place_id :places_authority_id ?authority_localname .
   }
-  BIND(URI(STR(?authority_source) + STR("/") + STR(?authority_localname)) as ?authority_uri) .
+  BIND(URI(REPLACE(STR(?authority_source), " ", "") + STR("/") + STR(?authority_localname)) as ?authority_uri) .
   OPTIONAL {
     ?place_id :places_latitude ?lat_ .
     FILTER(STR(?lat_) != "")
