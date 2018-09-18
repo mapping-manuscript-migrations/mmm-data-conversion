@@ -13,6 +13,7 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 # - create instances of sources, people and places (separate SPARQL CONSTRUCT?)
 # - generate URIs: material, language, dimension unit
 # - handle entries with two manuscript records: uncertainty vs. pieces of manuscript?
+# - use :entry_manuscripts_relation_type (is/partial/possible)
 
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
@@ -36,10 +37,11 @@ CONSTRUCT {
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     crm:P128_carries ?expression ; # TODO: or frbr:R42_is_representative_manifestation_singleton_for ?
     rdfs:label ?title ; # TODO: move to Expression, use Title class?
+    skos:prefLabel ?preflabel ;
     crm:P1_is_identified_by ?manuscript ;
     crm:P43_has_dimension ?width_uri ;
     crm:P45_consists_of ?material ;
-#    crm:P51_has_former_or_current_owner ?prov_agent ;
+    crm:P51_has_former_or_current_owner ?prov_agent ;
     mmm-schema:manuscript_record ?manuscript . # for showing a link to SDBM UI in faceter
 
   ?width_uri a mmm-schema:Width ;
@@ -57,82 +59,80 @@ CONSTRUCT {
   ?production a frbroo:E12_Production .
 
   # provenance reification
-  #[ a rdf:Statement ;
-  #  rdf:subject ?manifestation_singleton ;
-  #  rdf:predicate crm:P51_has_former_or_current_owner ;
-  #  rdf:object ?prov_agent ;
-  #  mmm-schema:order ?prov_order ;
-  #  rdfs:comment ?prov_comment ;
-  #  mmm-schema:entry ?entry ;
-  #  dc:source ?source
-  #] .
+  ?reification_owner_uri
+    a rdf:Statement ;
+    rdf:subject ?manifestation_singleton ;
+    rdf:predicate crm:P51_has_former_or_current_owner ;
+    rdf:object ?prov_agent ;
+    mmm-schema:order ?prov_order ;
+    rdfs:comment ?prov_comment ;
+    mmm-schema:entry ?entry ;
+    dc:source ?source .
 
   # title reification
-  [ a rdf:Statement ;
-  	rdf:subject ?manifestation_singleton ;
-  	rdf:predicate rdfs:label ;
+  ?reification_label_uri
+    a rdf:Statement ;
+    rdf:subject ?manifestation_singleton ;
+    rdf:predicate rdfs:label ;
     rdf:object ?title ;
     mmm-schema:entry ?entry ;
-    dc:source ?source
-  ] .
+    dc:source ?source .
 
   # identifier reification
-  [ a rdf:Statement ;
-      rdf:subject ?manifestation_singleton ;
-      rdf:predicate crm:P48_has_preferred_identifier ;
-      rdf:object ?manuscript_id ;
-      dc:source :
-  ] .
+  ?reification_id_uri a rdf:Statement ;
+    rdf:subject ?manifestation_singleton ;
+    rdf:predicate crm:P48_has_preferred_identifier ;
+    rdf:object ?manuscript_id ;
+    dc:source ?source .
 
   # author reification
-  [ a rdf:Statement ;
-  	rdf:subject ?expression_creation ;
-  	rdf:predicate crm:P14_carried_out_by ;
+  ?reification_author_uri
+    a rdf:Statement ;
+    rdf:subject ?expression_creation ;
+    rdf:predicate crm:P14_carried_out_by ;
     rdf:object ?author ;
     mmm-schema:entry ?entry ;
     :observed_author ?observed_author ;
-    dc:source ?source
-  ] .
+    dc:source ?source .
 
   # creation date reification
-  [ a rdf:Statement ;
-  	rdf:subject ?expression_creation ;
-  	rdf:predicate crm:P4_has_time_span ;
+  ?reification_expression_creation_time_uri
+    a rdf:Statement ;
+    rdf:subject ?expression_creation ;
+    rdf:predicate crm:P4_has_time_span ;
     rdf:object ?creation_timespan ;
     mmm-schema:entry ?entry ;
-    dc:source ?source
-  ] .
+    dc:source ?source .
 
   # artist reification
 
   # scribe reification
 
   # language reification
-  [ a rdf:Statement ;
+  ?reification_language_uri
+    a rdf:Statement ;
     rdf:subject ?expression;
     rdf:predicate crm:P72_has_language ;
     rdf:object ?language ;
     mmm-schema:entry ?entry ;
-    dc:source ?source
-  ] .
+    dc:source ?source .
 
   # place reification
-  [ a rdf:Statement ;
-  	rdf:subject ?expression_creation ;
-  	rdf:predicate crm:P7_took_place_at ;
+  ?reification_expression_creation_place_uri a rdf:Statement ;
+    rdf:subject ?expression_creation ;
+    rdf:predicate crm:P7_took_place_at ;
     rdf:object ?place ;
     mmm-schema:entry ?entry ;
-    dc:source ?source
-  ] .
+    dc:source ?source .
 
   # material reification
-  [ a rdf:Statement ;
+  ?reification_material_uri
+    a rdf:Statement ;
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P45_consists_of ;
     rdf:object ?material ;
     mmm-schema:entry ?entry ;
-    dc:source ?source
-  ] .
+    dc:source ?source .
 
   # use reification
 
@@ -145,13 +145,13 @@ CONSTRUCT {
   # height reification
 
   # width reification
-  [ a rdf:Statement;
+  ?reification_width_uri
+    a rdf:Statement;
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?width_uri ;
     mmm-schema:entry ?entry ;
-    dc:source ?source
-  ] .
+    dc:source ?source .
 
   # alternate size reification
 
@@ -173,8 +173,8 @@ CONSTRUCT {
 
   # other Info reification
 
-
 }
+#SELECT *
 WHERE {
   #BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
   #BIND (<https://sdbm.library.upenn.edu/manuscripts/13354> AS ?manuscript) # manuscript with sales information: buyer, seller, sales agent known
@@ -185,12 +185,12 @@ WHERE {
   ?entry a :entries .
 
   #OPTIONAL { # TODO: uncomment the OPTIONAL keyword to include also entries w/o manuscript records (commented out now because the query takes a long time otherwise)
-    ?entry_manuscript :entry_manuscripts_entry_id ?entry .
-    ?entry_manuscript a :entry_manuscripts .
-    ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
-    ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
-    ?manuscript a :manuscripts .
-    ?manuscript :manuscripts_id ?manuscript_id_int .
+  ?entry_manuscript :entry_manuscripts_entry_id ?entry .
+  ?entry_manuscript a :entry_manuscripts .
+  ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
+  ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
+  ?manuscript a :manuscripts .
+  ?manuscript :manuscripts_id ?manuscript_id_int .
   #}
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
@@ -219,16 +219,24 @@ WHERE {
 
   ## MANUSCRIPT DETAILS ##
 
-#  OPTIONAL {
-#    ?provenance_entry :provenance_entry_id ?entry ;
-#                      :provenance_provenance_agent_id/:names_id ?prov_agent_id ;
-#                      :provenance_order ?prov_order .
-#    OPTIONAL { ?provenance_entry :provenance_comment ?prov_comment . }
-#  }
+  OPTIONAL {
+    ?provenance_entry :provenance_entry_id ?entry ;
+                      :provenance_provenance_agent_id/:names_id ?prov_agent_id ;
+                                                     :provenance_order ?prov_order .
+    OPTIONAL { ?provenance_entry :provenance_comment ?prov_comment . }
+  }
 
   # title
   ?entry_title :entry_titles_entry_id ?entry .
-  ?entry_title :entry_titles_title ?title .
+  ?entry_title :entry_titles_id ?title_id .
+  OPTIONAL {
+    ?entry_title :entry_titles_title|:entry_titles_common_title ?title .
+    FILTER(STR(?title) != "")
+  }
+  OPTIONAL {
+    ?entry_title :entry_titles_common_title ?common_title .
+    FILTER(STR(?common_title) != "")
+  }
 
   # author
   OPTIONAL {
@@ -267,6 +275,7 @@ WHERE {
   # material
   OPTIONAL {
     ?entry_material :entry_materials_entry_id ?entry .
+    ?entry_material :entry_materials_id ?material_id .
     ?entry_material :entry_materials_material ?material_ .
     BIND(STRLANG(?material_, 'en') AS ?material)
   }
@@ -327,11 +336,22 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?seller_id))) as ?seller)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?buyer_id))) as ?buyer)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?selling_agent_id))) as ?selling_agent)
-#  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?prov_agent_id))) as ?prov_agent)
+  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?prov_agent_id))) as ?prov_agent)
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_id))) as ?place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
   BIND(IRI(CONCAT(STR(mmm:), "acquisition/", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "width/", ?entry_id)) as ?width_uri)
   BIND(CONCAT(STR(?creation_date_start),"-",STR(?creation_date_end)) as ?creation_date_label)
+  BIND(COALESCE(?common_title, ?title) as ?preflabel)  # TODO: Get most common value from ?title
+
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_author_", STR(?author_id))) as ?reification_author_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_owner_", STR(?prov_agent_id))) as ?reification_owner_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_place_", STR(?place))) as ?reification_expression_creation_place_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_time_", STR(?creation_date_id))) as ?reification_expression_creation_time_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_width_", STR(?width_value))) as ?reification_width_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_identifier_", ?manuscript_id)) as ?reification_id_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_material_", ?material_id)) as ?reification_material_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_language_", REPLACE(?language, " ", "-"))) as ?reification_language_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id))) as ?reification_label_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id), "_", SUBSTR(REPLACE(?title, "[\\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\#\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-"), 0, 21))) as ?reification_label_uri)
 }
-#LIMIT 1000
