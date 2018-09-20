@@ -14,7 +14,7 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 # - generate URIs: material, language, dimension unit
 # - handle entries with two manuscript records: uncertainty vs. pieces of manuscript?
 # - use :entry_manuscripts_relation_type (is/partial/possible)
-
+# "Select <is> for Entries that describe the same manuscript. Select <partial> for Entries that describe fragments of a manuscript. Fragmented manuscripts are most obvious by sharing many manuscript details with their linked Entries except for such key indicators as folio count and the most complete title listings. Select Possible if you are unsure whether the Entry describes the same manuscript."
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
 
@@ -184,14 +184,14 @@ WHERE {
 
   ?entry a :entries .
 
-  #OPTIONAL { # TODO: uncomment the OPTIONAL keyword to include also entries w/o manuscript records (commented out now because the query takes a long time otherwise)
-  ?entry_manuscript :entry_manuscripts_entry_id ?entry .
-  ?entry_manuscript a :entry_manuscripts .
-  ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
-  ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
-  ?manuscript a :manuscripts .
-  ?manuscript :manuscripts_id ?manuscript_id_int .
-  #}
+  OPTIONAL {
+    ?entry_manuscript :entry_manuscripts_entry_id ?entry .
+    ?entry_manuscript a :entry_manuscripts .
+    ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
+    ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
+    ?manuscript a :manuscripts .
+    ?manuscript :manuscripts_id ?manuscript_id_int .
+  }
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
 
@@ -342,7 +342,8 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "acquisition/", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "width/", ?entry_id)) as ?width_uri)
   BIND(CONCAT(STR(?creation_date_start),"-",STR(?creation_date_end)) as ?creation_date_label)
-  BIND(COALESCE(?common_title, ?title) as ?preflabel)  # TODO: Get most common value from ?title
+  BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
+  # TODO: for partial relations, take title as prefLabel
 
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_author_", STR(?author_id))) as ?reification_author_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_owner_", STR(?prov_agent_id))) as ?reification_owner_uri)
