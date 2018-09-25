@@ -42,7 +42,10 @@ CONSTRUCT {
     crm:P43_has_dimension ?width_uri ;
     crm:P45_consists_of ?material ;
     crm:P51_has_former_or_current_owner ?prov_agent ;
+    mmm-schema:entry ?entry ;
     mmm-schema:manuscript_record ?manuscript . # for showing a link to SDBM UI in faceter
+
+  ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
 
   ?width_uri a mmm-schema:Width ;
     crm:P90_has_value ?width_value ;
@@ -187,10 +190,27 @@ WHERE {
   OPTIONAL {
     ?entry_manuscript :entry_manuscripts_entry_id ?entry .
     ?entry_manuscript a :entry_manuscripts .
-    ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
-    ?entry_manuscript :entry_manuscripts_relation_type ?relation_type .
-    ?manuscript a :manuscripts .
-    ?manuscript :manuscripts_id ?manuscript_id_int .
+    OPTIONAL {
+      ?entry_manuscript :entry_manuscripts_relation_type "is" .
+      ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
+      ?manuscript a :manuscripts .
+      ?manuscript :manuscripts_id ?manuscript_id_int .
+    }
+    OPTIONAL {
+      ?entry_manuscript :entry_manuscripts_relation_type "partial" .
+      ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript_parent .
+      ?entry_manuscript :entry_manuscripts_entry_id ?entry_partial_uri .
+      ?manuscript_parent a :manuscripts .
+      ?manuscript_parent :manuscripts_id ?manuscript_parent_id_int .
+    }
+    OPTIONAL {
+      ?entry_manuscript :entry_manuscripts_relation_type "possible" .
+      ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
+      ?manuscript a :manuscripts .
+      ?manuscript :manuscripts_id ?manuscript_id_int .
+      BIND("Possible match of manuscript"@en as ?entry_comment)
+      # TODO: Adjust model to fit ?entry_comment (add observation event or add to transaction information)
+    }
   }
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
@@ -320,16 +340,17 @@ WHERE {
   ## SOURCE ##
   ?entry :entries_source_id/:sources_id ?source_id .
 
-  # replace reification blank nodes with entry IDs?
   BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
+  BIND(REPLACE(STR(?entry_partial_uri), "^.*\\/(.+)", "$1") as ?entry_partial_id)
 
   # generate IRIs in LDF.fi namespace
   BIND(STR(?manuscript_id_int) AS ?manuscript_id_)
-  BIND(COALESCE(?manuscript_id_, ?entry_id) AS ?manuscript_id)
+  BIND(COALESCE(?manuscript_id_, "part_" + STR(?entry_partial_id), "orphan_" + STR(?entry_id)) AS ?manuscript_id)
   BIND(IRI(CONCAT(STR(mmm:), "work/", ?manuscript_id)) as ?work)
   BIND(IRI(CONCAT(STR(mmm:), "expression/", ?manuscript_id)) as ?expression)
   BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", ?manuscript_id)) as ?expression_creation)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_parent_id_int)) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?author_id))) as ?author)
