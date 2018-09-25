@@ -368,7 +368,7 @@ WHERE {
 
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_author_", STR(?author_id))) as ?reification_author_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_owner_", STR(?prov_agent_id))) as ?reification_owner_uri)
-  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_place_", STR(?place))) as ?reification_expression_creation_place_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_place_", STR(?place_id))) as ?reification_expression_creation_place_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_time_", STR(?creation_date_id))) as ?reification_expression_creation_time_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_width_", STR(?width_value))) as ?reification_width_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_identifier_", ?manuscript_id)) as ?reification_id_uri)
