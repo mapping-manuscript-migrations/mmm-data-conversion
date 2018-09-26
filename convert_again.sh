@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# TODO: Update
 docker-compose down \
   && docker volume rm mmmsdbmdata_mmm-crm \
   && docker-compose build crm \

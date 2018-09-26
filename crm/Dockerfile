@@ -8,7 +8,7 @@ USER 9008
 
 ENV PATH "$PATH:/jena-fuseki/bin"
 ENV ASSEMBLER "/fuseki-base/configuration/assembler.ttl"
-ENV INPUT_SPARQL_ENDPOINT "http://input:3030/ds/sparql"
+ENV INPUT_SPARQL_ENDPOINT "http://input-sdbm:3030/ds/sparql"
 
 RUN mkdir -p $FUSEKI_BASE/databases/tdb \
     $FUSEKI_BASE/databases/lucene \

@@ -1,3 +1,4 @@
 *.swp
 input.ttl
 output.ttl
+data/

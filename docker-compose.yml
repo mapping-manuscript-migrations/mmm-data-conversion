@@ -1,28 +1,53 @@
 version: '3.5'
 services:
-    input:
+    input-sdbm:
         build:
             dockerfile: input/Dockerfile
             context: .
         ports:
-            - 3033:3030
+            - 3051:3030
         restart: "unless-stopped"
         volumes:
-            - ./data:/staging
-            - mmm-simple:/fuseki-base/databases
+            - ./data/sdbm:/staging
+            - mmm-sdbm:/fuseki-base/databases
+        restart: unless-stopped
+    input-bibale:
+        build:
+            dockerfile: input/Dockerfile
+            context: .
+        ports:
+            - 3052:3030
+        restart: "unless-stopped"
+        volumes:
+            - ./data/bibale:/staging
+            - mmm-bibale:/fuseki-base/databases
+        restart: unless-stopped
+    input-bodley:
+        build:
+            dockerfile: input/Dockerfile
+            context: .
+        ports:
+            - 3053:3030
+        restart: "unless-stopped"
+        volumes:
+            - ./data/bodley:/staging
+            - mmm-bodley:/fuseki-base/databases
         restart: unless-stopped
     crm:
         build:
             dockerfile: crm/Dockerfile
             context: .
         ports:
-            - 3034:3030
+            - 3050:3030
         restart: "unless-stopped"
         depends_on:
-          - input
+          - input-sdbm
+          - input-bibale
         volumes:
             - mmm-crm:/fuseki-base/databases
         restart: unless-stopped
 volumes:
     mmm-crm:
-    mmm-simple:
+    mmm-sdbm:
+    mmm-bibale:
+    mmm-bodley:

@@ -18,3 +18,4 @@ USER 9008
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["java", "-Xmx4096M", "-cp", "*:/javalibs/*", "org.apache.jena.fuseki.cmd.FusekiCmd"]
+
