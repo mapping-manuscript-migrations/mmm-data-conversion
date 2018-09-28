@@ -6,8 +6,7 @@
 
 
 :entry a rdf:Property;
-  rdfs:label "Source entry in SDBM"@en ;
-  rdfs:domain rdf:Statement .
+  rdfs:label "Source entry in SDBM"@en .
 
 :manuscript_record a rdf:Property;
   rdfs:label "Source manuscript record in SDBM"@en ;
