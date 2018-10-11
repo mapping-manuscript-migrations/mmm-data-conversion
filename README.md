@@ -2,18 +2,18 @@
 
 Currently the pipeline includes the following steps:
 
-1. Create a directory called `data` and download input RDF data into it (manual)
-  * Schoenberg Database of Manuscripts: https://sdbm.library.upenn.edu/downloads (you have to be logged in)
-  * Bodley: [TODO]
-  * Bibale: [TODO]
+1. Create a directory called `data` with a subdirectory for each of the source databases and download the input RDF data as follows: (manual)
+    * Schoenberg Database of Manuscripts: https://sdbm.library.upenn.edu/downloads (you have to be logged in)
+    * Bodley: [TODO]
+    * Bibale: [TODO]
 
 2. Set up input databases (automated)
-  * Load `data/sdbm/input.ttl` to `http://localhost:3051/ds/sparql`
-  * Load `data/bodley/input.ttl` to `http://localhost:3052/ds/sparql`
-  * Load `data/bibale/input.ttl` to `http://localhost:3053/ds/sparql`
+    * Load `data/sdbm/input.ttl` to `http://localhost:3051/ds/sparql`
+    * Load `data/bodley/input.ttl` to `http://localhost:3052/ds/sparql`
+    * Load `data/bibale/input.ttl` to `http://localhost:3053/ds/sparql`
 
 3. Convert to unified data model using SPARQL CONSTRUCT (automated)
-  * The final result is loaded into `http://localhost:3050/ds/sparql`
+    * The final result is loaded into `http://localhost:3050/ds/sparql`
 
 ## Build, convert, and run
 
