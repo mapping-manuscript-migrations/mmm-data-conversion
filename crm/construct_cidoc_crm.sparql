@@ -15,6 +15,9 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 # - handle entries with two manuscript records: uncertainty vs. pieces of manuscript?
 # - use :entry_manuscripts_relation_type (is/partial/possible)
 # "Select <is> for Entries that describe the same manuscript. Select <partial> for Entries that describe fragments of a manuscript. Fragmented manuscripts are most obvious by sharing many manuscript details with their linked Entries except for such key indicators as folio count and the most complete title listings. Select Possible if you are unsure whether the Entry describes the same manuscript."
+# - Take order numbers into account for all properties
+# - Take "flagged as problematic" into account
+
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
 
@@ -43,7 +46,8 @@ CONSTRUCT {
     crm:P45_consists_of ?material ;
     crm:P51_has_former_or_current_owner ?prov_agent ;
     mmm-schema:entry ?entry ;
-    mmm-schema:manuscript_record ?manuscript . # for showing a link to SDBM UI in faceter
+    mmm-schema:manuscript_record ?manuscript ;
+    mmm-schema:data_provider_url ?provider_url . # for showing a link in faceter
 
   ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
 
@@ -57,6 +61,8 @@ CONSTRUCT {
     crm:P22_transferred_title_to ?buyer ;
     crm:P14_carried_out_by ?selling_agent ;
     mmm-schema:entry ?entry ;
+    mmm-schema:catalog_location ?cat_location ;  # TODO: Not in unified model docs
+    mmm-schema:catalog_date ?cat_date ;  # TODO: Not in unified model docs
     dc:source ?source .
 
   ?production a frbroo:E12_Production .
@@ -338,7 +344,16 @@ WHERE {
   ## /MANUSCRIPT DETAILS ##
 
   ## SOURCE ##
-  ?entry :entries_source_id/:sources_id ?source_id .
+  ?entry :entries_source_id [
+    :sources_id ?source_id ;
+    :sources_location ?cat_location ;
+
+    :sources_date ?cat_date_raw ;
+  ] .
+  BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
+  BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
+  BIND(SUBSTR(?cat_date_raw, 7) as ?cat_date_day)
+  BIND(?cat_date_year + "-" + ?cat_date_month + "-" + ?cat_date_day as ?cat_date)
 
   BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
   BIND(REPLACE(STR(?entry_partial_uri), "^.*\\/(.+)", "$1") as ?entry_partial_id)
@@ -365,6 +380,8 @@ WHERE {
   BIND(CONCAT(STR(?creation_date_start),"-",STR(?creation_date_end)) as ?creation_date_label)
   BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
   # TODO: for partial relations, take title as prefLabel
+
+  BIND(COALESCE(?manuscript, ?entry) as ?provider_url)
 
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_author_", STR(?author_id))) as ?reification_author_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_owner_", STR(?prov_agent_id))) as ?reification_owner_uri)
