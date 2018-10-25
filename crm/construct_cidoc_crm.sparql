@@ -61,6 +61,7 @@ CONSTRUCT {
     crm:P22_transferred_title_to ?buyer ;
     crm:P14_carried_out_by ?selling_agent ;
     mmm-schema:entry ?entry ;
+    mmm-schema:catalog_title ?cat_title ; # TODO: Not in unified model docs
     mmm-schema:catalog_location ?cat_location ;  # TODO: Not in unified model docs
     mmm-schema:catalog_date ?cat_date ;  # TODO: Not in unified model docs
     dc:source ?source .
@@ -346,8 +347,8 @@ WHERE {
   ## SOURCE ##
   ?entry :entries_source_id [
     :sources_id ?source_id ;
+    :sources_title ?cat_title ;
     :sources_location ?cat_location ;
-
     :sources_date ?cat_date_raw ;
   ] .
   BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
