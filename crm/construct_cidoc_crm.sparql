@@ -194,6 +194,7 @@ WHERE {
   #BIND (<https://sdbm.library.upenn.edu/entries/51493> AS ?entry) # entry with no manuscript record
 
   ?entry a :entries .
+  FILTER(NOT EXISTS { ?entry :entries_deprecated true })
 
   OPTIONAL {
     ?entry_manuscript :entry_manuscripts_entry_id ?entry .
@@ -346,12 +347,14 @@ WHERE {
   ## /MANUSCRIPT DETAILS ##
 
   ## SOURCE ##
-  ?entry :entries_source_id [
-    :sources_id ?source_id ;
-    :sources_title ?cat_title ;
-    :sources_location ?cat_location ;
-    :sources_date ?cat_date_raw ;
-  ] .
+  OPTIONAL {
+    ?entry :entries_source_id [
+      :sources_id ?source_id ;
+      :sources_title ?cat_title ;
+      :sources_location ?cat_location ;
+      :sources_date ?cat_date_raw ;
+    ] .
+  }
   BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
   BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
   BIND(SUBSTR(?cat_date_raw, 7) as ?cat_date_day)
@@ -367,7 +370,7 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "expression/", ?manuscript_id)) as ?expression)
   BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", ?manuscript_id)) as ?expression_creation)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
-  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR?(manuscript_parent_id_int))) as ?parent_manifestation_singleton)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?author_id))) as ?author)
