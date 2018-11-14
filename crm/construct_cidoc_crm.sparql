@@ -17,6 +17,7 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 # "Select <is> for Entries that describe the same manuscript. Select <partial> for Entries that describe fragments of a manuscript. Fragmented manuscripts are most obvious by sharing many manuscript details with their linked Entries except for such key indicators as folio count and the most complete title listings. Select Possible if you are unsure whether the Entry describes the same manuscript."
 # - Take order numbers into account for all properties
 # - Take "flagged as problematic" into account
+# - Take <https://sdbm.library.upenn.edu/entries_superceded_by_id> into account
 
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
@@ -366,7 +367,7 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "expression/", ?manuscript_id)) as ?expression)
   BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", ?manuscript_id)) as ?expression_creation)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
-  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_parent_id_int)) as ?parent_manifestation_singleton)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR?(manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?author_id))) as ?author)
