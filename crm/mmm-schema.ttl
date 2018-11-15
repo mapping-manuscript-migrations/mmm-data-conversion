@@ -20,3 +20,23 @@
 :Width a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
   rdfs:label "Width"@en .
+
+:Height a rdfs:Class ;
+  rdfs:subClassOf crm:E54_Dimension ;
+  rdfs:label "Height"@en .
+
+:Folios a rdfs:Class ;
+  rdfs:subClassOf crm:E54_Dimension ;
+  rdfs:label "Folio count"@en .
+
+:Lines a rdfs:Class ;
+  rdfs:subClassOf crm:E54_Dimension ;
+  rdfs:label "Line count"@en .
+
+:Columns a rdfs:Class ;
+  rdfs:subClassOf crm:E54_Dimension ;
+  rdfs:label "Column count"@en .
+
+:Miniatures a rdfs:Class ;
+  rdfs:subClassOf crm:E54_Dimension ;
+  rdfs:label "Miniature count"@en .

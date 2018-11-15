@@ -44,11 +44,16 @@ CONSTRUCT {
     skos:prefLabel ?preflabel ;
     crm:P1_is_identified_by ?manuscript ;
     crm:P43_has_dimension ?width_uri ;
+    crm:P43_has_dimension ?height_uri ;
+    crm:P43_has_dimension ?folios_uri ;
+    crm:P43_has_dimension ?lines_uri ;
+    crm:P43_has_dimension ?columns_uri ;
+    crm:P43_has_dimension ?miniatures_uri ;
     crm:P45_consists_of ?material ;
     crm:P51_has_former_or_current_owner ?prov_agent ;
     mmm-schema:entry ?entry ;
     mmm-schema:manuscript_record ?manuscript ;
-    mmm-schema:data_provider_url ?provider_url . # for showing a link in faceter
+    mmm-schema:data_provider_url ?provider_url . # for showing the link in faceted search
 
   ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
 
@@ -56,15 +61,31 @@ CONSTRUCT {
     crm:P90_has_value ?width_value ;
     crm:P91_has_unit "mm"@en .
 
+  ?height_uri a mmm-schema:Height ;
+    crm:P90_has_value ?height_value ;
+    crm:P91_has_unit "mm"@en .
+
+  ?folios_uri a mmm-schema:Folios ;
+    crm:P90_has_value ?folios_value .
+
+  ?lines_uri a mmm-schema:Lines ;
+    crm:P90_has_value ?lines_value .
+
+  ?columns_uri a mmm-schema:Columns ;
+    crm:P90_has_value ?columns_value .
+
+  ?miniatures_uri a mmm-schema:Miniatures ;
+    crm:P90_has_value ?miniatures_value .
+
   ?acquisition_uri a frbroo:E8_Acquisition ;
     crm:P24_transferred_title_of ?manifestation_singleton ;
     crm:P23_transferred_title_from ?seller ;
     crm:P22_transferred_title_to ?buyer ;
     crm:P14_carried_out_by ?selling_agent ;
     mmm-schema:entry ?entry ;
-    mmm-schema:catalog_title ?cat_title ; # TODO: Not in unified model docs
-    mmm-schema:catalog_location ?cat_location ;  # TODO: Not in unified model docs
-    mmm-schema:catalog_date ?cat_date ;  # TODO: Not in unified model docs
+    mmm-schema:catalog_title ?cat_title ;
+    mmm-schema:catalog_location ?cat_location ;
+    mmm-schema:catalog_date ?cat_date ;
     dc:source ?source .
 
   ?production a frbroo:E12_Production .
@@ -148,12 +169,40 @@ CONSTRUCT {
   # use reification
 
   # folios reification
+  ?reification_folios_uri
+    a rdf:Statement;
+    rdf:subject ?manifestation_singleton;
+    rdf:predicate crm:P43_has_dimension ;
+    rdf:object ?folios_uri ;
+    mmm-schema:entry ?entry ;
+    dc:source ?source .
 
   # lines reification
+  ?reification_lines_uri
+    a rdf:Statement;
+    rdf:subject ?manifestation_singleton;
+    rdf:predicate crm:P43_has_dimension ;
+    rdf:object ?lines_uri ;
+    mmm-schema:entry ?entry ;
+    dc:source ?source .
 
   # columns reification
+  ?reification_columns_uri
+    a rdf:Statement;
+    rdf:subject ?manifestation_singleton;
+    rdf:predicate crm:P43_has_dimension ;
+    rdf:object ?columns_uri ;
+    mmm-schema:entry ?entry ;
+    dc:source ?source .
 
   # height reification
+  ?reification_height_uri
+    a rdf:Statement;
+    rdf:subject ?manifestation_singleton;
+    rdf:predicate crm:P43_has_dimension ;
+    rdf:object ?height_uri ;
+    mmm-schema:entry ?entry ;
+    dc:source ?source .
 
   # width reification
   ?reification_width_uri
@@ -166,13 +215,14 @@ CONSTRUCT {
 
   # alternate size reification
 
-  # full-page miniatures reification
-
-  # large miniatures reification
-
-  # small miniatures reification
-
-  # unspec. sized miniatures reification
+  # miniatures reification
+  ?reification_miniatures_uri
+    a rdf:Statement;
+    rdf:subject ?manifestation_singleton;
+    rdf:predicate crm:P43_has_dimension ;
+    rdf:object ?miniatures_uri ;
+    mmm-schema:entry ?entry ;
+    dc:source ?source .
 
   # historiated initials reification
 
@@ -226,6 +276,8 @@ WHERE {
 
   ## TRANSACTION INFORMATION
 
+  # TODO: Add places
+
   OPTIONAL {
     ?sales_entry :sales_entry_id ?entry .
     ?sales_entry :sales_id ?sales_id .
@@ -247,6 +299,8 @@ WHERE {
   }
 
   ## MANUSCRIPT DETAILS ##
+
+  # TODO: Add dates
 
   OPTIONAL {
     ?provenance_entry :provenance_entry_id ?entry ;
@@ -312,10 +366,19 @@ WHERE {
   # use
 
   # folios
+  OPTIONAL {
+    ?entry :entries_folios ?folios_value .
+  }
 
   # lines
+  OPTIONAL {
+    ?entry :entries_num_lines ?lines_value .
+  }
 
   # columns
+  OPTIONAL {
+    ?entry :entries_num_columns ?columns_value .
+  }
 
   # width
   OPTIONAL {
@@ -323,16 +386,32 @@ WHERE {
   }
 
   # height
+  OPTIONAL {
+    ?entry :entries_height ?height_value .
+  }
 
   # alternate size
 
   # full-page miniatures
+  OPTIONAL {
+    ?entry :entries_miniatures_fullpage ?miniatures_fullpage_value .
+  }
 
   # large miniatures
+  OPTIONAL {
+    ?entry :entries_miniatures_large ?miniatures_large_value .
+  }
 
   # small miniatures
+  OPTIONAL {
+    ?entry :entries_miniatures_small ?miniatures_small_value .
+  }
 
   # unspec. sized miniatures
+  OPTIONAL {
+    ?entry :entries_miniatures_unspec_size ?miniatures_unspec_value .
+  }
+
 
   # historiated initials
 
@@ -381,7 +460,13 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_id))) as ?place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
   BIND(IRI(CONCAT(STR(mmm:), "acquisition/", ?entry_id)) as ?acquisition_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "height/", ?entry_id)) as ?height_uri)
   BIND(IRI(CONCAT(STR(mmm:), "width/", ?entry_id)) as ?width_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "folios/", ?entry_id)) as ?folios_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "lines/", ?entry_id)) as ?lines_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "columns/", ?entry_id)) as ?columns_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "miniatures/", ?entry_id)) as ?miniatures_uri)
+  BIND(?miniatures_large_value + ?miniatures_small_value + ?miniatures_fullpage_value + ?miniatures_unspec_value as ?miniatures_value)
   BIND(CONCAT(STR(?creation_date_start),"-",STR(?creation_date_end)) as ?creation_date_label)
   BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
   # TODO: for partial relations, take title as prefLabel
