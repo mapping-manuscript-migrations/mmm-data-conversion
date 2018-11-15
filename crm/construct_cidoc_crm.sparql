@@ -17,7 +17,6 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 # "Select <is> for Entries that describe the same manuscript. Select <partial> for Entries that describe fragments of a manuscript. Fragmented manuscripts are most obvious by sharing many manuscript details with their linked Entries except for such key indicators as folio count and the most complete title listings. Select Possible if you are unsure whether the Entry describes the same manuscript."
 # - Take order numbers into account for all properties
 # - Take "flagged as problematic" into account
-# - Take <https://sdbm.library.upenn.edu/entries_superceded_by_id> into account
 
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
@@ -31,7 +30,7 @@ CONSTRUCT {
     frbroo:R19_created_a_realisation_of ?work ;
     crm:P14_carried_out_by ?author ;
     crm:P7_took_place_at ?place ;
-    crm:P4_has_time_span ?creation_timespan .
+    crm:P4_has_time-span ?creation_timespan .
 
   ?creation_timespan a crm:E52_Time-Span ;
     rdfs:label ?creation_date_label ;
@@ -77,18 +76,33 @@ CONSTRUCT {
   ?miniatures_uri a mmm-schema:Miniatures ;
     crm:P90_has_value ?miniatures_value .
 
-  ?acquisition_uri a frbroo:E8_Acquisition ;
+  ?acquisition_uri a ?event_type ;  # Buyer known or known to be sold
+    skos:prefLabel ?cat_title ;
     crm:P24_transferred_title_of ?manifestation_singleton ;
     crm:P23_transferred_title_from ?seller ;
     crm:P22_transferred_title_to ?buyer ;
-    crm:P14_carried_out_by ?selling_agent ;
-    mmm-schema:entry ?entry ;
-    mmm-schema:catalog_title ?cat_title ;
-    mmm-schema:catalog_location ?cat_location ;
-    mmm-schema:catalog_date ?cat_date ;
+    mmm-schema:selling_agent ?selling_agent ;
+    mmm-schema:data_provider_url ?entry ;
+    crm:P7_took_place_at ?cat_location ;
+    crm:P4_has_time-span ?cat_date ;
+    crm:P179_had_sales_price ?monetary_amount_uri ;
     dc:source ?source .
 
   ?production a frbroo:E12_Production .
+
+  ?monetary_amount_uri a crm:E97_Monetary_Amount ;
+    crm:P180_has_currency ?sales_currency ;
+    crm:P181_has_amount ?sales_price ;
+    rdfs:comment ?sales_other_currency .
+
+  # Monetary amount reification
+  ?reification_monetary_amount_uri
+    a rdf:Statement ;
+    rdf:subject ?acquisition_uri ;
+    rdf:predicate crm:P179_had_sales_price ;
+    rdf:object ?monetary_amount_uri ;
+    mmm-schema:data_provider_url ?entry ;
+    dc:source ?source .
 
   # provenance reification
   ?reification_owner_uri
@@ -98,7 +112,7 @@ CONSTRUCT {
     rdf:object ?prov_agent ;
     mmm-schema:order ?prov_order ;
     rdfs:comment ?prov_comment ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # title reification
@@ -107,7 +121,7 @@ CONSTRUCT {
     rdf:subject ?manifestation_singleton ;
     rdf:predicate rdfs:label ;
     rdf:object ?title ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # identifier reification
@@ -123,7 +137,7 @@ CONSTRUCT {
     rdf:subject ?expression_creation ;
     rdf:predicate crm:P14_carried_out_by ;
     rdf:object ?author ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     :observed_author ?observed_author ;
     dc:source ?source .
 
@@ -131,9 +145,9 @@ CONSTRUCT {
   ?reification_expression_creation_time_uri
     a rdf:Statement ;
     rdf:subject ?expression_creation ;
-    rdf:predicate crm:P4_has_time_span ;
+    rdf:predicate crm:P4_has_time-span ;
     rdf:object ?creation_timespan ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # artist reification
@@ -146,7 +160,7 @@ CONSTRUCT {
     rdf:subject ?expression;
     rdf:predicate crm:P72_has_language ;
     rdf:object ?language ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # place reification
@@ -154,7 +168,7 @@ CONSTRUCT {
     rdf:subject ?expression_creation ;
     rdf:predicate crm:P7_took_place_at ;
     rdf:object ?place ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # material reification
@@ -163,7 +177,7 @@ CONSTRUCT {
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P45_consists_of ;
     rdf:object ?material ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # use reification
@@ -174,7 +188,7 @@ CONSTRUCT {
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?folios_uri ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # lines reification
@@ -183,7 +197,7 @@ CONSTRUCT {
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?lines_uri ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # columns reification
@@ -192,7 +206,7 @@ CONSTRUCT {
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?columns_uri ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # height reification
@@ -201,7 +215,7 @@ CONSTRUCT {
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?height_uri ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # width reification
@@ -210,7 +224,7 @@ CONSTRUCT {
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?width_uri ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # alternate size reification
@@ -221,7 +235,7 @@ CONSTRUCT {
     rdf:subject ?manifestation_singleton;
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?miniatures_uri ;
-    mmm-schema:entry ?entry ;
+    mmm-schema:data_provider_url ?entry ;
     dc:source ?source .
 
   # historiated initials reification
@@ -276,11 +290,17 @@ WHERE {
 
   ## TRANSACTION INFORMATION
 
-  # TODO: Add places
-
   OPTIONAL {
+    # ?entry :entries_transaction_type "sale" or "gift"
     ?sales_entry :sales_entry_id ?entry .
     ?sales_entry :sales_id ?sales_id .
+    OPTIONAL { ?sales_entry :sales_price ?sales_price }
+    OPTIONAL { ?sales_entry :sales_currency ?sales_currency }
+    OPTIONAL { ?sales_entry :sales_other_currency ?sales_other_currency }
+    OPTIONAL {
+      ?sales_entry :sales_sold "Yes"
+      BIND(crm:E8_Acquisition as ?event_type)
+    }
     OPTIONAL {
       ?seller_agent :sale_agents_sale_id ?sales_entry .
       ?seller_agent :sale_agents_role "seller_or_holder" .
@@ -290,12 +310,16 @@ WHERE {
       ?buyer_agent :sale_agents_sale_id ?sales_entry .
       ?buyer_agent :sale_agents_role "buyer" .
       ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
+      BIND(crm:E8_Acquisition as ?event_type)
     }
     OPTIONAL {
       ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
       ?selling_agent_agent :sale_agents_role "selling_agent" .
       ?selling_agent_agent :sale_agents_agent_id/:names_id ?selling_agent_id .
     }
+  }
+  OPTIONAL {
+    BIND(mmm-schema:Observation as ?event_type)
   }
 
   ## MANUSCRIPT DETAILS ##
@@ -427,12 +451,13 @@ WHERE {
 
   ## SOURCE ##
   OPTIONAL {
-    ?entry :entries_source_id [
-      :sources_id ?source_id ;
-      :sources_title ?cat_title ;
-      :sources_location ?cat_location ;
-      :sources_date ?cat_date_raw ;
-    ] .
+    ?entry :entries_source_id ?entry_source .
+    OPTIONAL{ ?entry_source :sources_id ?source_id }
+    OPTIONAL{ ?entry_source :sources_title ?cat_title }
+    OPTIONAL{ ?entry_source :sources_location ?cat_location }
+    OPTIONAL{ ?entry_source :sources_date ?cat_date_raw }
+    OPTIONAL{ ?entry_source :sources_location_institution ?cat_institution }
+    OPTIONAL{ ?entry_source :sources_link ?cat_link }
   }
   BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
   BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
@@ -466,6 +491,8 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "lines/", ?entry_id)) as ?lines_uri)
   BIND(IRI(CONCAT(STR(mmm:), "columns/", ?entry_id)) as ?columns_uri)
   BIND(IRI(CONCAT(STR(mmm:), "miniatures/", ?entry_id)) as ?miniatures_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
+
   BIND(?miniatures_large_value + ?miniatures_small_value + ?miniatures_fullpage_value + ?miniatures_unspec_value as ?miniatures_value)
   BIND(CONCAT(STR(?creation_date_start),"-",STR(?creation_date_end)) as ?creation_date_label)
   BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title

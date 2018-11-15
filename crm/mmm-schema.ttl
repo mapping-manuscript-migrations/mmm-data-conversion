@@ -40,3 +40,11 @@
 :Miniatures a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
   rdfs:label "Miniature count"@en .
+
+:Observation a rdfs:Class ;
+  rdfs:subClassOf crm:E5_Event ;
+  rdfs:label "Direct or indirect observation of a manuscript"@en .
+
+:selling_agent a rdf:Property;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  rdfs:label "Selling agent"@en .
