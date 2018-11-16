@@ -48,3 +48,7 @@
 :selling_agent a rdf:Property;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
   rdfs:label "Selling agent"@en .
+
+:observed_manuscript a rdf:Property;
+  rdfs:subPropertyOf crm:P12_occured_in_the_presence_of ;
+  rdfs:label "Observed manuscript"@en .

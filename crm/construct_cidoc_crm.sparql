@@ -78,7 +78,7 @@ CONSTRUCT {
 
   ?acquisition_uri a ?event_type ;  # Buyer known or known to be sold
     skos:prefLabel ?cat_title ;
-    crm:P24_transferred_title_of ?manifestation_singleton ;
+    ?event_property ?manifestation_singleton ;
     crm:P23_transferred_title_from ?seller ;
     crm:P22_transferred_title_to ?buyer ;
     mmm-schema:selling_agent ?selling_agent ;
@@ -300,6 +300,7 @@ WHERE {
     OPTIONAL {
       ?sales_entry :sales_sold "Yes"
       BIND(crm:E8_Acquisition as ?event_type)
+      BIND(crm:P24_transferred_title_of as ?event_property)
     }
     OPTIONAL {
       ?seller_agent :sale_agents_sale_id ?sales_entry .
@@ -311,6 +312,7 @@ WHERE {
       ?buyer_agent :sale_agents_role "buyer" .
       ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
       BIND(crm:E8_Acquisition as ?event_type)
+      BIND(crm:P24_transferred_title_of as ?event_property)
     }
     OPTIONAL {
       ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
@@ -320,6 +322,7 @@ WHERE {
   }
   OPTIONAL {
     BIND(mmm-schema:Observation as ?event_type)
+    BIND(mmm-schema:observed_manuscript as ?event_property)
   }
 
   ## MANUSCRIPT DETAILS ##
@@ -484,7 +487,7 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?prov_agent_id))) as ?prov_agent)
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_id))) as ?place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
-  BIND(IRI(CONCAT(STR(mmm:), "acquisition/", ?entry_id)) as ?acquisition_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "height/", ?entry_id)) as ?height_uri)
   BIND(IRI(CONCAT(STR(mmm:), "width/", ?entry_id)) as ?width_uri)
   BIND(IRI(CONCAT(STR(mmm:), "folios/", ?entry_id)) as ?folios_uri)
