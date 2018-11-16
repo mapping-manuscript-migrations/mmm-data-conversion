@@ -52,3 +52,7 @@
 :observed_manuscript a rdf:Property;
   rdfs:subPropertyOf crm:P12_occured_in_the_presence_of ;
   rdfs:label "Observed manuscript"@en .
+
+:place_literal a rdf:Property;
+  rdfs:subPropertyOf crm:P7_took_place_at ;
+  rdfs:label "Observed manuscript"@en .

@@ -76,14 +76,15 @@ CONSTRUCT {
   ?miniatures_uri a mmm-schema:Miniatures ;
     crm:P90_has_value ?miniatures_value .
 
-  ?acquisition_uri a ?event_type ;  # Buyer known or known to be sold
+  ?acquisition_uri a ?event_type ;  # Acquisition or Observation
     skos:prefLabel ?cat_title ;
     ?event_property ?manifestation_singleton ;
     crm:P23_transferred_title_from ?seller ;
     crm:P22_transferred_title_to ?buyer ;
     mmm-schema:selling_agent ?selling_agent ;
     mmm-schema:data_provider_url ?entry ;
-    crm:P7_took_place_at ?cat_location ;
+    crm:P7_took_place_at ?selling_agent_location ;
+    mmm-schema:place_literal ?cat_location_literal ;
     crm:P4_has_time-span ?cat_date ;
     crm:P179_had_sales_price ?monetary_amount_uri ;
     dc:source ?source .
@@ -317,7 +318,10 @@ WHERE {
     OPTIONAL {
       ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
       ?selling_agent_agent :sale_agents_role "selling_agent" .
-      ?selling_agent_agent :sale_agents_agent_id/:names_id ?selling_agent_id .
+      ?selling_agent_agent :sale_agents_agent_id ?selling_agent_name .
+      ?selling_agent_name :names_id ?selling_agent_id .
+      ?selling_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?place_local_id .
+      BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?selling_agent_location)
     }
   }
   OPTIONAL {
@@ -456,12 +460,22 @@ WHERE {
   OPTIONAL {
     ?entry :entries_source_id ?entry_source .
     OPTIONAL{ ?entry_source :sources_id ?source_id }
-    OPTIONAL{ ?entry_source :sources_title ?cat_title }
-    OPTIONAL{ ?entry_source :sources_location ?cat_location }
-    OPTIONAL{ ?entry_source :sources_date ?cat_date_raw }
+    OPTIONAL{
+      ?entry_source :sources_title ?cat_title
+      FILTER(STR(?cat_title) != "")
+    }
+    OPTIONAL{
+      ?entry_source :sources_location ?cat_location_literal
+      FILTER(STR(?cat_location_literal) != "")
+    }
+    OPTIONAL{
+      ?entry_source :sources_date ?cat_date_raw
+      FILTER(STR(?cat_date_raw) != "")
+    }
     OPTIONAL{ ?entry_source :sources_location_institution ?cat_institution }
     OPTIONAL{ ?entry_source :sources_link ?cat_link }
   }
+
   BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
   BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
   BIND(SUBSTR(?cat_date_raw, 7) as ?cat_date_day)
