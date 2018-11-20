@@ -10,11 +10,13 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 
+# TODO: Can organizations be separated?
+
 CONSTRUCT {
   ?person a mmm-schema:Person ;
     skos:prefLabel ?name ;
     mmm-schema:viaf ?viaf_id ;
-    mmm-schema:person_place ?mmm_place
+    mmm-schema:person_place ?mmm_place ;  # Place/nationality
 } WHERE {
   ?name_id a :names ;
            :names_name ?name ;
