@@ -3,56 +3,70 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
-
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
 :entry a rdf:Property;
-  rdfs:label "Source entry in SDBM"@en .
+  skos:prefLabel "Source entry in SDBM"@en .
 
 :manuscript_record a rdf:Property;
-  rdfs:label "Source manuscript record in SDBM"@en ;
+  skos:prefLabel "Source manuscript record in SDBM"@en ;
   rdfs:domain frbroo:F4_Manifestation_Singleton .
 
 :order a rdf:Property;
-  rdfs:label "Ordering number"@en ;
+  skos:prefLabel "Ordering number"@en ;
   rdfs:comment "Used, e.g., for ordering of provenance information"@en ;
   rdfs:domain rdf:Statement .
 
 :Width a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  rdfs:label "Width"@en .
+  skos:prefLabel "Width"@en .
 
 :Height a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  rdfs:label "Height"@en .
+  skos:prefLabel "Height"@en .
 
 :Folios a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  rdfs:label "Folio count"@en .
+  skos:prefLabel "Folio count"@en .
 
 :Lines a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  rdfs:label "Line count"@en .
+  skos:prefLabel "Line count"@en .
 
 :Columns a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  rdfs:label "Column count"@en .
+  skos:prefLabel "Column count"@en .
 
 :Miniatures a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  rdfs:label "Miniature count"@en .
+  skos:prefLabel "Miniature count"@en .
 
 :Manuscript_Observation a rdfs:Class ;
   rdfs:subClassOf crm:E5_Event ;
-  rdfs:label "Direct or indirect observation of a manuscript"@en .
+  skos:prefLabel "Direct or indirect observation of a manuscript"@en .
 
 :selling_agent a rdf:Property;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  rdfs:label "Selling agent"@en .
+  skos:prefLabel "Selling agent"@en .
 
 :observed_manuscript a rdf:Property;
   rdfs:subPropertyOf crm:P12_occured_in_the_presence_of ;
-  rdfs:label "Observed manuscript"@en .
+  skos:prefLabel "Observed manuscript"@en .
 
 :place_literal a rdf:Property;
   rdfs:subPropertyOf crm:P7_took_place_at ;
-  rdfs:label "Observed manuscript"@en .
+  skos:prefLabel "Observed manuscript"@en .
+
+:data_provider a rdfs:Property ;
+  skos:prefLabel "The data provider database"@en ;
+  rdfs:range :Database .
+
+:data_provider_url a rdfs:Property ;
+  skos:prefLabel "URL link to find more information from"@en .
+
+:Database a rdfs:Class ;
+  skos:prefLabel "A database containing source information"@en .
+
+:SDBM a :Database ;
+  skos:prefLabel "Schoenberg Database of Manuscripts"@en ;
+  :data_provider_url <https://sdbm.library.upenn.edu/> .

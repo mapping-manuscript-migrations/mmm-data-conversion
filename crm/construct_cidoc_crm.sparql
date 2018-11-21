@@ -10,11 +10,8 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 
 # TODO:
-# - create instances of sources, people and places (separate SPARQL CONSTRUCT?)
 # - generate URIs: material, language, dimension unit
 # - handle entries with two manuscript records: uncertainty vs. pieces of manuscript?
-# - use :entry_manuscripts_relation_type (is/partial/possible)
-# "Select <is> for Entries that describe the same manuscript. Select <partial> for Entries that describe fragments of a manuscript. Fragmented manuscripts are most obvious by sharing many manuscript details with their linked Entries except for such key indicators as folio count and the most complete title listings. Select Possible if you are unsure whether the Entry describes the same manuscript."
 # - Take order numbers into account for all properties
 # - Take "flagged as problematic" into account
 
@@ -39,8 +36,8 @@ CONSTRUCT {
     crm:P80_end_is_qualified_by ?creation_date_end .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
-    crm:P128_carries ?expression ; # TODO: or frbr:R42_is_representative_manifestation_singleton_for ?
-    rdfs:label ?title ; # TODO: move to Expression, use Title class?
+    crm:P128_carries ?expression ;
+    rdfs:label ?title ;  # TODO: move to Expression, use Title class?
     skos:prefLabel ?preflabel ;
     crm:P1_is_identified_by ?manuscript ;
     crm:P43_has_dimension ?width_uri ;
@@ -537,9 +534,14 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_owner_", STR(?prov_agent_id))) as ?reification_owner_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_place_", STR(?place_id))) as ?reification_expression_creation_place_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_time_", STR(?creation_date_id))) as ?reification_expression_creation_time_uri)
-  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_width_", STR(?width_value))) as ?reification_width_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_identifier_", ?manuscript_id)) as ?reification_id_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_material_", ?material_id)) as ?reification_material_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_folios_", STR(?folios_value))) as ?reification_folios_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_lines_", STR(?lines_value))) as ?reification_lines_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_columns_", STR(?columns_value))) as ?reification_columns_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_height_", STR(?height_value))) as ?reification_height_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_width_", STR(?width_value))) as ?reification_width_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_miniatures_", STR(?miniatures_value))) as ?reification_miniatures_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_language_", REPLACE(?language, " ", "-"))) as ?reification_language_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id))) as ?reification_label_uri)
   # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id), "_", SUBSTR(REPLACE(?title, "[\\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\#\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-"), 0, 21))) as ?reification_label_uri)
