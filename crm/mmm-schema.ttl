@@ -70,3 +70,7 @@
 :SDBM a :Database ;
   skos:prefLabel "Schoenberg Database of Manuscripts"@en ;
   :data_provider_url <https://sdbm.library.upenn.edu/> .
+
+:Source a rdfs:Class ;
+  rdfs:subClassOf crm:E31_Document ;
+  skos:prefLabel "Source document"@en .
