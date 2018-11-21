@@ -41,7 +41,7 @@
   rdfs:subClassOf crm:E54_Dimension ;
   rdfs:label "Miniature count"@en .
 
-:Observation a rdfs:Class ;
+:Manuscript_Observation a rdfs:Class ;
   rdfs:subClassOf crm:E5_Event ;
   rdfs:label "Direct or indirect observation of a manuscript"@en .
 

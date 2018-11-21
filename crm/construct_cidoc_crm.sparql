@@ -80,13 +80,13 @@ CONSTRUCT {
   ?acquisition_uri a ?event_type ;  # Acquisition or Observation
     skos:prefLabel ?cat_title ;
     ?event_property ?manifestation_singleton ;
-    crm:P23_transferred_title_from ?seller ;
+    ?event_seller_or_holder_property ?seller ;
     crm:P22_transferred_title_to ?buyer ;
     mmm-schema:selling_agent ?selling_agent ;
     mmm-schema:data_provider_url ?entry ;
-    crm:P7_took_place_at ?source_agent_location ;
-    mmm-schema:place_literal ?cat_location_literal ;
-    crm:P4_has_time-span ?cat_date ;
+    ?event_place_property ?source_agent_location ;
+    # mmm-schema:place_literal ?cat_location_literal ;
+    ?event_timespan_property ?cat_date ;
     crm:P179_had_sales_price ?monetary_amount_uri ;
     dc:source ?source .
 
@@ -303,6 +303,9 @@ WHERE {
       ?sales_entry :sales_sold "Yes"
       BIND(crm:E8_Acquisition as ?event_type)
       BIND(crm:P24_transferred_title_of as ?event_property)
+      BIND(crm:P7_took_place_at as ?event_place_property)
+      BIND(crm:E52_has_time-span as ?event_timespan_property)
+      BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
     }
     OPTIONAL {
       ?seller_agent :sale_agents_sale_id ?sales_entry .
@@ -315,6 +318,9 @@ WHERE {
       ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
       BIND(crm:E8_Acquisition as ?event_type)
       BIND(crm:P24_transferred_title_of as ?event_property)
+      BIND(crm:P7_took_place_at as ?event_place_property)
+      BIND(crm:E52_has_time-span as ?event_timespan_property)
+      BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
     }
     OPTIONAL {
       ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
@@ -326,8 +332,11 @@ WHERE {
     }
   }
   OPTIONAL {
-    BIND(mmm-schema:Observation as ?event_type)
+    BIND(mmm-schema:Manuscript_Observation as ?event_type)
     BIND(mmm-schema:observed_manuscript as ?event_property)
+    BIND(mmm-schema:observed_location as ?event_place_property)
+    BIND(mmm-schema:observed_time-span as ?event_timespan_property)
+    BIND(mmm-schema:observed_owner as ?event_seller_or_holder_property)
   }
 
   ## MANUSCRIPT DETAILS ##
@@ -465,10 +474,10 @@ WHERE {
       ?entry_source :sources_title ?cat_title
       FILTER(STR(?cat_title) != "")
     }
-    OPTIONAL{
-      ?entry_source :sources_location ?cat_location_literal
-      FILTER(STR(?cat_location_literal) != "")
-    }
+    # OPTIONAL{
+    #   ?entry_source :sources_location ?cat_location_literal
+    #   FILTER(STR(?cat_location_literal) != "")
+    # }
     OPTIONAL{
       ?entry_source :sources_date ?cat_date_raw
       FILTER(STR(?cat_date_raw) != "")
