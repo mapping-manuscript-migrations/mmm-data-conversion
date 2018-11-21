@@ -16,6 +16,7 @@ CONSTRUCT {
     mmm-schema:institution_literal ?cat_institution ;
     mmm-schema:source_date ?source_date ;
     mmm-schema:link ?cat_link ;
+    mmm-schema:data_provider mmm-schema:SDBM ;
     mmm-schema:data_provider_url ?source ;
     mmm-schema:source_agent ?mmm_source_actor ;
     mmm-schema:source_type ?mmm_source_type .

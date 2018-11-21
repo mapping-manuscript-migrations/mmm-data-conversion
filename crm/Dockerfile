@@ -20,6 +20,7 @@ COPY crm/mmm-schema.ttl $FUSEKI_HOME/mmm-schema.ttl
 COPY crm/construct_cidoc_crm.sparql $FUSEKI_HOME/construct_cidoc_crm.sparql
 COPY crm/construct_people.sparql $FUSEKI_HOME/construct_people.sparql
 COPY crm/construct_places.sparql $FUSEKI_HOME/construct_places.sparql
+COPY crm/construct_sources.sparql $FUSEKI_HOME/construct_sources.sparql
 
 COPY --chown=9008 crm/convert.sh tdbloader $FUSEKI_HOME/
 RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/tdbloader
