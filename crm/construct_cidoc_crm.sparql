@@ -482,7 +482,7 @@ WHERE {
       ?entry_source :sources_date ?cat_date_raw
       FILTER(STR(?cat_date_raw) != "")
     }
-    OPTIONAL{ ?entry_source :sources_location_institution ?cat_institution }
+    # OPTIONAL{ ?entry_source :sources_location_institution ?cat_institution }
     OPTIONAL{ ?entry_source :sources_link ?cat_link }
     OPTIONAL{
       ?source_agent :source_agents_source_id ?entry_source .

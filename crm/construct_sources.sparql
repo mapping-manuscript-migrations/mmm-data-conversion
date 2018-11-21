@@ -1,0 +1,72 @@
+PREFIX : <https://sdbm.library.upenn.edu/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+
+CONSTRUCT {
+  ?mmm_source a mmm-schema:Source ;
+    skos:prefLabel ?source_preflabel ;
+    mmm-schema:location_literal ?cat_location_literal ;
+    mmm-schema:institution_literal ?cat_institution ;
+    mmm-schema:source_date ?source_date ;
+    mmm-schema:link ?cat_link ;
+    mmm-schema:data_provider_url ?source ;
+    mmm-schema:source_agent ?mmm_source_actor ;
+    mmm-schema:source_type ?mmm_source_type .
+
+  ?mmm_source_type a mmm-schema:Source_Type ;
+    skos:prefLabel ?source_type_label .
+}
+WHERE {
+  ?source a :sources .
+  FILTER(NOT EXISTS { ?source :sources_deleted true })
+  ?source :sources_id ?source_id .
+  OPTIONAL{
+    ?source :sources_title ?source_title
+    FILTER(STR(?source_title) != "")
+  }
+  OPTIONAL{
+    ?source :sources_location ?cat_location_literal
+    FILTER(STR(?cat_location_literal) != "")
+  }
+  OPTIONAL {
+    ?source :sources_source_type_id ?source_type .
+    ?source_type :source_types_name ?source_type_local_name .
+    ?source_type :source_types_display_name ?source_type_label
+  }
+  OPTIONAL{
+    ?source :sources_date ?cat_date_raw
+    FILTER(STR(?cat_date_raw) != "")
+  }
+  OPTIONAL{
+    ?source :sources_location_institution ?cat_institution
+    FILTER(STR(?cat_institution) != "")
+  }
+  OPTIONAL{ ?source :sources_link ?cat_link }
+  OPTIONAL{
+    ?source_agent :source_agents_source_id ?source .
+    ?source_agent :source_agents_agent_id ?source_agent_name .
+    ?source_agent_name :names_id ?source_agent_id .
+    ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
+    BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?source_place_local_id))) as ?source_agent_location)
+    BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?source_agent_id))) as ?mmm_source_actor)
+  }
+  OPTIONAL { ?source :sources_medium ?medium . }
+  OPTIONAL { ?source :other_info ?other_info . }
+  OPTIONAL { ?source :sources_author ?source_author . }
+
+  BIND(IRI(CONCAT(STR(mmm-schema:), "source_types/", STR(?source_type_local_name))) as ?mmm_source_type)
+  BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?mmm_source)
+  BIND(COALESCE(?source_title, "SDBM source " + STR(?source_id)) as ?source_preflabel)
+
+  BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
+  BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
+  BIND(SUBSTR(?cat_date_raw, 7) as ?cat_date_day)
+  BIND(?cat_date_year + "-" + ?cat_date_month + "-" + ?cat_date_day as ?source_date)
+}

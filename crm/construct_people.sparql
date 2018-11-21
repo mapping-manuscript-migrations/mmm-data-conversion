@@ -12,6 +12,8 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 
 # TODO: Can organizations be separated?
 
+# TODO: :names_startdate & :names_enddate
+
 CONSTRUCT {
   ?person a mmm-schema:Person ;
     skos:prefLabel ?name ;
@@ -22,7 +24,7 @@ CONSTRUCT {
            :names_name ?name ;
            :names_id ?person_local_id .
   OPTIONAL { ?name_id :names_viaf_id ?viaf_id . }
-  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?person_local_id))) as ?person)
+  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?person_local_id))) as ?person)
 
   OPTIONAL {
     ?name_place_id :name_places_name_id ?name_id ;

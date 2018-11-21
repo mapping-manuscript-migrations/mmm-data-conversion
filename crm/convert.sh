@@ -6,8 +6,9 @@ set -eo pipefail
 curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_cidoc_crm.sparql)" $INPUT_SPARQL_ENDPOINT -v > /tmp/manuscripts.ttl
 curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_people.sparql)" $INPUT_SPARQL_ENDPOINT -v > /tmp/people.ttl
 curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_places.sparql)" $INPUT_SPARQL_ENDPOINT -v > /tmp/places.ttl
+curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_sources.sparql)" $INPUT_SPARQL_ENDPOINT -v > /tmp/sources.ttl
 
-cat /tmp/manuscripts.ttl /tmp/people.ttl /tmp/places.ttl > /tmp/cidoc.ttl
+cat /tmp/manuscripts.ttl /tmp/people.ttl /tmp/places.ttl /tmp/sources.ttl > /tmp/cidoc.ttl
 
 # load the result to a new Fuseki
 $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-sdbm-cidoc-crm/ /tmp/cidoc.ttl \
