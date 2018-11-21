@@ -9,12 +9,6 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 
-# TODO:
-# - generate URIs: material, language, dimension unit
-# - handle entries with two manuscript records: uncertainty vs. pieces of manuscript?
-# - Take order numbers into account for all properties
-# - Take "flagged as problematic" into account
-
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
 
@@ -25,7 +19,7 @@ CONSTRUCT {
     frbroo:R17_created ?expression ;
     frbroo:R18_created ?manifestation_singleton ;
     frbroo:R19_created_a_realisation_of ?work ;
-    crm:P14_carried_out_by ?author ;
+    mmm-schema:carried_out_by_as_author ?author ;
     crm:P7_took_place_at ?place ;
     crm:P4_has_time-span ?creation_timespan .
 
@@ -79,7 +73,7 @@ CONSTRUCT {
     ?event_property ?manifestation_singleton ;
     ?event_seller_or_holder_property ?seller ;
     crm:P22_transferred_title_to ?buyer ;
-    mmm-schema:selling_agent ?selling_agent ;
+    mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
     mmm-schema:data_provider_url ?entry ;
     ?event_place_property ?source_agent_location ;
     # mmm-schema:place_literal ?cat_location_literal ;
@@ -134,7 +128,7 @@ CONSTRUCT {
   ?reification_author_uri
     a rdf:Statement ;
     rdf:subject ?expression_creation ;
-    rdf:predicate crm:P14_carried_out_by ;
+    rdf:predicate mmm-schema:carried_out_by_as_author ;
     rdf:object ?author ;
     mmm-schema:data_provider_url ?entry ;
     :observed_author ?observed_author ;
@@ -471,15 +465,10 @@ WHERE {
       ?entry_source :sources_title ?cat_title
       FILTER(STR(?cat_title) != "")
     }
-    # OPTIONAL{
-    #   ?entry_source :sources_location ?cat_location_literal
-    #   FILTER(STR(?cat_location_literal) != "")
-    # }
     OPTIONAL{
       ?entry_source :sources_date ?cat_date_raw
       FILTER(STR(?cat_date_raw) != "")
     }
-    # OPTIONAL{ ?entry_source :sources_location_institution ?cat_institution }
     OPTIONAL{ ?entry_source :sources_link ?cat_link }
     OPTIONAL{
       ?source_agent :source_agents_source_id ?entry_source .
@@ -507,11 +496,11 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
-  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?author_id))) as ?author)
-  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?seller_id))) as ?seller)
-  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?buyer_id))) as ?buyer)
-  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?selling_agent_id))) as ?selling_agent)
-  BIND(IRI(CONCAT(STR(mmm:), "person/", STR(?prov_agent_id))) as ?prov_agent)
+  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?author_id))) as ?author)
+  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?seller_id))) as ?seller)
+  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?buyer_id))) as ?buyer)
+  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?selling_agent_id))) as ?selling_agent)
+  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?prov_agent_id))) as ?prov_agent)
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_id))) as ?place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
   BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)

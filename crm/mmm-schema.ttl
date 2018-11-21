@@ -45,10 +45,6 @@
   rdfs:subClassOf crm:E5_Event ;
   skos:prefLabel "Direct or indirect observation of a manuscript"@en .
 
-:selling_agent a rdf:Property;
-  rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Selling agent"@en .
-
 :observed_manuscript a rdf:Property;
   rdfs:subPropertyOf crm:P12_occured_in_the_presence_of ;
   skos:prefLabel "Observed manuscript"@en .
@@ -74,3 +70,11 @@
 :Source a rdfs:Class ;
   rdfs:subClassOf crm:E31_Document ;
   skos:prefLabel "Source document"@en .
+
+:carried_out_by_as_author a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by author"@en .
+
+:carried_out_by_as_selling_agent a rdf:Property;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by selling agent"@en .
