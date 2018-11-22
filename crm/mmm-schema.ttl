@@ -78,3 +78,11 @@
 :carried_out_by_as_selling_agent a rdf:Property;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
   skos:prefLabel "Carried out by selling agent"@en .
+
+:entry a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "SDBM manuscript entry URL" .
+
+:manuscript_record a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "SDBM manuscript entry URL" .
