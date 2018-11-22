@@ -461,8 +461,9 @@ WHERE {
   OPTIONAL {
     ?entry :entries_source_id ?entry_source .
     OPTIONAL{ ?entry_source :sources_id ?source_id }
+    # TODO: if source has no title, generate one for acquisition/observation prefLabel
     OPTIONAL{
-      ?entry_source :sources_title ?cat_title
+      ?entry_source :sources_title ?cat_title 
       FILTER(STR(?cat_title) != "")
     }
     OPTIONAL{
