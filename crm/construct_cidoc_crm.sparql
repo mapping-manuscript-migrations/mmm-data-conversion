@@ -7,7 +7,7 @@ PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dct: <http://purl.org/dc/terms/>
 
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
@@ -16,7 +16,7 @@ CONSTRUCT {
     rdfs:label ?title ;
     skos:prefLabel ?preflabel ;
     crm:P72_has_language ?language ;
-    dc:source mmm-schema:SDBM .
+    dct:source mmm-schema:SDBM .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
     frbroo:R17_created ?expression ;
@@ -25,7 +25,7 @@ CONSTRUCT {
     mmm-schema:carried_out_by_as_author ?author ;
     crm:P7_took_place_at ?place ;
     crm:P4_has_time-span ?creation_timespan ;
-    dc:source mmm-schema:SDBM .
+    dct:source mmm-schema:SDBM .
 
   ?creation_timespan a crm:E52_Time-Span ;
     skos:prefLabel ?creation_date_label ;
@@ -47,7 +47,7 @@ CONSTRUCT {
     mmm-schema:entry ?entry ;
     mmm-schema:manuscript_record ?manuscript ;
     mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
-    dc:source mmm-schema:SDBM .
+    dct:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
 
@@ -83,7 +83,7 @@ CONSTRUCT {
     ?event_timespan_property ?cat_date ;
     crm:P179_had_sales_price ?monetary_amount_uri ;
     crm:P70i_is_documented_in ?source ;
-    dc:source mmm-schema:SDBM .
+    dct:source mmm-schema:SDBM .
 
   ?production a frbroo:E12_Production .
 
@@ -99,7 +99,7 @@ CONSTRUCT {
     rdf:predicate crm:P179_had_sales_price ;
     rdf:object ?monetary_amount_uri ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # provenance reification
   ?reification_owner_uri
@@ -110,7 +110,7 @@ CONSTRUCT {
     mmm-schema:order ?prov_order ;
     rdfs:comment ?prov_comment ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # title reification
   ?reification_label_uri
@@ -119,14 +119,14 @@ CONSTRUCT {
     rdf:predicate rdfs:label ;
     rdf:object ?title ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # identifier reification
   ?reification_id_uri a rdf:Statement ;
     rdf:subject ?manifestation_singleton ;
     rdf:predicate crm:P48_has_preferred_identifier ;
     rdf:object ?manuscript_id ;
-    dc:source ?source .
+    dct:source ?source .
 
   # author reification
   ?reification_author_uri
@@ -136,7 +136,7 @@ CONSTRUCT {
     rdf:object ?author ;
     mmm-schema:data_provider_url ?entry ;
     :observed_author ?observed_author ;
-    dc:source ?source .
+    dct:source ?source .
 
   # creation date reification
   ?reification_expression_creation_time_uri
@@ -145,7 +145,7 @@ CONSTRUCT {
     rdf:predicate crm:P4_has_time-span ;
     rdf:object ?creation_timespan ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # artist reification
 
@@ -158,7 +158,7 @@ CONSTRUCT {
     rdf:predicate crm:P72_has_language ;
     rdf:object ?language ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # place reification
   ?reification_expression_creation_place_uri a rdf:Statement ;
@@ -166,7 +166,7 @@ CONSTRUCT {
     rdf:predicate crm:P7_took_place_at ;
     rdf:object ?place ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # material reification
   ?reification_material_uri
@@ -175,7 +175,7 @@ CONSTRUCT {
     rdf:predicate crm:P45_consists_of ;
     rdf:object ?material ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # use reification
 
@@ -186,7 +186,7 @@ CONSTRUCT {
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?folios_uri ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # lines reification
   ?reification_lines_uri
@@ -195,7 +195,7 @@ CONSTRUCT {
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?lines_uri ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # columns reification
   ?reification_columns_uri
@@ -204,7 +204,7 @@ CONSTRUCT {
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?columns_uri ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # height reification
   ?reification_height_uri
@@ -213,7 +213,7 @@ CONSTRUCT {
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?height_uri ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # width reification
   ?reification_width_uri
@@ -222,7 +222,7 @@ CONSTRUCT {
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?width_uri ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # alternate size reification
 
@@ -233,7 +233,7 @@ CONSTRUCT {
     rdf:predicate crm:P43_has_dimension ;
     rdf:object ?miniatures_uri ;
     mmm-schema:data_provider_url ?entry ;
-    dc:source ?source .
+    dct:source ?source .
 
   # historiated initials reification
 
@@ -539,3 +539,4 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id))) as ?reification_label_uri)
   # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id), "_", SUBSTR(REPLACE(?title, "[\\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\#\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-"), 0, 21))) as ?reification_label_uri)
 }
+limit 500
