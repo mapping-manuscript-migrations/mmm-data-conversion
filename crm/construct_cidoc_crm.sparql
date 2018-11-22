@@ -12,8 +12,11 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 CONSTRUCT {
   ?work a frbroo:F1_Work  .
 
-  ?expression a frbroo:F2_Expression ;
-    crm:P72_has_language ?language .
+  ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+    rdfs:label ?title ;
+    skos:prefLabel ?preflabel ;
+    crm:P72_has_language ?language ;
+    dc:source mmm-schema:SDBM .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
     frbroo:R17_created ?expression ;
@@ -21,7 +24,8 @@ CONSTRUCT {
     frbroo:R19_created_a_realisation_of ?work ;
     mmm-schema:carried_out_by_as_author ?author ;
     crm:P7_took_place_at ?place ;
-    crm:P4_has_time-span ?creation_timespan .
+    crm:P4_has_time-span ?creation_timespan ;
+    dc:source mmm-schema:SDBM .
 
   ?creation_timespan a crm:E52_Time-Span ;
     skos:prefLabel ?creation_date_label ;
@@ -31,9 +35,7 @@ CONSTRUCT {
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     crm:P128_carries ?expression ;
-    rdfs:label ?title ;  # TODO: move to Expression, use Title class?
     skos:prefLabel ?preflabel ;
-    crm:P1_is_identified_by ?manuscript ;
     crm:P43_has_dimension ?width_uri ;
     crm:P43_has_dimension ?height_uri ;
     crm:P43_has_dimension ?folios_uri ;
@@ -44,7 +46,8 @@ CONSTRUCT {
     crm:P51_has_former_or_current_owner ?prov_agent ;
     mmm-schema:entry ?entry ;
     mmm-schema:manuscript_record ?manuscript ;
-    mmm-schema:data_provider_url ?provider_url . # for showing the link in faceted search
+    mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
+    dc:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
 
@@ -79,7 +82,8 @@ CONSTRUCT {
     # mmm-schema:place_literal ?cat_location_literal ;
     ?event_timespan_property ?cat_date ;
     crm:P179_had_sales_price ?monetary_amount_uri ;
-    dc:source ?source .
+    crm:P70i_is_documented_in ?source ;
+    dc:source mmm-schema:SDBM .
 
   ?production a frbroo:E12_Production .
 
