@@ -43,6 +43,7 @@ services:
         depends_on:
           - input-sdbm
           - input-bibale
+          - input-bodley
         volumes:
             - mmm-crm:/fuseki-base/databases
         restart: unless-stopped

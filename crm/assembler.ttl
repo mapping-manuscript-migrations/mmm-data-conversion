@@ -12,26 +12,26 @@
 @prefix schema:  <http://schema.org/> .
 @prefix :        <#> .
 
-<#mmm-sdbm-cidoc>  rdf:type fuseki:Service ;
+<#mmm-cidoc>  rdf:type fuseki:Service ;
     fuseki:name              "ds" ;   # http://host:port/ds
     fuseki:serviceQuery      "sparql" ;    # SPARQL query service
     #fuseki:serviceUpdate     "update" ;    # SPARQL update service
     #fuseki:serviceUpload     "upload" ;    # Non-SPARQL upload service
     #fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol
-    fuseki:dataset           <#mmm-sdbm-cidoc-dataset> ;
+    fuseki:dataset           <#mmm-cidoc-dataset> ;
     .
 
-<#mmm-sdbm-cidoc-dataset> rdf:type spatial:SpatialDataset ;
-    spatial:dataset <#mmm-sdbm-cidoc-text> ;
-    spatial:index <#mmm-sdbm-cidoc-spatiallucene> ;
+<#mmm-cidoc-dataset> rdf:type spatial:SpatialDataset ;
+    spatial:dataset <#mmm-cidoc-text> ;
+    spatial:index <#mmm-cidoc-spatiallucene> ;
     .
 
-<#mmm-sdbm-cidoc-spatiallucene> a spatial:SpatialIndexLucene ;
+<#mmm-cidoc-spatiallucene> a spatial:SpatialIndexLucene ;
     spatial:directory <file:/fuseki-base/databases/spatiallucene> ;
-    spatial:definition <#mmm-sdbm-cidoc-spatialdefinition> ;
+    spatial:definition <#mmm-cidoc-spatialdefinition> ;
     .
 
-<#mmm-sdbm-cidoc-spatialdefinition> a spatial:EntityDefinition ;
+<#mmm-cidoc-spatialdefinition> a spatial:EntityDefinition ;
     spatial:entityField      "uri" ;
     spatial:geoField     "geo" ;
     # custom geo predicates for 1) Latitude/Longitude Format
@@ -47,23 +47,23 @@
          "org.locationtech.spatial4j.context.jts.JtsSpatialContextFactory"
     .
 
-<#mmm-sdbm-cidoc-text> rdf:type text:TextDataset ;
-    text:dataset <#mmm-sdbm-cidoc-tdb> ;
-    text:index <#mmm-sdbm-cidoc-lucene> ;
+<#mmm-cidoc-text> rdf:type text:TextDataset ;
+    text:dataset <#mmm-cidoc-tdb> ;
+    text:index <#mmm-cidoc-lucene> ;
     .
 
-<#mmm-sdbm-cidoc-tdb> rdf:type      tdb:DatasetTDB ;
+<#mmm-cidoc-tdb> rdf:type      tdb:DatasetTDB ;
     tdb:location "/fuseki-base/databases/tdb" ;
     # Make the default graph be the union of all named graphs.
     tdb:unionDefaultGraph true ;
     .
 
-<#mmm-sdbm-cidoc-lucene> a text:TextIndexLucene ;
+<#mmm-cidoc-lucene> a text:TextIndexLucene ;
     text:directory <file:/fuseki-base/databases/lucene> ;
-    text:entityMap <#mmm-sdbm-cidoc-entity-map> ;
+    text:entityMap <#mmm-cidoc-entity-map> ;
     .
 
-<#mmm-sdbm-cidoc-entity-map> a text:EntityMap ;
+<#mmm-cidoc-entity-map> a text:EntityMap ;
     text:entityField "uri" ;
     text:graphField "graph" ; ## enable graph-specific indexing
     text:defaultField "text" ; ## Must be defined in the text:map
