@@ -1,0 +1,311 @@
+PREFIX : <https://sdbm.library.upenn.edu/>
+PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+CONSTRUCT {
+  ?work a frbroo:F1_Work  .
+
+  # ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+  #   rdfs:label ?title ;
+  #   skos:prefLabel ?preflabel ;
+  #   crm:P72_has_language ?language ;
+  #   dct:source mmm-schema:SDBM .
+  #
+  # ?expression_creation a frbroo:F28_Expression_Creation ;
+  #   frbroo:R17_created ?expression ;
+  #   frbroo:R18_created ?manifestation_singleton ;
+  #   frbroo:R19_created_a_realisation_of ?work ;
+  #   mmm-schema:carried_out_by_as_author ?author ;
+  #   crm:P7_took_place_at ?place ;
+  #   crm:P4_has_time-span ?creation_timespan ;
+  #   dct:source mmm-schema:SDBM .
+  #
+  # ?creation_timespan a crm:E52_Time-Span ;
+  #   skos:prefLabel ?creation_date_label ;
+  #   skos:altLabel ?creation_date_observed ;
+  #   crm:P79_beginning_is_qualified_by ?creation_date_start ;
+  #   crm:P80_end_is_qualified_by ?creation_date_end .
+
+  ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
+    # crm:P128_carries ?expression ;
+    skos:prefLabel ?preflabel ;
+    # crm:P43_has_dimension ?width_uri ;
+    # crm:P43_has_dimension ?height_uri ;
+    # crm:P43_has_dimension ?folios_uri ;
+    # crm:P43_has_dimension ?lines_uri ;
+    # crm:P43_has_dimension ?columns_uri ;
+    # crm:P43_has_dimension ?miniatures_uri ;
+    # crm:P45_consists_of ?material ;
+    crm:P51_has_former_or_current_owner ?prov_agent ;
+    # mmm-schema:entry ?entry ;
+    # mmm-schema:manuscript_record ?manuscript ;
+    # mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
+    dct:source mmm-schema:Bodley .
+
+  # ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
+  #
+  # ?width_uri a mmm-schema:Width ;
+  #   crm:P90_has_value ?width_value ;
+  #   crm:P91_has_unit "mm"@en .
+  #
+  # ?height_uri a mmm-schema:Height ;
+  #   crm:P90_has_value ?height_value ;
+  #   crm:P91_has_unit "mm"@en .
+  #
+  # ?folios_uri a mmm-schema:Folios ;
+  #   crm:P90_has_value ?folios_value .
+  #
+  # ?lines_uri a mmm-schema:Lines ;
+  #   crm:P90_has_value ?lines_value .
+  #
+  # ?columns_uri a mmm-schema:Columns ;
+  #   crm:P90_has_value ?columns_value .
+  #
+  # ?miniatures_uri a mmm-schema:Miniatures ;
+  #   crm:P90_has_value ?miniatures_value .
+  #
+  # ?acquisition_uri a ?event_type ;  # Acquisition or Observation
+  #   skos:prefLabel ?cat_title ;
+  #   ?event_property ?manifestation_singleton ;
+  #   ?event_seller_or_holder_property ?seller ;
+  #   crm:P22_transferred_title_to ?buyer ;
+  #   mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   ?event_place_property ?source_agent_location ;
+  #   # mmm-schema:place_literal ?cat_location_literal ;
+  #   ?event_timespan_property ?cat_date ;
+  #   crm:P179_had_sales_price ?monetary_amount_uri ;
+  #   crm:P70i_is_documented_in ?source ;
+  #   dct:source mmm-schema:SDBM .
+  #
+  # ?production a frbroo:E12_Production .
+  #
+  # ?monetary_amount_uri a crm:E97_Monetary_Amount ;
+  #   crm:P180_has_currency ?sales_currency ;
+  #   crm:P181_has_amount ?sales_price ;
+  #   rdfs:comment ?sales_other_currency .
+  #
+  # # Monetary amount reification
+  # ?reification_monetary_amount_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?acquisition_uri ;
+  #   rdf:predicate crm:P179_had_sales_price ;
+  #   rdf:object ?monetary_amount_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # provenance reification
+  # ?reification_owner_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?manifestation_singleton ;
+  #   rdf:predicate crm:P51_has_former_or_current_owner ;
+  #   rdf:object ?prov_agent ;
+  #   mmm-schema:order ?prov_order ;
+  #   rdfs:comment ?prov_comment ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # title reification
+  # ?reification_label_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?manifestation_singleton ;
+  #   rdf:predicate rdfs:label ;
+  #   rdf:object ?title ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # identifier reification
+  # ?reification_id_uri a rdf:Statement ;
+  #   rdf:subject ?manifestation_singleton ;
+  #   rdf:predicate crm:P48_has_preferred_identifier ;
+  #   rdf:object ?manuscript_id ;
+  #   dct:source ?source .
+  #
+  # # author reification
+  # ?reification_author_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?expression_creation ;
+  #   rdf:predicate mmm-schema:carried_out_by_as_author ;
+  #   rdf:object ?author ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   :observed_author ?observed_author ;
+  #   dct:source ?source .
+  #
+  # # creation date reification
+  # ?reification_expression_creation_time_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?expression_creation ;
+  #   rdf:predicate crm:P4_has_time-span ;
+  #   rdf:object ?creation_timespan ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # artist reification
+  #
+  # # scribe reification
+  #
+  # # language reification
+  # ?reification_language_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?expression;
+  #   rdf:predicate crm:P72_has_language ;
+  #   rdf:object ?language ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # place reification
+  # ?reification_expression_creation_place_uri a rdf:Statement ;
+  #   rdf:subject ?expression_creation ;
+  #   rdf:predicate crm:P7_took_place_at ;
+  #   rdf:object ?place ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # material reification
+  # ?reification_material_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P45_consists_of ;
+  #   rdf:object ?material ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # use reification
+  #
+  # # folios reification
+  # ?reification_folios_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?folios_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # lines reification
+  # ?reification_lines_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?lines_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # columns reification
+  # ?reification_columns_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?columns_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # height reification
+  # ?reification_height_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?height_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # width reification
+  # ?reification_width_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?width_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # alternate size reification
+  #
+  # # miniatures reification
+  # ?reification_miniatures_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?miniatures_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+
+  # historiated initials reification
+
+  # decorated initials reification
+
+  # binding reification
+
+  # manuscript link reification
+
+  # other Info reification
+
+}
+WHERE
+{
+  ?manifestation_singleton a frbr:F4_Manifestation_Singleton ;
+    rdfs:label ?preflabel .
+  OPTIONAL { ?manifestation_singleton crm:P51_has_former_or_current_owner ?prov_agent }
+
+  # BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
+  # BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
+  # BIND(SUBSTR(?cat_date_raw, 7) as ?cat_date_day)
+  # BIND(?cat_date_year + "-" + ?cat_date_month + "-" + ?cat_date_day as ?cat_date)
+  #
+  # BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
+  # BIND(REPLACE(STR(?entry_partial_uri), "^.*\\/(.+)", "$1") as ?entry_partial_id)
+  #
+  # # generate IRIs in LDF.fi namespace
+  # BIND(STR(?manuscript_id_int) AS ?manuscript_id_)
+  # BIND(COALESCE(?manuscript_id_, "part_" + STR(?entry_partial_id), "orphan_" + STR(?entry_id)) AS ?manuscript_id)
+  # BIND(IRI(CONCAT(STR(mmm:), "work/", ?manuscript_id)) as ?work)
+  # BIND(IRI(CONCAT(STR(mmm:), "expression/", ?manuscript_id)) as ?expression)
+  # BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", ?manuscript_id)) as ?expression_creation)
+  # BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
+  # BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
+  # BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
+  # BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
+  # BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?author_id))) as ?author)
+  # BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?seller_id))) as ?seller)
+  # BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?buyer_id))) as ?buyer)
+  # BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?selling_agent_id))) as ?selling_agent)
+  # BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?prov_agent_id))) as ?prov_agent)
+  # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_id))) as ?place)
+  # BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?creation_date_id))) as ?creation_timespan)
+  # BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "height/", ?entry_id)) as ?height_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "width/", ?entry_id)) as ?width_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "folios/", ?entry_id)) as ?folios_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "lines/", ?entry_id)) as ?lines_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "columns/", ?entry_id)) as ?columns_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "miniatures/", ?entry_id)) as ?miniatures_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
+  #
+  # BIND(?miniatures_large_value + ?miniatures_small_value + ?miniatures_fullpage_value + ?miniatures_unspec_value as ?miniatures_value)
+  # BIND(CONCAT(STR(?creation_date_start),"-",STR(?creation_date_end)) as ?creation_date_label)
+  # BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
+  # # TODO: for partial relations, take title as prefLabel
+  #
+  # BIND(COALESCE(?manuscript, ?entry) as ?provider_url)
+  #
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_author_", STR(?author_id))) as ?reification_author_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_owner_", STR(?prov_agent_id))) as ?reification_owner_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_place_", STR(?place_id))) as ?reification_expression_creation_place_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_expression_creation_time_", STR(?creation_date_id))) as ?reification_expression_creation_time_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_identifier_", ?manuscript_id)) as ?reification_id_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_material_", ?material_id)) as ?reification_material_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_folios_", STR(?folios_value))) as ?reification_folios_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_lines_", STR(?lines_value))) as ?reification_lines_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_columns_", STR(?columns_value))) as ?reification_columns_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_height_", STR(?height_value))) as ?reification_height_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_width_", STR(?width_value))) as ?reification_width_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_miniatures_", STR(?miniatures_value))) as ?reification_miniatures_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_language_", REPLACE(?language, " ", "-"))) as ?reification_language_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id))) as ?reification_label_uri)
+}
