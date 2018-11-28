@@ -12,26 +12,26 @@
 @prefix schema:  <http://schema.org/> .
 @prefix :        <#> .
 
-<#mmm-sdbm>  rdf:type fuseki:Service ;
+<#mmm>  rdf:type fuseki:Service ;
     fuseki:name              "ds" ;   # http://host:port/ds
     fuseki:serviceQuery      "sparql" ;    # SPARQL query service
     #fuseki:serviceUpdate     "update" ;    # SPARQL update service
     #fuseki:serviceUpload     "upload" ;    # Non-SPARQL upload service
     #fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol
-    fuseki:dataset           <#mmm-sdbm-dataset> ;
+    fuseki:dataset           <#mmm-dataset> ;
     .
 
-<#mmm-sdbm-dataset> rdf:type spatial:SpatialDataset ;
-    spatial:dataset <#mmm-sdbm-text> ;
-    spatial:index <#mmm-sdbm-spatiallucene> ;
+<#mmm-dataset> rdf:type spatial:SpatialDataset ;
+    spatial:dataset <#mmm-text> ;
+    spatial:index <#mmm-spatiallucene> ;
     .
 
-<#mmm-sdbm-spatiallucene> a spatial:SpatialIndexLucene ;
+<#mmm-spatiallucene> a spatial:SpatialIndexLucene ;
     spatial:directory <file:/fuseki-base/databases/spatiallucene> ;
-    spatial:definition <#mmm-sdbm-spatialdefinition> ;
+    spatial:definition <#mmm-spatialdefinition> ;
     .
 
-<#mmm-sdbm-spatialdefinition> a spatial:EntityDefinition ;
+<#mmm-spatialdefinition> a spatial:EntityDefinition ;
     spatial:entityField      "uri" ;
     spatial:geoField     "geo" ;
     # custom geo predicates for 1) Latitude/Longitude Format
@@ -47,23 +47,23 @@
          "org.locationtech.spatial4j.context.jts.JtsSpatialContextFactory"
     .
 
-<#mmm-sdbm-text> rdf:type text:TextDataset ;
-    text:dataset <#mmm-sdbm-tdb> ;
-    text:index <#mmm-sdbm-lucene> ;
+<#mmm-text> rdf:type text:TextDataset ;
+    text:dataset <#mmm-tdb> ;
+    text:index <#mmm-lucene> ;
     .
 
-<#mmm-sdbm-tdb> rdf:type      tdb:DatasetTDB ;
+<#mmm-tdb> rdf:type      tdb:DatasetTDB ;
     tdb:location "/fuseki-base/databases/tdb" ;
     # Make the default graph be the union of all named graphs.
     tdb:unionDefaultGraph true ;
     .
 
-<#mmm-sdbm-lucene> a text:TextIndexLucene ;
+<#mmm-lucene> a text:TextIndexLucene ;
     text:directory <file:/fuseki-base/databases/lucene> ;
-    text:entityMap <#mmm-sdbm-entity-map> ;
+    text:entityMap <#mmm-entity-map> ;
     .
 
-<#mmm-sdbm-entity-map> a text:EntityMap ;
+<#mmm-entity-map> a text:EntityMap ;
     text:entityField "uri" ;
     text:graphField "graph" ; ## enable graph-specific indexing
     text:defaultField "text" ; ## Must be defined in the text:map
