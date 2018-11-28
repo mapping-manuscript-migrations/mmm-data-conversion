@@ -39,6 +39,7 @@ CONSTRUCT {
     #   crm:P80_end_is_qualified_by ?creation_date_end .
 
   ?production a crm:E12_Production ;
+    crm:P108_has_produced ?manifestation_singleton ;
     crm:P4_has_time-span ?production_timespan ;
     crm:P7_took_place_at ?production_place ;
     mmm-schema:carried_out_by_as_artist ?production_artist ;

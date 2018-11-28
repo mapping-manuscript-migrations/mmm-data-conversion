@@ -41,4 +41,5 @@ WHERE {
     BIND(STRBEFORE(STRAFTER(?coords, ","), ")") as ?long)
   }
   OPTIONAL { ?bod_place_uri owl:sameAs ?authority_uri }
+  FILTER(!STRENDS(STR(?bod_place_uri), "place-centroid"))
 }
