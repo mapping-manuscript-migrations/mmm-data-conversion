@@ -67,13 +67,49 @@
   skos:prefLabel "Schoenberg Database of Manuscripts"@en ;
   :data_provider_url <https://sdbm.library.upenn.edu/> .
 
+:Bodley a :Database ;
+  skos:prefLabel "Medieval Manuscripts in Oxford Libraries"@en ;
+  :data_provider_url <https://www.bodleian.ox.ac.uk/subjects-and-libraries/collections/manuscripts> .
+
 :Source a rdfs:Class ;
   rdfs:subClassOf crm:E31_Document ;
   skos:prefLabel "Source document"@en .
 
+:carried_out_by_as_artist a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by artist"@en .
+
 :carried_out_by_as_author a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
   skos:prefLabel "Carried out by author"@en .
+
+:carried_out_by_as_binder a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by binder"@en .
+
+:carried_out_by_as_commissioner a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by commissioner"@en .
+
+:carried_out_by_as_dedicatee a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by dedicatee"@en .
+
+:carried_out_by_as_formerOwner a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by former owner"@en .
+
+:carried_out_by_as_patron a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by patron"@en .
+
+:carried_out_by_as_scribe a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by scribe"@en .
+
+:carried_out_by_as_signer a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by signer"@en .
 
 :carried_out_by_as_selling_agent a rdf:Property;
   rdfs:subPropertyOf crm:P14_carried_out_by ;

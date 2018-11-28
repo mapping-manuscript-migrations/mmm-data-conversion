@@ -9,30 +9,48 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
+
+# TODO:
+# - mint MMM URIs for resources
 
 CONSTRUCT {
-  ?work a frbroo:F1_Work  .
+  ?work a frbroo:F1_Work  ;
+    skos:prefLabel ?work_preflabel .
 
-  # ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
-  #   rdfs:label ?title ;
-  #   skos:prefLabel ?preflabel ;
-  #   crm:P72_has_language ?language ;
-  #   dct:source mmm-schema:SDBM .
-  #
-  # ?expression_creation a frbroo:F28_Expression_Creation ;
-  #   frbroo:R17_created ?expression ;
-  #   frbroo:R18_created ?manifestation_singleton ;
-  #   frbroo:R19_created_a_realisation_of ?work ;
-  #   mmm-schema:carried_out_by_as_author ?author ;
-  #   crm:P7_took_place_at ?place ;
-  #   crm:P4_has_time-span ?creation_timespan ;
-  #   dct:source mmm-schema:SDBM .
-  #
-  # ?creation_timespan a crm:E52_Time-Span ;
-  #   skos:prefLabel ?creation_date_label ;
-  #   skos:altLabel ?creation_date_observed ;
-  #   crm:P79_beginning_is_qualified_by ?creation_date_start ;
-  #   crm:P80_end_is_qualified_by ?creation_date_end .
+  ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+    skos:altLabel ?work_title ;
+    skos:prefLabel ?expression_label ;
+    crm:P72_has_language ?work_language ;
+    dct:source mmm-schema:Bodley .
+
+  ?expression_creation a frbroo:F28_Expression_Creation ;
+    frbroo:R17_created ?expression ;
+    frbroo:R18_created ?manifestation_singleton ;
+    frbroo:R19_created_a_realisation_of ?work ;
+    mmm-schema:carried_out_by_as_author ?production_author ;
+    # crm:P7_took_place_at ?place ;
+    # crm:P4_has_time-span ?creation_timespan ;
+    dct:source mmm-schema:Bodley .
+    # ?creation_timespan a crm:E52_Time-Span ;
+    #   skos:prefLabel ?creation_date_label ;
+    #   skos:altLabel ?creation_date_observed ;
+    #   crm:P79_beginning_is_qualified_by ?creation_date_start ;
+    #   crm:P80_end_is_qualified_by ?creation_date_end .
+
+  ?production a crm:E12_Production ;
+    crm:P4_has_time-span ?production_timespan ;
+    crm:P7_took_place_at ?production_place ;
+    mmm-schema:carried_out_by_as_artist ?production_artist ;
+    mmm-schema:carried_out_by_as_author ?production_author ;
+    mmm-schema:carried_out_by_as_binder ?production_binder ;
+    mmm-schema:carried_out_by_as_commissioner ?production_commissioner ;
+    mmm-schema:carried_out_by_as_dedicatee ?production_dedicatee ;
+    mmm-schema:carried_out_by_as_formerOwner ?production_formerOwner ;
+    mmm-schema:carried_out_by_as_patron ?production_patron ;
+    mmm-schema:carried_out_by_as_scribe ?production_scribe ;
+    mmm-schema:carried_out_by_as_signer ?production_signer ;
+    dct:source mmm-schema:Bodley .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     # crm:P128_carries ?expression ;
@@ -252,6 +270,77 @@ WHERE
   ?manifestation_singleton a frbr:F4_Manifestation_Singleton ;
     rdfs:label ?preflabel .
   OPTIONAL { ?manifestation_singleton crm:P51_has_former_or_current_owner ?prov_agent }
+
+  OPTIONAL {
+    ?manifestation_singleton frbr:R42_is_representative_manifestation_singleton_for ?expression .
+    ?expression rdfs:label ?expression_label .
+    OPTIONAL {
+      ?expression frbr:R3i_realises ?work .
+      ?work rdfs:label ?work_title .
+      ?work crm:P102_has_title ?work_preflabel .
+      ?work crm:P72_has_language ?work_language .
+    }
+  }
+  OPTIONAL {
+    ?sub crm:P108i_was_produced_by ?production .
+    ?production rdfs:label ?production_label .
+    ?production crm:P4_has_time-span ?production_timespan .
+    ?production crm:P7_took_place_at ?production_place .
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:artist ;
+        crm:P02_has_range ?production_artist ;
+      ]
+    }
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:author ;
+        crm:P02_has_range ?production_author ;
+      ]
+    }
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:binder ;
+        crm:P02_has_range ?production_binder ;
+      ]
+    }
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:commissioner ;
+        crm:P02_has_range ?production_commissioner ;
+      ]
+    }
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:dedicatee ;
+        crm:P02_has_range ?production_dedicatee ;
+      ]
+    }
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:formerOwner ;
+        crm:P02_has_range ?production_formerOwner ;
+      ]
+    }
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:patron ;
+        crm:P02_has_range ?production_patron ;
+      ]
+    }
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:scribe ;
+        crm:P02_has_range ?production_scribe ;
+      ]
+    }
+    OPTIONAL {
+      ?production crm:P01i_is_domain_of [
+        crm:P14.1_in_the_role_of bod-roles:signer ;
+        crm:P02_has_range ?production_signer ;
+      ]
+    }
+  }
 
   # BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
   # BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
