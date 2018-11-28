@@ -8,7 +8,7 @@ PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dct: <http://purl.org/dc/terms/>
 
 CONSTRUCT {
   ?mmm_actor_uri a ?actor_class ;
@@ -18,6 +18,7 @@ CONSTRUCT {
     mmm-schema:birth_date ?birth_date ;
     mmm-schema:death_date ?death_date ;
     mmm-schema:data_provider_url ?name_id ;
+    dct:source mmm-schema:SDBM .
 } WHERE {
   ?name_id a :names ;
            :names_name ?name ;
