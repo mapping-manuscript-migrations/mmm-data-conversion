@@ -15,11 +15,11 @@ CONSTRUCT {
   ?place a mmm-schema:Place ;
     skos:prefLabel ?name ;
     crm:P89_falls_within ?parent ;
-    dct:source ?authority_source ;
     owl:sameAs ?authority_uri ;
-    dct:source mmm-schema:SDBM ;
     wgs:lat ?lat ;
     wgs:long ?long ;
+    mmm-schema:data_provider_url ?name_id ;
+    dct:source mmm-schema:SDBM .
 }
 WHERE {
   ?place_id a :places ;
