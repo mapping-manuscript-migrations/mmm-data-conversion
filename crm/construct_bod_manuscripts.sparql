@@ -282,7 +282,7 @@ WHERE
     }
   }
   OPTIONAL {
-    ?sub crm:P108i_was_produced_by ?production .
+    ?manifestation_singleton crm:P108i_was_produced_by ?production .
     ?production rdfs:label ?production_label .
     ?production crm:P4_has_time-span ?production_timespan .
     ?production crm:P7_took_place_at ?production_place .
