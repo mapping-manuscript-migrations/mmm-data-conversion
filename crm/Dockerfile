@@ -23,6 +23,7 @@ COPY crm/construct_sdbm_people.sparql $FUSEKI_HOME/construct_sdbm_people.sparql
 COPY crm/construct_sdbm_places.sparql $FUSEKI_HOME/construct_sdbm_places.sparql
 COPY crm/construct_sdbm_sources.sparql $FUSEKI_HOME/construct_sdbm_sources.sparql
 COPY crm/construct_bod_manuscripts.sparql $FUSEKI_HOME/construct_bod_manuscripts.sparql
+COPY crm/construct_bod_people.sparql $FUSEKI_HOME/construct_bod_people.sparql
 
 COPY --chown=9008 crm/convert.sh crm/convert_sdbm.sh crm/convert_bodley.sh tdbloader $FUSEKI_HOME/
 RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/convert_sdbm.sh $FUSEKI_HOME/convert_bodley.sh $FUSEKI_HOME/tdbloader

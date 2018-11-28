@@ -1,0 +1,65 @@
+PREFIX : <https://sdbm.library.upenn.edu/>
+PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+# TODO:
+# - mint MMM URIs for resources
+
+CONSTRUCT {
+  ?bod_person_uri a ?actor_class ;
+    skos:prefLabel ?preflabel ;
+    skos:altLabel ?person_label ;
+    skos:altLabel ?altlabel ;
+    crm:P98i_was_born ?birth_event ;
+    crm:P100i_died_in ?death_event ;
+    owl:sameAs ?external_uri ;
+    mmm-schema:data_provider_url ?bod_person_uri ;
+    dct:source mmm-schema:Bodley .
+} WHERE {
+  ?bod_person_uri a crm:E21_Person .
+  BIND(IRI(mmm-schema:Person) as ?actor_class)
+  OPTIONAL {
+    ?bod_person_uri rdfs:label ?person_label .
+  }
+  OPTIONAL {
+    ?bod_person_uri crm:P98i_was_born ?birth_event .
+    ?birth_event rdfs:label ?birth_label ;
+    OPTIONAL {
+      ?birth_event crm:P4_has_time-span ?birth_timespan .
+      ?birth_timespan rdfs:label ?birth_timespan_label .
+      OPTIONAL { ?birth_timespan crm:P82a_begin_of_the_begin ?birth_timespan_begin_begin }
+      OPTIONAL { ?birth_timespan crm:P82b_end_of_the_end ?birth_timespan_end_end }
+    }
+  }
+  OPTIONAL {
+    ?bod_person_uri crm:P100i_died_in ?death_event .
+    ?death_event rdfs:label ?death_label .
+    OPTIONAL {
+      ?death_event crm:P4_has_time-span ?death_timespan .
+      ?death_timespan rdfs:label ?death_timespan_label .
+      OPTIONAL { ?death_timespan crm:P82a_begin_of_the_begin ?death_timespan_begin_begin }
+      OPTIONAL { ?death_timespan crm:P82b_end_of_the_end ?death_timespan_end_end }
+    }
+  }
+  OPTIONAL {
+    ?bod_person_uri crm:P1_is_identified_by ?appellation .
+    ?appellation rdfs:label ?preflabel .
+    OPTIONAL { ?appellation crm:P139_has_alternative_form/rdfs:label ?altlabel  }
+  }
+  OPTIONAL {
+    ?bod_person_uri owl:sameAs ?external_uri .
+  }
+
+  # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?mmm_place)
+  # BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?person_local_id))) as ?mmm_actor_uri)
+}
