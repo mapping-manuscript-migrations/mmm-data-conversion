@@ -10,6 +10,7 @@ ENV PATH "$PATH:/jena-fuseki/bin"
 ENV ASSEMBLER "/fuseki-base/configuration/assembler.ttl"
 ENV INPUT_SDBM_SPARQL_ENDPOINT "http://input-sdbm:3030/ds/sparql"
 ENV INPUT_BODLEY_SPARQL_ENDPOINT "http://input-bodley:3030/ds/sparql"
+ENV INPUT_BIBALE_SPARQL_ENDPOINT "http://input-bibale:3030/ds/sparql"
 
 RUN mkdir -p $FUSEKI_BASE/databases/tdb \
     $FUSEKI_BASE/databases/lucene \
@@ -25,9 +26,10 @@ COPY crm/construct_sdbm_sources.sparql $FUSEKI_HOME/construct_sdbm_sources.sparq
 COPY crm/construct_bod_manuscripts.sparql $FUSEKI_HOME/construct_bod_manuscripts.sparql
 COPY crm/construct_bod_people.sparql $FUSEKI_HOME/construct_bod_people.sparql
 COPY crm/construct_bod_places.sparql $FUSEKI_HOME/construct_bod_places.sparql
+COPY crm/construct_bibale_manuscripts.sparql $FUSEKI_HOME/construct_bibale_manuscripts.sparql
 
-COPY --chown=9008 crm/convert.sh crm/convert_sdbm.sh crm/convert_bodley.sh tdbloader $FUSEKI_HOME/
-RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/convert_sdbm.sh $FUSEKI_HOME/convert_bodley.sh $FUSEKI_HOME/tdbloader
+COPY --chown=9008 crm/convert.sh crm/convert_sdbm.sh crm/convert_bodley.sh crm/convert_bibale.sh tdbloader $FUSEKI_HOME/
+RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/convert_sdbm.sh $FUSEKI_HOME/convert_bodley.sh $FUSEKI_HOME/convert_bibale.sh $FUSEKI_HOME/tdbloader
 
 EXPOSE 3030
 

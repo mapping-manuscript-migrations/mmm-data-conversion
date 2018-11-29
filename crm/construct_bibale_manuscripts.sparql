@@ -1,0 +1,92 @@
+PREFIX : <https://sdbm.library.upenn.edu/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX bibale: <http://bibale.irht.cnrs.fr/>
+# TODO:
+# - mint MMM URIs for resources
+
+CONSTRUCT {
+  # ?work a frbroo:F1_Work  ;
+  #   skos:prefLabel ?work_preflabel .
+  #
+  # ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+  #   skos:altLabel ?work_title ;
+  #   crm:P72_has_language ?work_language ;
+  #   dct:source mmm-schema:Bodley .
+  #
+  ?expression a frbroo:F2_Expression;
+    skos:prefLabel ?expression_label ;
+    skos:altLabel ?expression_title ;
+    dct:source mmm-schema:Bibale .
+
+  ?expression_creation a frbroo:F28_Expression_Creation ;
+    frbroo:R17_created ?expression ;
+    frbroo:R18_created ?manifestation_singleton ;
+  #   frbroo:R19_created_a_realisation_of ?work ;
+  #   mmm-schema:carried_out_by_as_author ?production_author ;
+    dct:source mmm-schema:Bibale .
+  #   # crm:P7_took_place_at ?place ;
+  #   # crm:P4_has_time-span ?creation_timespan ;
+  #   # ?creation_timespan a crm:E52_Time-Span ;
+  #   #   skos:prefLabel ?creation_date_label ;
+  #   #   skos:altLabel ?creation_date_observed ;
+  #   #   crm:P79_beginning_is_qualified_by ?creation_date_start ;
+  #   #   crm:P80_end_is_qualified_by ?creation_date_end .
+  #
+  ?production a crm:E12_Production ;
+    crm:P108_has_produced ?manifestation_singleton ;
+  #   crm:P4_has_time-span ?production_timespan ;
+  #   crm:P7_took_place_at ?production_place ;
+    mmm-schema:carried_out_by_as_scribe ?production_scribe ;
+    dct:source mmm-schema:Bibale .
+
+  ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
+    # crm:P128_carries ?expression ;
+    skos:prefLabel ?preflabel ;
+    # crm:P43_has_dimension ?width_uri ;
+    # crm:P43_has_dimension ?height_uri ;
+    # crm:P43_has_dimension ?folios_uri ;
+    # crm:P43_has_dimension ?lines_uri ;
+    # crm:P43_has_dimension ?columns_uri ;
+    # crm:P43_has_dimension ?miniatures_uri ;
+    # crm:P45_consists_of ?material ;
+    # crm:P51_has_former_or_current_owner ?prov_agent ;
+    # mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
+    dct:source mmm-schema:Bibale .
+}
+WHERE
+{
+  ?manifestation_singleton a bibale:type:livre ;
+    rdfs:label ?preflabel .
+
+  OPTIONAL {
+    ?expression crm:P128i_is_carried_by ?manifestation_singleton .
+    ?expression_creation frbroo2:R17_created ?expression ;
+      a frbroo2:F28_Expression_Creation .
+    OPTIONAL { ?expression rdfs:label ?expression_label }
+    OPTIONAL { ?expression crm:P102_has_title ?expression_title }
+    OPTIONAL { ?expression_creation crm:P01i_is_domain_of [
+      a crm:PC14_carried_out_by ;
+      crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
+      crm:P02_has_range ?expression_author ;
+      ] }
+  }
+
+  OPTIONAL {
+    ?production crm:P108_has_produced ?manifestation_singleton ;
+      a crm:E12_Production .
+    OPTIONAL { ?production crm:P01i_is_domain_of [
+        a crm:PC14_carried_out_by ;
+        crm:P02_has_range ?production_scribe ;
+        crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ]
+        ] }  # TODO: Check other scribe path
+  }
+}

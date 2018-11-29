@@ -69,7 +69,11 @@
 
 :Bodley a :Database ;
   skos:prefLabel "Medieval Manuscripts in Oxford Libraries"@en ;
-  :data_provider_url <https://www.bodleian.ox.ac.uk/subjects-and-libraries/collections/manuscripts> .
+  :data_provider_url <https://medieval.bodleian.ox.ac.uk/> .
+
+:Bibale a :Database ;
+  skos:prefLabel "Bibale Database"@en ;
+  :data_provider_url <http://bibale.irht.cnrs.fr/> .
 
 :Source a rdfs:Class ;
   rdfs:subClassOf crm:E31_Document ;
