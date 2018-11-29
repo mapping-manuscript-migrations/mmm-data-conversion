@@ -18,7 +18,7 @@ CONSTRUCT {
     owl:sameAs ?authority_uri ;
     wgs:lat ?lat ;
     wgs:long ?long ;
-    mmm-schema:data_provider_url ?name_id ;
+    mmm-schema:data_provider_url ?place_id ;
     dct:source mmm-schema:SDBM .
 }
 WHERE {
