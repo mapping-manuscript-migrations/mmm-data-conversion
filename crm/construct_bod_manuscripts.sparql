@@ -32,11 +32,6 @@ CONSTRUCT {
     # crm:P7_took_place_at ?place ;
     # crm:P4_has_time-span ?creation_timespan ;
     dct:source mmm-schema:Bodley .
-    # ?creation_timespan a crm:E52_Time-Span ;
-    #   skos:prefLabel ?creation_date_label ;
-    #   skos:altLabel ?creation_date_observed ;
-    #   crm:P79_beginning_is_qualified_by ?creation_date_start ;
-    #   crm:P80_end_is_qualified_by ?creation_date_end .
 
   ?production a crm:E12_Production ;
     crm:P108_has_produced ?manifestation_singleton ;
@@ -53,6 +48,11 @@ CONSTRUCT {
     mmm-schema:carried_out_by_as_signer ?production_signer ;
     dct:source mmm-schema:Bodley .
 
+  ?production_timespan a crm:E52_Time-Span ;
+    skos:prefLabel ?production_timespan_label ;
+    crm:P79_beginning_is_qualified_by ?production_timespan_begin ;
+    crm:P80_end_is_qualified_by ?production_timespan_end .
+
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     # crm:P128_carries ?expression ;
     skos:prefLabel ?preflabel ;
@@ -66,7 +66,7 @@ CONSTRUCT {
     crm:P51_has_former_or_current_owner ?prov_agent ;
     # mmm-schema:entry ?entry ;
     # mmm-schema:manuscript_record ?manuscript ;
-    mmm-schema:data_provider_url ?manifestation_singleton ; 
+    mmm-schema:data_provider_url ?manifestation_singleton ;
     dct:source mmm-schema:Bodley .
 
   # ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
@@ -285,8 +285,12 @@ WHERE
   OPTIONAL {
     ?manifestation_singleton crm:P108i_was_produced_by ?production .
     ?production rdfs:label ?production_label .
-    ?production crm:P4_has_time-span ?production_timespan .
-    ?production crm:P7_took_place_at ?production_place .
+    OPTIONAL {
+      ?production crm:P4_has_time-span ?production_timespan .
+      ?production_timespan crm:P82a_begin_of_the_begin ?production_timespan_begin .
+      ?production_timespan crm:P82b_end_of_the_end ?production_timespan_end .
+    }
+    OPTIONAL { ?production crm:P7_took_place_at ?production_place }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
         crm:P14.1_in_the_role_of bod-roles:artist ;
@@ -343,6 +347,9 @@ WHERE
     }
   }
 
+  BIND(SUBSTR(?production_timespan_begin, 1, 4) as ?begin_year)
+  BIND(SUBSTR(?production_timespan_end, 1, 4) as ?end_year)
+  BIND(STR(?begin_year) + "-" + STR(?end_year) as ?production_timespan_label)
   # BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
   # BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
   # BIND(SUBSTR(?cat_date_raw, 7) as ?cat_date_day)
