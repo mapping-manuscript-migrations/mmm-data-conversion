@@ -1,6 +1,6 @@
 #!/bin/bash
 docker-compose down \
-  && docker volume rm mmmdataconversion_mmm-crm \
+  && docker volume rm mmm-data-conversion_mmm-crm \
   && docker-compose build crm \
   && docker-compose up -d input-sdbm \
   && docker-compose up -d input-bibale \
