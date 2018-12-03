@@ -14,7 +14,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 
 CONSTRUCT {
-  ?bod_place_uri a mmm-schema:Place ;
+  ?bod_place_uri a crm:E53_Place ;
     skos:prefLabel ?pref_label ;
     skos:altLabel ?place_label ;
     skos:altLabel ?alt_label ;
