@@ -30,8 +30,8 @@ COPY crm/construct_bibale_actors.sparql $FUSEKI_HOME/construct_bibale_actors.spa
 COPY crm/construct_bibale_manuscripts.sparql $FUSEKI_HOME/construct_bibale_manuscripts.sparql
 COPY crm/construct_bibale_places.sparql $FUSEKI_HOME/construct_bibale_places.sparql
 
-COPY --chown=9008 crm/convert.sh crm/convert_sdbm.sh crm/convert_bodley.sh crm/convert_bibale.sh tdbloader $FUSEKI_HOME/
-RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/convert_sdbm.sh $FUSEKI_HOME/convert_bodley.sh $FUSEKI_HOME/convert_bibale.sh $FUSEKI_HOME/tdbloader
+COPY --chown=9008 crm/convert.sh crm/convert_sdbm.sh crm/convert_bodley.sh crm/convert_bibale.sh tdbloader tdbindexer $FUSEKI_HOME/
+RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/convert_sdbm.sh $FUSEKI_HOME/convert_bodley.sh $FUSEKI_HOME/convert_bibale.sh $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbindexer
 
 EXPOSE 3030
 

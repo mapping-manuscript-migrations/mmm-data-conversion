@@ -12,6 +12,7 @@ $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-sdbm/ /tmp/sdbm_cidoc.ttl \
   && $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-bodley/ /tmp/bodley_cidoc.ttl \
   && $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-bibale/ /tmp/bibale_cidoc.ttl \
   && $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/schema/mmm/ $FUSEKI_HOME/mmm-schema.ttl \
+  && $FUSEKI_HOME/tdbindexer \
   && rm /tmp/*
 
 exec "$@"
