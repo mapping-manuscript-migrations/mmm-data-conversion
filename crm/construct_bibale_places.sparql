@@ -40,14 +40,14 @@ WHERE
   OPTIONAL { ?bibale_place_uri owl:sameAs ?authority_uri }
   OPTIONAL {
     ?bibale_place_uri a bibale:type:country .
-    BIND(?bibale_place_uri as ?place_type)
+    BIND(URI(bibale:type:country) as ?place_type)
   }
   OPTIONAL {
     ?bibale_place_uri a bibale:type:region .
-    BIND(?bibale_place_uri as ?place_type)
+    BIND(URI(bibale:type:region) as ?place_type)
   }
   OPTIONAL {
     ?bibale_place_uri a bibale:type:settlement .
-    BIND(?bibale_place_uri as ?place_type)
+    BIND(URI(bibale:type:settlement) as ?place_type)
   }
 }
