@@ -299,7 +299,7 @@ WHERE {
       BIND(crm:E8_Acquisition as ?event_type)
       BIND(crm:P24_transferred_title_of as ?event_property)
       BIND(crm:P7_took_place_at as ?event_place_property)
-      BIND(crm:E52_has_time-span as ?event_timespan_property)
+      BIND(crm:P4_has_time-span as ?event_timespan_property)
       BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
     }
     OPTIONAL {
@@ -314,7 +314,7 @@ WHERE {
       BIND(crm:E8_Acquisition as ?event_type)
       BIND(crm:P24_transferred_title_of as ?event_property)
       BIND(crm:P7_took_place_at as ?event_place_property)
-      BIND(crm:E52_has_time-span as ?event_timespan_property)
+      BIND(crm:P4_has_time-span as ?event_timespan_property)
       BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
     }
     OPTIONAL {
