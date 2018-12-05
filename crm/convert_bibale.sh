@@ -10,7 +10,6 @@ curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_bibale_places.sparq
 echo 'Constructing Bibale actors'
 curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_bibale_actors.sparql)" $INPUT_BIBALE_SPARQL_ENDPOINT -v > /tmp/bibale_actors.ttl
 
-echo "Inserting data to Fuseki"
 cat /tmp/bibale_manuscripts.ttl /tmp/bibale_places.ttl /tmp/bibale_actors.ttl > /tmp/bibale_cidoc.ttl
 
 exec "$@"
