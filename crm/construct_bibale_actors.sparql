@@ -1,4 +1,3 @@
-PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
@@ -30,7 +29,10 @@ WHERE
 {
   ?bibale_actor_uri a crm:E39_Actor .
   OPTIONAL { ?bibale_actor_uri rdfs:label ?pref_label }
-  OPTIONAL { ?bibale_actor_uri bibale:type:person_sex/bibale:type:sex_sex ?gender_literal }
+  OPTIONAL {
+    ?bibale_actor_uri bibale:type:person_sex/bibale:type:sex_sex+ ?gender_literal .
+    FILTER(!ISIRI(?gender_literal))
+  }
 
   #<http://bibale.irht.cnrs.fr/type:personne> .
 
