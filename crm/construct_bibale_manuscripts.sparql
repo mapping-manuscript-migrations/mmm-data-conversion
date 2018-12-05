@@ -14,9 +14,17 @@ PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 # - mint MMM URIs for resources
 
 CONSTRUCT {
-  # ?work a frbroo:F1_Work  ;
-  #   skos:prefLabel ?work_preflabel .
-  #
+  ?work a frbroo:F1_Work  ;
+    skos:prefLabel ?work_pref_label ;
+    skos:altLabel ?work_alt_label ;
+    dct:source mmm-schema:Bibale .
+
+  ?work_conception a frbroo:F27_Work_Conception ;
+    skos:prefLabel ?work_conception_pref_label ;
+    frbroo:R16_initiated ?work ;
+    mmm-schema:carried_out_by_as_author ?work_conception_author ;
+    dct:source mmm-schema:Bibale .
+
   # ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
   #   skos:altLabel ?work_title ;
   #   crm:P72_has_language ?work_language ;
@@ -30,7 +38,7 @@ CONSTRUCT {
   ?expression_creation a frbroo:F28_Expression_Creation ;
     frbroo:R17_created ?expression ;
     frbroo:R18_created ?manifestation_singleton ;
-    #   frbroo:R19_created_a_realisation_of ?work ;
+    frbroo:R19_created_a_realisation_of ?work ;
     mmm-schema:carried_out_by_as_author ?expression_author ;
     dct:source mmm-schema:Bibale .
   #   # crm:P7_took_place_at ?place ;
@@ -41,6 +49,7 @@ CONSTRUCT {
   #   #   crm:P79_beginning_is_qualified_by ?creation_date_start ;
   #   #   crm:P80_end_is_qualified_by ?creation_date_end .
   #
+
   ?production a crm:E12_Production ;
     crm:P108_has_produced ?manifestation_singleton ;
     crm:P4_has_time-span ?production_timespan ;
@@ -107,6 +116,21 @@ WHERE
           crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ] ;
           crm:P02_has_range ?production_scribe ;
       ] }  # Note, also other scribe path
+  }
+
+  # WORK
+  OPTIONAL {
+    ?work a frbroo2:F1_Work .
+    OPTIONAL { ?work rdfs:label ?work_pref_label }
+    OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_alt_label }
+    OPTIONAL {
+      ?work frbroo2:R16i_was_initiated_by ?work_conception .
+      ?work_conception crm:P01i_is_domain_of  [
+        a crm:PC14_carried_out_by ;
+        crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
+        crm:P02_has_range ?work_conception_author ;
+      ] ;
+    }
   }
 
 }
