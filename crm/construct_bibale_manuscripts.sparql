@@ -30,7 +30,7 @@ CONSTRUCT {
   ?expression_creation a frbroo:F28_Expression_Creation ;
     frbroo:R17_created ?expression ;
     frbroo:R18_created ?manifestation_singleton ;
-  #   frbroo:R19_created_a_realisation_of ?work ;
+    #   frbroo:R19_created_a_realisation_of ?work ;
     mmm-schema:carried_out_by_as_author ?expression_author ;
     dct:source mmm-schema:Bibale .
   #   # crm:P7_took_place_at ?place ;
@@ -43,10 +43,17 @@ CONSTRUCT {
   #
   ?production a crm:E12_Production ;
     crm:P108_has_produced ?manifestation_singleton ;
-  #   crm:P4_has_time-span ?production_timespan ;
-  #   crm:P7_took_place_at ?production_place ;
+    crm:P4_has_time-span ?production_timespan ;
+    crm:P7_took_place_at ?production_place ;
     mmm-schema:carried_out_by_as_scribe ?production_scribe ;
     dct:source mmm-schema:Bibale .
+
+  ?production_timespan a crm:E52_Time-Span ;
+    skos:prefLabel ?production_timespan_label ;
+    crm:P82a_begin_of_the_begin ?production_timespan_bb ;
+    crm:P81a_end_of_the_begin ?production_timespan_eb ;
+    crm:P81b_begin_of_the_end ?production_timespan_be ;
+    crm:P82b_end_of_the_end ?production_timespan_ee .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     # crm:P128_carries ?expression ;
@@ -65,28 +72,41 @@ CONSTRUCT {
 WHERE
 {
   ?manifestation_singleton a bibale:type:livre ;
-    rdfs:label ?preflabel .
+                           rdfs:label ?preflabel .
 
   OPTIONAL {
     ?expression crm:P128i_is_carried_by ?manifestation_singleton .
     ?expression_creation frbroo2:R17_created ?expression ;
-      a frbroo2:F28_Expression_Creation .
+                         a frbroo2:F28_Expression_Creation .
     OPTIONAL { ?expression rdfs:label ?expression_label }
     OPTIONAL { ?expression crm:P102_has_title ?expression_title }
     OPTIONAL { ?expression_creation crm:P01i_is_domain_of [
-      a crm:PC14_carried_out_by ;
-      crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
-      crm:P02_has_range ?expression_author ;
-      ] }
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
+          crm:P02_has_range ?expression_author ;
+          ] }
   }
 
+  # PRODUCTION
   OPTIONAL {
     ?production crm:P108_has_produced ?manifestation_singleton ;
-      a crm:E12_Production .
+                a crm:E12_Production .
+    OPTIONAL {
+      ?production crm:P4_has_time-span ?production_timespan .
+      OPTIONAL { ?production_timespan crm:P82a_begin_of_the_begin ?production_timespan_bb }
+      OPTIONAL { ?production_timespan crm:P81a_end_of_the_begin ?production_timespan_eb }
+      OPTIONAL { ?production_timespan crm:P81b_begin_of_the_end ?production_timespan_be }
+      OPTIONAL { ?production_timespan crm:P82b_end_of_the_end ?production_timespan_ee }
+      OPTIONAL { ?production_timespan rdfs:label ?production_timespan_label }
+    }
+    OPTIONAL {
+      ?production crm:P7_took_place_at ?production_place .
+    }
     OPTIONAL { ?production crm:P01i_is_domain_of [
-        a crm:PC14_carried_out_by ;
-        crm:P02_has_range ?production_scribe ;
-        crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ]
-        ] }  # TODO: Check other scribe path
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ] ;
+          crm:P02_has_range ?production_scribe ;
+      ] }  # Note, also other scribe path
   }
+
 }
