@@ -15,9 +15,9 @@
 <#mmm-cidoc>  rdf:type fuseki:Service ;
     fuseki:name              "ds" ;   # http://host:port/ds
     fuseki:serviceQuery      "sparql" ;    # SPARQL query service
-    #fuseki:serviceUpdate     "update" ;    # SPARQL update service
-    #fuseki:serviceUpload     "upload" ;    # Non-SPARQL upload service
-    #fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol
+    fuseki:serviceUpdate     "update" ;    # SPARQL update service
+    # fuseki:serviceUpload     "upload" ;    # Non-SPARQL upload service
+    fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol
     fuseki:dataset           <#mmm-cidoc-dataset> ;
     .
 
