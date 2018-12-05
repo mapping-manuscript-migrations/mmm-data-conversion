@@ -1,19 +1,23 @@
 #!/bin/bash
 set -eo pipefail
 
-command -v s-delete >/dev/null 2>&1 || { echo >&2 "s-delete is not available, aborting"; exit 1; }
-
 case "$1" in
   "bibale")
-    s-delete "http://localhost:3050/ds/data" "http://ldf.fi/mmm-bibale/"
+    docker-compose up -d crm
+    sleep 5
+    docker-compose exec crm ./prune.sh $1
     docker-compose down
   ;;
   "bodley")
-    s-delete "http://localhost:3050/ds/data" "http://ldf.fi/mmm-bodley/"
+    docker-compose up -d crm
+    sleep 5
+    docker-compose exec crm ./prune.sh $1
     docker-compose down
   ;;
   "sdbm")
-    s-delete "http://localhost:3050/ds/data" "http://ldf.fi/mmm-sdbm/"
+    docker-compose up -d crm
+    sleep 5
+    docker-compose exec crm ./prune.sh $1
     docker-compose down
   ;;
   *)
