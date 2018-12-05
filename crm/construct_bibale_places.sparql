@@ -1,4 +1,3 @@
-PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
@@ -18,36 +17,64 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 CONSTRUCT {
   ?bibale_place_uri a crm:E53_Place ;
     skos:prefLabel ?pref_label ;
-    # skos:altLabel ?place_label ;
-    # skos:altLabel ?alt_label ;
-    crm:P89_falls_within ?bibale_parent_place_uri ;
-    owl:sameAs  ?authority_uri ;
+    skos:altLabel ?combined_label ;
+    owl:sameAs ?authority_uri ;
     # wgs:lat ?lat ;
     # wgs:long ?long ;
     # mmm-schema:data_provider_url ?bod_place_uri ;
     mmm-schema:place_type ?place_type ;
+    crm:P89_falls_within ?parent_region ;
+    crm:P89_falls_within ?parent_country ;
+    dct:source mmm-schema:Bibale .
+
+    ?parent_region a crm:E53_Place ;
+    rdfs:label ?parent_region_label ;
+    mmm-schema:place_type ?parent_region_type ;
+    dct:source mmm-schema:Bibale .
+
+    ?parent_country a crm:E53_Place ;
+    rdfs:label ?parent_country_label ;
+    mmm-schema:place_type ?parent_country_type ;
     dct:source mmm-schema:Bibale .
 }
 WHERE
 {
   ?bibale_place_uri a crm:E53_Place .
+  ?bibale_place_uri crm:P88_consists_of ?child .
+  OPTIONAL { ?bibale_place_uri owl:sameAs ?authority_uri . }
   OPTIONAL {
-    ?bibale_place_uri rdfs:label ?pref_label
+    ?bibale_place_uri crm:P88_consists_of ?settlement .
+    ?settlement a bibale:type:settlement .
+    OPTIONAL { ?settlement rdfs:label ?settlement_label . }
+    BIND(bibale:type:settlement as ?place_type)
   }
   OPTIONAL {
-    ?bibale_place_uri crm:P88i_forms_part_of ?bibale_parent_place_uri .
-  }
-  OPTIONAL { ?bibale_place_uri owl:sameAs ?authority_uri }
-  OPTIONAL {
-    ?bibale_place_uri a bibale:type:country .
-    BIND(URI(bibale:type:country) as ?place_type)
+    ?bibale_place_uri crm:P88_consists_of ?region .
+    ?region a bibale:type:region .
+    OPTIONAL { ?region rdfs:label ?region_label . }
+    BIND(bibale:type:region as ?place_type)
   }
   OPTIONAL {
-    ?bibale_place_uri a bibale:type:region .
-    BIND(URI(bibale:type:region) as ?place_type)
+    ?bibale_place_uri crm:P88_consists_of ?country .
+    ?country a bibale:type:country .
+    OPTIONAL { ?country rdfs:label ?country_label . }
+    BIND(bibale:type:country as ?place_type)
+  }
+
+  # TODO: Parents are not bound now
+  OPTIONAL {
+    FILTER(?place_type = bibale:type:settlement)
+    BIND(?region as ?parent_region)
+    BIND(?region_label as ?parent_region_label)
+    BIND(bibale:type:region as ?parent_region_type)
   }
   OPTIONAL {
-    ?bibale_place_uri a bibale:type:settlement .
-    BIND(URI(bibale:type:settlement) as ?place_type)
+    FILTER(?place_type != bibale:type:country)
+    BIND(?region as ?parent_country)
+    BIND(?region_label as ?parent_country_label)
+    BIND(bibale:type:country as ?parent_country_type)
   }
+
+  BIND(COALESCE(?settlement_label, ?region_label, ?country_label) as ?pref_label)
+  BIND(CONCAT(?country_label, ", ", ?region_label, ", ", ?settlement_label) as ?combined_label)
 }
