@@ -16,7 +16,7 @@ RUN mkdir -p $FUSEKI_BASE/databases/tdb \
     $FUSEKI_BASE/databases/lucene \
     $FUSEKI_BASE/databases/spatiallucene
 
-COPY fuseki-config.ttl $FUSEKI_BASE/config.ttl
+COPY fuseki-config-crm.ttl $FUSEKI_BASE/config.ttl
 COPY crm/assembler.ttl $FUSEKI_BASE/configuration/assembler.ttl
 COPY crm/mmm-schema.ttl $FUSEKI_HOME/mmm-schema.ttl
 COPY crm/construct_sdbm_manuscripts.sparql $FUSEKI_HOME/construct_sdbm_manuscripts.sparql
