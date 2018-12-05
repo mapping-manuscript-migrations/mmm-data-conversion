@@ -31,7 +31,7 @@ CONSTRUCT {
     frbroo:R17_created ?expression ;
     frbroo:R18_created ?manifestation_singleton ;
   #   frbroo:R19_created_a_realisation_of ?work ;
-  #   mmm-schema:carried_out_by_as_author ?production_author ;
+    mmm-schema:carried_out_by_as_author ?expression_author ;
     dct:source mmm-schema:Bibale .
   #   # crm:P7_took_place_at ?place ;
   #   # crm:P4_has_time-span ?creation_timespan ;
