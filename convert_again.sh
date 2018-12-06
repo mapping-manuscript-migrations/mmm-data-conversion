@@ -5,19 +5,19 @@ case "$1" in
   "bibale")
     docker-compose up -d crm
     sleep 5
-    docker-compose exec crm ./prune.sh $1
+    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-bibale/"
     docker-compose down
   ;;
   "bodley")
     docker-compose up -d crm
     sleep 5
-    docker-compose exec crm ./prune.sh $1
+    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-bodley/"
     docker-compose down
   ;;
   "sdbm")
     docker-compose up -d crm
     sleep 5
-    docker-compose exec crm ./prune.sh $1
+    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-sdbm/"
     docker-compose down
   ;;
   *)
