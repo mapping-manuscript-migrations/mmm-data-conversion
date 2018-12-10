@@ -16,6 +16,7 @@ CONSTRUCT {
     dct:source mmm-schema:SDBM .
 
   ?work_conception a frbroo:F27_Work_Conception ;
+    # skos:prefLabel # TODO
     frbroo:R16_initiated ?work ;
     mmm-schema:carried_out_by_as_author ?author ;
     # crm:P7_took_place_at  # TODO: author place/nationality
@@ -23,15 +24,18 @@ CONSTRUCT {
     dct:source mmm-schema:SDBM .
 
   ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+    # skos:prefLabel # TODO
     crm:P72_has_language ?language ;
     dct:source mmm-schema:SDBM .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
+    # skos:prefLabel # TODO
     frbroo:R17_created ?expression ;
     frbroo:R19_created_a_realisation_of ?work ;
     dct:source mmm-schema:SDBM .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
+    skos:prefLabel ?preflabel ;
     crm:P128_carries ?expression ;
     crm:P43_has_dimension ?width_uri ;
     crm:P43_has_dimension ?height_uri ;
@@ -49,6 +53,7 @@ CONSTRUCT {
   ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
 
   ?production a crm:E12_Production ;
+    # skos:prefLabel # TODO
     crm:P108_has_produced ?manifestation_singleton ;
     crm:P4_has_time-span ?production_timespan ;
     crm:P7_took_place_at ?production_place ;
@@ -357,15 +362,17 @@ WHERE {
   }
 
   # title
-  ?entry_title :entry_titles_entry_id ?entry .
-  ?entry_title :entry_titles_id ?title_id .
   OPTIONAL {
-    ?entry_title :entry_titles_title|:entry_titles_common_title ?title .
-    FILTER(STR(?title) != "")
-  }
-  OPTIONAL {
-    ?entry_title :entry_titles_common_title ?common_title .
-    FILTER(STR(?common_title) != "")
+    ?entry_title :entry_titles_entry_id ?entry .
+    ?entry_title :entry_titles_id ?title_id .
+    OPTIONAL {
+      ?entry_title :entry_titles_title|:entry_titles_common_title ?title .
+      FILTER(STR(?title) != "")
+    }
+    OPTIONAL {
+      ?entry_title :entry_titles_common_title ?common_title .
+      FILTER(STR(?common_title) != "")
+    }
   }
 
   # author
