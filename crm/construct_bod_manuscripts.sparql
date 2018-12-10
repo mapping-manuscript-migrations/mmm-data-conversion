@@ -1,8 +1,6 @@
-PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -23,12 +21,20 @@ CONSTRUCT {
     skos:prefLabel ?work_conception_pref_label ;
     frbroo:R16_initiated ?work ;
     mmm-schema:carried_out_by_as_author ?work_conception_author ;
+    # crm:P7_took_place_at  # TODO: author place/nationality
+    # crm:P4_has_time-span  # TODO: author life dates
     dct:source mmm-schema:Bodley .
 
   ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
-    skos:altLabel ?work_title ;
     skos:prefLabel ?expression_label ;
+    skos:altLabel ?work_title ;
     crm:P72_has_language ?work_language ;
+    dct:source mmm-schema:Bodley .
+
+  ?expression_creation a frbroo:F28_Expression_Creation ;
+    # skos:prefLabel # TODO
+    frbroo:R17_created ?expression ;
+    frbroo:R19_created_a_realisation_of ?work ;
     dct:source mmm-schema:Bodley .
 
   ?production a crm:E12_Production ;
@@ -52,18 +58,9 @@ CONSTRUCT {
     crm:P80_end_is_qualified_by ?production_timespan_end .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
-    # crm:P128_carries ?expression ;
-    skos:prefLabel ?preflabel ;
-    # crm:P43_has_dimension ?width_uri ;
-    # crm:P43_has_dimension ?height_uri ;
-    # crm:P43_has_dimension ?folios_uri ;
-    # crm:P43_has_dimension ?lines_uri ;
-    # crm:P43_has_dimension ?columns_uri ;
-    # crm:P43_has_dimension ?miniatures_uri ;
-    # crm:P45_consists_of ?material ;
+    skos:prefLabel ?manifestation_singleton_preflabel ;
+    crm:P128_carries ?expression ;
     crm:P51_has_former_or_current_owner ?prov_agent ;
-    # mmm-schema:entry ?entry ;
-    # mmm-schema:manuscript_record ?manuscript ;
     mmm-schema:data_provider_url ?manifestation_singleton ;
     dct:source mmm-schema:Bodley .
 
@@ -71,7 +68,7 @@ CONSTRUCT {
 WHERE
 {
   ?manifestation_singleton a frbr:F4_Manifestation_Singleton ;
-    rdfs:label ?preflabel .
+    rdfs:label ?manifestation_singleton_preflabel .
   OPTIONAL { ?manifestation_singleton crm:P51_has_former_or_current_owner ?prov_agent }
 
   # EXPRESSION / WORK
