@@ -105,7 +105,10 @@ WHERE
 
   # EXPRESSION
   OPTIONAL {
-    ?expression crm:P128i_is_carried_by ?manifestation_singleton .
+    ?expression a frbroo2:F2_Expression .
+    { ?expression crm:P128i_is_carried_by ?manifestation_singleton }
+    UNION
+    { ?expression ^crm:P128_carries ?manifestation_singleton }
     OPTIONAL { ?expression rdfs:label ?expression_label }
     OPTIONAL { ?expression crm:P102_has_title ?expression_title }
     OPTIONAL {
@@ -131,6 +134,7 @@ WHERE
     OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_alt_label }
     OPTIONAL {
       ?work frbroo2:R16i_was_initiated_by ?work_conception .
+      ?work_conception a crm:F27_Work_Conception .
       OPTIONAL {
         ?work_conception crm:P01i_is_domain_of  [
           a crm:PC14_carried_out_by ;
