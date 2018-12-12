@@ -17,12 +17,17 @@ CONSTRUCT {
   ?work a frbroo:F1_Work  ;
     skos:prefLabel ?work_pref_label ;
     skos:altLabel ?work_alt_label ;
+    mmm-schema:data_provider_url ?work ;
     dct:source mmm-schema:Bibale .
 
   ?work_conception a frbroo:F27_Work_Conception ;
     skos:prefLabel ?work_conception_pref_label ;
     frbroo:R16_initiated ?work ;
     mmm-schema:carried_out_by_as_author ?work_conception_author ;
+    mmm-schema:carried_out_by_as_translator ?work_conception_translator ;
+    mmm-schema:carried_out_by_as_editor ?work_conception_editor ;
+    mmm-schema:carried_out_by_as_commissioner ?work_conception_commissioner ;
+    mmm-schema:carried_out_by_as_recipient ?work_conception_recipient ;
     dct:source mmm-schema:Bibale .
 
   # ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
@@ -33,6 +38,7 @@ CONSTRUCT {
   ?expression a frbroo:F2_Expression;
     skos:prefLabel ?expression_label ;
     skos:altLabel ?expression_title ;
+    mmm-schema:data_provider_url ?expression ;
     dct:source mmm-schema:Bibale .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
@@ -67,15 +73,7 @@ CONSTRUCT {
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     # crm:P128_carries ?expression ;
     skos:prefLabel ?preflabel ;
-    # crm:P43_has_dimension ?width_uri ;
-    # crm:P43_has_dimension ?height_uri ;
-    # crm:P43_has_dimension ?folios_uri ;
-    # crm:P43_has_dimension ?lines_uri ;
-    # crm:P43_has_dimension ?columns_uri ;
-    # crm:P43_has_dimension ?miniatures_uri ;
-    # crm:P45_consists_of ?material ;
-    # crm:P51_has_former_or_current_owner ?prov_agent ;
-    # mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
+    mmm-schema:data_provider_url ?manifestation_singleton ;
     dct:source mmm-schema:Bibale .
 }
 WHERE
@@ -83,23 +81,10 @@ WHERE
   ?manifestation_singleton a bibale:type:livre ;
                            rdfs:label ?preflabel .
 
-  OPTIONAL {
-    ?expression crm:P128i_is_carried_by ?manifestation_singleton .
-    ?expression_creation frbroo2:R17_created ?expression ;
-                         a frbroo2:F28_Expression_Creation .
-    OPTIONAL { ?expression rdfs:label ?expression_label }
-    OPTIONAL { ?expression crm:P102_has_title ?expression_title }
-    OPTIONAL { ?expression_creation crm:P01i_is_domain_of [
-          a crm:PC14_carried_out_by ;
-          crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
-          crm:P02_has_range ?expression_author ;
-          ] }
-  }
-
   # PRODUCTION
   OPTIONAL {
     ?production crm:P108_has_produced ?manifestation_singleton ;
-                a crm:E12_Production .
+      a crm:E12_Production .
     OPTIONAL {
       ?production crm:P4_has_time-span ?production_timespan .
       OPTIONAL { ?production_timespan crm:P82a_begin_of_the_begin ?production_timespan_bb }
@@ -112,24 +97,75 @@ WHERE
       ?production crm:P7_took_place_at ?production_place .
     }
     OPTIONAL { ?production crm:P01i_is_domain_of [
-          a crm:PC14_carried_out_by ;
-          crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ] ;
-          crm:P02_has_range ?production_scribe ;
-      ] }  # Note, also other scribe path
+         a crm:PC14_carried_out_by ;
+         crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ] ;
+         crm:P02_has_range ?production_scribe ;
+     ] }  # Note, also other scribe path
+  }
+
+  # EXPRESSION
+  OPTIONAL {
+    ?expression crm:P128i_is_carried_by ?manifestation_singleton .
+    OPTIONAL { ?expression rdfs:label ?expression_label }
+    OPTIONAL { ?expression crm:P102_has_title ?expression_title }
+    OPTIONAL {
+      ?expression_creation a frbroo2:F28_Expression_Creation ;
+        frbroo2:R17_created ?expression .
+      # OPTIONAL { frbroo2:R19_created_a_realisation_of ?work }
+      OPTIONAL { ?expression_creation crm:P01i_is_domain_of [
+           a crm:PC14_carried_out_by ;
+           crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
+           crm:P02_has_range ?expression_author ;
+           ]
+      }
+    }
   }
 
   # WORK
   OPTIONAL {
     ?work a frbroo2:F1_Work .
+    { ?work crm:P128i_is_carried_by ?manifestation_singleton }
+    UNION
+    { ?work ^crm:P128_carries ?manifestation_singleton }
     OPTIONAL { ?work rdfs:label ?work_pref_label }
     OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_alt_label }
     OPTIONAL {
       ?work frbroo2:R16i_was_initiated_by ?work_conception .
-      ?work_conception crm:P01i_is_domain_of  [
-        a crm:PC14_carried_out_by ;
-        crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
-        crm:P02_has_range ?work_conception_author ;
-      ] ;
+      OPTIONAL {
+        ?work_conception crm:P01i_is_domain_of  [
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
+          crm:P02_has_range ?work_conception_author ;
+        ] ;
+      }
+      OPTIONAL {
+        ?work_conception crm:P01i_is_domain_of  [
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Translator" ] ;
+          crm:P02_has_range ?work_conception_translator ;
+        ] ;
+      }
+      OPTIONAL {
+        ?work_conception crm:P01i_is_domain_of  [
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Editor" ] ;
+          crm:P02_has_range ?work_conception_editor ;
+        ] ;
+      }
+      OPTIONAL {
+        ?work_conception crm:P01i_is_domain_of  [
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Commissioner" ] ;
+          crm:P02_has_range ?work_conception_commissioner ;
+        ] ;
+      }
+      OPTIONAL {
+        ?work_conception crm:P01i_is_domain_of  [
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Recipient" ] ;
+          crm:P02_has_range ?work_conception_recipient ;
+        ] ;
+      }
     }
   }
 
