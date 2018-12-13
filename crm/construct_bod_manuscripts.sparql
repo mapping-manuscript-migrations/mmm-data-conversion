@@ -15,6 +15,7 @@ PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 CONSTRUCT {
   ?work a frbroo:F1_Work  ;
     skos:prefLabel ?work_preflabel ;
+    mmm-schema:data_provider_url ?work ;
     dct:source mmm-schema:Bodley .
 
   ?work_conception a frbroo:F27_Work_Conception ;
@@ -28,7 +29,7 @@ CONSTRUCT {
   ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
     skos:prefLabel ?expression_label ;
     skos:altLabel ?work_title ;
-    crm:P72_has_language ?work_language ;
+    crm:P72_has_language ?work_language_label ;
     dct:source mmm-schema:Bodley .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
@@ -79,7 +80,7 @@ WHERE
       ?expression frbr:R3i_realises ?work .
       ?work rdfs:label ?work_title .
       OPTIONAL { ?work crm:P102_has_title ?work_preflabel . }
-      OPTIONAL { ?work crm:P72_has_language ?work_language . }
+      OPTIONAL { ?work crm:P72_has_language/rdfs:label ?work_language_label . }
       OPTIONAL {
         ?work frbr:R16i_was_initiated_by ?work_conception .
         ?work_conception rdfs:label ?work_conception_pref_label .
