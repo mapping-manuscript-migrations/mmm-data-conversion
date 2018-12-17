@@ -87,35 +87,33 @@ CONSTRUCT {
   ?miniatures_uri a mmm-schema:Miniatures ;
     crm:P90_has_value ?miniatures_value .
 
-  ?acquisition_uri a ?event_type ;  # Acquisition or Observation
-    skos:prefLabel ?cat_title ;
-    ?event_property ?manifestation_singleton ;
-    ?event_seller_or_holder_property ?seller ;
-    crm:P22_transferred_title_to ?buyer ;
-    mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
-    mmm-schema:data_provider_url ?entry ;
-    ?event_place_property ?source_agent_location ;
-    # mmm-schema:place_literal ?cat_location_literal ;
-    ?event_timespan_property ?cat_date ;
-    crm:P179_had_sales_price ?monetary_amount_uri ;
-    crm:P70i_is_documented_in ?source ;
-    dct:source mmm-schema:SDBM .
-
-  ?production a frbroo:E12_Production .
-
-  ?monetary_amount_uri a crm:E97_Monetary_Amount ;
-    crm:P180_has_currency ?sales_currency ;
-    crm:P181_has_amount ?sales_price ;
-    rdfs:comment ?sales_other_currency .
-
-  # Monetary amount reification
-  ?reification_monetary_amount_uri
-    a rdf:Statement ;
-    rdf:subject ?acquisition_uri ;
-    rdf:predicate crm:P179_had_sales_price ;
-    rdf:object ?monetary_amount_uri ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
+  # ?acquisition_uri a ?event_type ;  # Acquisition or Observation
+  #   skos:prefLabel ?cat_title ;
+  #   ?event_property ?manifestation_singleton ;
+  #   ?event_seller_or_holder_property ?seller ;
+  #   crm:P22_transferred_title_to ?buyer ;
+  #   mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   ?event_place_property ?source_agent_location ;
+  #   # mmm-schema:place_literal ?cat_location_literal ;
+  #   ?event_timespan_property ?cat_date ;
+  #   crm:P179_had_sales_price ?monetary_amount_uri ;
+  #   crm:P70i_is_documented_in ?source ;
+  #   dct:source mmm-schema:SDBM .
+  #
+  # ?monetary_amount_uri a crm:E97_Monetary_Amount ;
+  #   crm:P180_has_currency ?sales_currency ;
+  #   crm:P181_has_amount ?sales_price ;
+  #   rdfs:comment ?sales_other_currency .
+  #
+  # # Monetary amount reification
+  # ?reification_monetary_amount_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?acquisition_uri ;
+  #   rdf:predicate crm:P179_had_sales_price ;
+  #   rdf:object ?monetary_amount_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
 
   # provenance reification
   ?reification_owner_uri
@@ -301,54 +299,54 @@ WHERE {
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
 
-  ## TRANSACTION INFORMATION
-
-  OPTIONAL {
-    # ?entry :entries_transaction_type "sale" or "gift"
-    ?sales_entry :sales_entry_id ?entry .
-    ?sales_entry :sales_id ?sales_id .
-    OPTIONAL { ?sales_entry :sales_price ?sales_price }
-    OPTIONAL { ?sales_entry :sales_currency ?sales_currency }
-    OPTIONAL { ?sales_entry :sales_other_currency ?sales_other_currency }
-    OPTIONAL {
-      ?sales_entry :sales_sold "Yes"
-      BIND(crm:E8_Acquisition as ?event_type)
-      BIND(crm:P24_transferred_title_of as ?event_property)
-      BIND(crm:P7_took_place_at as ?event_place_property)
-      BIND(crm:P4_has_time-span as ?event_timespan_property)
-      BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
-    }
-    OPTIONAL {
-      ?seller_agent :sale_agents_sale_id ?sales_entry .
-      ?seller_agent :sale_agents_role "seller_or_holder" .
-      ?seller_agent :sale_agents_agent_id/:names_id ?seller_id .
-    }
-    OPTIONAL {
-      ?buyer_agent :sale_agents_sale_id ?sales_entry .
-      ?buyer_agent :sale_agents_role "buyer" .
-      ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
-      BIND(crm:E8_Acquisition as ?event_type)
-      BIND(crm:P24_transferred_title_of as ?event_property)
-      BIND(crm:P7_took_place_at as ?event_place_property)
-      BIND(crm:P4_has_time-span as ?event_timespan_property)
-      BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
-    }
-    OPTIONAL {
-      ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
-      ?selling_agent_agent :sale_agents_role "selling_agent" .
-      ?selling_agent_agent :sale_agents_agent_id ?selling_agent_name .
-      ?selling_agent_name :names_id ?selling_agent_id .
-      # ?selling_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?place_local_id .
-      # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?selling_agent_location)
-    }
-  }
-  OPTIONAL {
-    BIND(mmm-schema:Manuscript_Observation as ?event_type)
-    BIND(mmm-schema:observed_manuscript as ?event_property)
-    BIND(mmm-schema:observed_location as ?event_place_property)
-    BIND(mmm-schema:observed_time-span as ?event_timespan_property)
-    BIND(mmm-schema:observed_owner as ?event_seller_or_holder_property)
-  }
+  # ## TRANSACTION INFORMATION
+  #
+  # OPTIONAL {
+  #   # ?entry :entries_transaction_type "sale" or "gift"
+  #   ?sales_entry :sales_entry_id ?entry .
+  #   ?sales_entry :sales_id ?sales_id .
+  #   OPTIONAL { ?sales_entry :sales_price ?sales_price }
+  #   OPTIONAL { ?sales_entry :sales_currency ?sales_currency }
+  #   OPTIONAL { ?sales_entry :sales_other_currency ?sales_other_currency }
+  #   OPTIONAL {
+  #     ?sales_entry :sales_sold "Yes"
+  #     BIND(crm:E8_Acquisition as ?event_type)
+  #     BIND(crm:P24_transferred_title_of as ?event_property)
+  #     BIND(crm:P7_took_place_at as ?event_place_property)
+  #     BIND(crm:P4_has_time-span as ?event_timespan_property)
+  #     BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
+  #   }
+  #   OPTIONAL {
+  #     ?seller_agent :sale_agents_sale_id ?sales_entry .
+  #     ?seller_agent :sale_agents_role "seller_or_holder" .
+  #     ?seller_agent :sale_agents_agent_id/:names_id ?seller_id .
+  #   }
+  #   OPTIONAL {
+  #     ?buyer_agent :sale_agents_sale_id ?sales_entry .
+  #     ?buyer_agent :sale_agents_role "buyer" .
+  #     ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
+  #     BIND(crm:E8_Acquisition as ?event_type)
+  #     BIND(crm:P24_transferred_title_of as ?event_property)
+  #     BIND(crm:P7_took_place_at as ?event_place_property)
+  #     BIND(crm:P4_has_time-span as ?event_timespan_property)
+  #     BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
+  #   }
+  #   OPTIONAL {
+  #     ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
+  #     ?selling_agent_agent :sale_agents_role "selling_agent" .
+  #     ?selling_agent_agent :sale_agents_agent_id ?selling_agent_name .
+  #     ?selling_agent_name :names_id ?selling_agent_id .
+  #     # ?selling_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?place_local_id .
+  #     # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?selling_agent_location)
+  #   }
+  # }
+  # OPTIONAL {
+  #   BIND(mmm-schema:Manuscript_Observation as ?event_type)
+  #   BIND(mmm-schema:observed_manuscript as ?event_property)
+  #   BIND(mmm-schema:observed_location as ?event_place_property)
+  #   BIND(mmm-schema:observed_time-span as ?event_timespan_property)
+  #   BIND(mmm-schema:observed_owner as ?event_seller_or_holder_property)
+  # }
 
   ## MANUSCRIPT DETAILS ##
 
@@ -482,23 +480,23 @@ WHERE {
   ## SOURCE ##
   OPTIONAL {
     ?entry :entries_source_id ?entry_source .
-    OPTIONAL{ ?entry_source :sources_id ?source_id }
-    # TODO: if source has no title, generate one for acquisition/observation prefLabel
-    OPTIONAL{
-      ?entry_source :sources_title ?cat_title
-      FILTER(STR(?cat_title) != "")
-    }
-    OPTIONAL{
-      ?entry_source :sources_date ?cat_date_raw
-      FILTER(STR(?cat_date_raw) != "")
-    }
-    OPTIONAL{ ?entry_source :sources_link ?cat_link }
-    OPTIONAL{
-      ?source_agent :source_agents_source_id ?entry_source .
-      ?source_agent :source_agents_agent_id ?source_agent_name .
-      ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
-      BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?source_place_local_id))) as ?source_agent_location)
-    }
+    ?entry_source :sources_id ?source_id .
+    # # TODO: if source has no title, generate one for acquisition/observation prefLabel
+    # OPTIONAL{
+    #   ?entry_source :sources_title ?cat_title
+    #   FILTER(STR(?cat_title) != "")
+    # }
+    # OPTIONAL{
+    #   ?entry_source :sources_date ?cat_date_raw
+    #   FILTER(STR(?cat_date_raw) != "")
+    # }
+    #OPTIONAL{ ?entry_source :sources_link ?cat_link }
+    # OPTIONAL{
+    #   ?source_agent :source_agents_source_id ?entry_source .
+    #   ?source_agent :source_agents_agent_id ?source_agent_name .
+    #   ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
+    #   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?source_place_local_id))) as ?source_agent_location)
+    # }
   }
 
   BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
@@ -520,20 +518,20 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
   BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?author_id))) as ?author)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?seller_id))) as ?seller)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?buyer_id))) as ?buyer)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?selling_agent_id))) as ?selling_agent)
+  #BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?seller_id))) as ?seller)
+  #BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?buyer_id))) as ?buyer)
+  #BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?selling_agent_id))) as ?selling_agent)
   BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?prov_agent_id))) as ?prov_agent)
   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?production_place_id))) as ?production_place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?production_date_id))) as ?production_timespan)
-  BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
+  #BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "height/", ?entry_id)) as ?height_uri)
   BIND(IRI(CONCAT(STR(mmm:), "width/", ?entry_id)) as ?width_uri)
   BIND(IRI(CONCAT(STR(mmm:), "folios/", ?entry_id)) as ?folios_uri)
   BIND(IRI(CONCAT(STR(mmm:), "lines/", ?entry_id)) as ?lines_uri)
   BIND(IRI(CONCAT(STR(mmm:), "columns/", ?entry_id)) as ?columns_uri)
   BIND(IRI(CONCAT(STR(mmm:), "miniatures/", ?entry_id)) as ?miniatures_uri)
-  BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
+  #BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
 
   BIND(?miniatures_large_value + ?miniatures_small_value + ?miniatures_fullpage_value + ?miniatures_unspec_value as ?miniatures_value)
   BIND(CONCAT(STR(?production_date_start),"-",STR(?production_date_end)) as ?production_date_label)
