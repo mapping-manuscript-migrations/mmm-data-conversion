@@ -4,6 +4,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmm-actors: <http://ldf.fi/mmm/actors/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -17,12 +18,12 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 CONSTRUCT {
   ?bibale_actor_uri a ?actor_class ;
     skos:prefLabel ?pref_label ;
-    # skos:altLabel ?person_label ;
-    # skos:altLabel ?altlabel ;
     # crm:P98i_was_born ?birth_event ;
     # crm:P100i_died_in ?death_event ;
     # owl:sameAs ?external_uri ;
-    # mmm-schema:data_provider_url ?bod_person_uri ;
+    mmm-schema:data_provider_url ?bibale_actor_uri ;
+    mmm-schema:person_place ?bibale_place_uri ;
+    mmm-schema:gender ?gender_literal ;
     dct:source mmm-schema:Bibale .
 }
 WHERE
@@ -34,6 +35,21 @@ WHERE
     FILTER(!ISIRI(?gender_literal))
   }
 
-  #<http://bibale.irht.cnrs.fr/type:personne> .
+  OPTIONAL {
+    # ORGANIZATION
+    ?bibale_actor_uri bibale:type:person_type/rdfs:label* "morale" .
+    BIND(IRI(mmm-schema:Organization) as ?actor_class)
+  }
 
+  OPTIONAL {
+    BIND(IRI(mmm-schema:Person) as ?actor_class)
+  }
+
+  OPTIONAL {
+    ?bibale_actor_uri crm:P53_has_former_or_current_location ?bibale_place_uri .
+  }
+
+  OPTIONAL {
+    ?bibale_actor_uri crm:P98i_was_born ?birth .
+  }
 }
