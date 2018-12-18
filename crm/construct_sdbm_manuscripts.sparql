@@ -48,7 +48,7 @@ CONSTRUCT {
     mmm-schema:manuscript_record ?manuscript ;
     mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
     mmm-schema:author ?author ; # shortcut
-    mmm-schema:language ?author ; # shortcut
+    mmm-schema:language ?language ; # shortcut
     dct:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
