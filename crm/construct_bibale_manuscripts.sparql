@@ -81,6 +81,13 @@ WHERE
   ?manifestation_singleton a bibale:type:livre ;
                            rdfs:label ?preflabel .
 
+  # OPTIONAL {
+  #   ?manifestation_singleton bibale:type:attested_or_curated/rdfs:label? "Volume conservé"
+  # }
+  # OPTIONAL {
+  #   ?manifestation_singleton bibale:type:attested_or_curated/rdfs:label? "Volume ou texte attesté"
+  # }
+
   # PRODUCTION
   OPTIONAL {
     ?production crm:P108_has_produced ?manifestation_singleton ;
