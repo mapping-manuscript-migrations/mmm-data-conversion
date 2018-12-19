@@ -119,10 +119,22 @@
   rdfs:subPropertyOf crm:P14_carried_out_by ;
   skos:prefLabel "Carried out by selling agent"@en .
 
+:carried_out_by_as_possible_author a rdf:Property;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Possibly carried out by author"@en .
+
 :entry a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "SDBM manuscript entry URL" .
 
 :manuscript_record a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
-  skos:prefLabel "SDBM manuscript entry URL" .
+  skos:prefLabel "SDBM manuscript record URL" .
+
+:manuscript_work a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Work contained in a physical manuscript" .
+
+:manuscript_author a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Author related to a physical manuscript" .
