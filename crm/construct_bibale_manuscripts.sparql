@@ -14,25 +14,18 @@ PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 # - mint MMM URIs for resources
 
 CONSTRUCT {
-  ?work a frbroo:F1_Work .
 
-  ?exp_work a frbroo:F1_Work .
-
-  # ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
-  #   skos:altLabel ?work_title ;
-  #   crm:P72_has_language ?work_language ;
-  #   dct:source mmm-schema:Bodley .
-  #
-  ?expression a frbroo:F2_Expression;
+  ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
     skos:prefLabel ?expression_label ;
     skos:altLabel ?expression_title ;
     mmm-schema:data_provider_url ?expression ;
+  #   crm:P72_has_language ?manifestation_work_language ;
     dct:source mmm-schema:Bibale .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
     frbroo:R17_created ?expression ;
     frbroo:R18_created ?manifestation_singleton ;
-    frbroo:R19_created_a_realisation_of ?exp_work ;
+    frbroo:R19_created_a_realisation_of ?expression_work ;
     mmm-schema:carried_out_by_as_author ?expression_author ;
     dct:source mmm-schema:Bibale .
   #   # crm:P7_took_place_at ?place ;
@@ -59,9 +52,10 @@ CONSTRUCT {
     crm:P82b_end_of_the_end ?production_timespan_ee .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
-    # crm:P128_carries ?expression ;
+    crm:P128_carries ?expression ;
     skos:prefLabel ?preflabel ;
     mmm-schema:data_provider_url ?manifestation_singleton ;
+    mmm-schema:manuscript_work ?manifestation_work
     dct:source mmm-schema:Bibale .
 }
 WHERE
@@ -99,9 +93,9 @@ WHERE
   }
 
   OPTIONAL {
-    { ?work crm:P128i_is_carried_by ?manifestation_singleton }
+    { ?manifestation_work crm:P128i_is_carried_by ?manifestation_singleton }
     UNION
-    { ?work ^crm:P128_carries ?manifestation_singleton }
+    { ?manifestation_work ^crm:P128_carries ?manifestation_singleton }
   }
 
   # EXPRESSION
@@ -116,11 +110,11 @@ WHERE
       ?expression_creation a frbroo2:F28_Expression_Creation ;
         frbroo2:R17_created ?expression ;
       OPTIONAL {
-        { ?expression_creation frbroo2:R19_created_a_realisation_of ?exp_work }
+        { ?expression_creation frbroo2:R19_created_a_realisation_of ?expression_work }
         UNION
-        { ?expression_creation ^frbroo2:R19i_was_realised_through ?exp_work }
+        { ?expression_creation ^frbroo2:R19i_was_realised_through ?expression_work }
       }
-      # OPTIONAL { frbroo2:R19_created_a_realisation_of ?work }
+      # OPTIONAL { frbroo2:R19_created_a_realisation_of ?manifestation_work }
       OPTIONAL { ?expression_creation crm:P01i_is_domain_of [
            a crm:PC14_carried_out_by ;
            crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
