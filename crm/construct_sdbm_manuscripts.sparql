@@ -434,7 +434,7 @@ WHERE {
 
   BIND(?miniatures_large_value + ?miniatures_small_value + ?miniatures_fullpage_value + ?miniatures_unspec_value as ?miniatures_value)
   BIND(CONCAT(STR(?production_date_start),"-",STR(?production_date_end)) as ?production_date_label)
-  BIND("SDBM_MS_" + STR(?manuscript_id)) as ?manuscript_preflabel)
+  BIND("SDBM_MS_" + STR(?manuscript_id) as ?manuscript_preflabel)
 
   BIND(COALESCE(?manuscript, ?entry) as ?provider_url)
 
