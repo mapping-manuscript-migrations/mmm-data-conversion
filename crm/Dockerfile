@@ -20,6 +20,7 @@ COPY fuseki-config-crm.ttl $FUSEKI_BASE/config.ttl
 COPY crm/assembler.ttl $FUSEKI_BASE/configuration/assembler.ttl
 COPY crm/mmm-schema.ttl $FUSEKI_HOME/mmm-schema.ttl
 COPY crm/construct_sdbm_manuscripts.sparql $FUSEKI_HOME/construct_sdbm_manuscripts.sparql
+COPY crm/construct_sdbm_works.sparql $FUSEKI_HOME/construct_sdbm_works.sparql
 COPY crm/construct_sdbm_manuscripts_transactions.sparql $FUSEKI_HOME/construct_sdbm_manuscripts_transactions.sparql
 COPY crm/construct_sdbm_people.sparql $FUSEKI_HOME/construct_sdbm_people.sparql
 COPY crm/construct_sdbm_places.sparql $FUSEKI_HOME/construct_sdbm_places.sparql

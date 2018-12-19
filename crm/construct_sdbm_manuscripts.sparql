@@ -10,28 +10,6 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 
 CONSTRUCT {
-  # ?work a frbroo:F1_Work ;
-  #   skos:prefLabel ?title ;
-  #   dct:source mmm-schema:SDBM .
-  #
-  # ?work_conception a frbroo:F27_Work_Conception ;
-  #   # skos:prefLabel # TODO
-  #   frbroo:R16_initiated ?work ;
-  #   mmm-schema:carried_out_by_as_author ?author ;
-  #   # crm:P7_took_place_at  # TODO: author place/nationality
-  #   # crm:P4_has_time-span  # TODO: author life dates
-  #   dct:source mmm-schema:SDBM .
-
-  # ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
-  #   # skos:prefLabel # TODO
-  #   crm:P72_has_language ?language ;
-  #   dct:source mmm-schema:SDBM .
-  #
-  # ?expression_creation a frbroo:F28_Expression_Creation ;
-  #   # skos:prefLabel # TODO
-  #   frbroo:R17_created ?expression ;
-  #   frbroo:R19_created_a_realisation_of ?work ;
-  #   dct:source mmm-schema:SDBM .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?preflabel ;
@@ -47,8 +25,9 @@ CONSTRUCT {
     mmm-schema:entry ?entry ;
     mmm-schema:manuscript_record ?manuscript ;
     mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
-    mmm-schema:author ?author ; # shortcut
-    mmm-schema:language ?language ; # shortcut
+    mmm-schema:manuscript_author ?author ;  # shortcut
+    mmm-schema:manuscript_work ?work ;  # shortcut
+    # mmm-schema:language ?language ; # shortcut
     dct:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton crm:P46i_is_composed_of ?manifestation_singleton .
@@ -88,186 +67,153 @@ CONSTRUCT {
   ?miniatures_uri a mmm-schema:Miniatures ;
     crm:P90_has_value ?miniatures_value .
 
-  # ?acquisition_uri a ?event_type ;  # Acquisition or Observation
-  #   skos:prefLabel ?cat_title ;
-  #   ?event_property ?manifestation_singleton ;
-  #   ?event_seller_or_holder_property ?seller ;
-  #   crm:P22_transferred_title_to ?buyer ;
-  #   mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   ?event_place_property ?source_agent_location ;
-  #   # mmm-schema:place_literal ?cat_location_literal ;
-  #   ?event_timespan_property ?cat_date ;
-  #   crm:P179_had_sales_price ?monetary_amount_uri ;
-  #   crm:P70i_is_documented_in ?source ;
-  #   dct:source mmm-schema:SDBM .
-  #
-  # ?monetary_amount_uri a crm:E97_Monetary_Amount ;
-  #   crm:P180_has_currency ?sales_currency ;
-  #   crm:P181_has_amount ?sales_price ;
-  #   rdfs:comment ?sales_other_currency .
-  #
-  # # Monetary amount reification
-  # ?reification_monetary_amount_uri
+  # # provenance reification
+  # ?reification_owner_uri
   #   a rdf:Statement ;
-  #   rdf:subject ?acquisition_uri ;
-  #   rdf:predicate crm:P179_had_sales_price ;
-  #   rdf:object ?monetary_amount_uri ;
+  #   rdf:subject ?manifestation_singleton ;
+  #   rdf:predicate crm:P51_has_former_or_current_owner ;
+  #   rdf:object ?prov_agent ;
+  #   mmm-schema:order ?prov_order ;
+  #   rdfs:comment ?prov_comment ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
-
-  # provenance reification
-  ?reification_owner_uri
-    a rdf:Statement ;
-    rdf:subject ?manifestation_singleton ;
-    rdf:predicate crm:P51_has_former_or_current_owner ;
-    rdf:object ?prov_agent ;
-    mmm-schema:order ?prov_order ;
-    rdfs:comment ?prov_comment ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # title reification
-  ?reification_label_uri
-    a rdf:Statement ;
-    rdf:subject ?manifestation_singleton ;
-    rdf:predicate rdfs:label ;
-    rdf:object ?title ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # identifier reification
-  ?reification_id_uri a rdf:Statement ;
-    rdf:subject ?manifestation_singleton ;
-    rdf:predicate crm:P48_has_preferred_identifier ;
-    rdf:object ?manuscript_id ;
-    dct:source ?source .
-
-  # author reification
-  ?reification_author_uri
-    a rdf:Statement ;
-    rdf:subject ?expression_creation ;
-    rdf:predicate mmm-schema:carried_out_by_as_author ;
-    rdf:object ?author ;
-    mmm-schema:data_provider_url ?entry ;
-    :observed_author ?observed_author ;
-    dct:source ?source .
-
-  # production date reification
-  ?reification_production_time_uri
-    a rdf:Statement ;
-    rdf:subject ?production ;
-    rdf:predicate crm:P4_has_time-span ;
-    rdf:object ?production_timespan ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # artist reification
-
-  # scribe reification
-
-  # language reification
-  ?reification_language_uri
-    a rdf:Statement ;
-    rdf:subject ?expression;
-    rdf:predicate crm:P72_has_language ;
-    rdf:object ?language ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # place reification
-  ?reification_production_place_uri a rdf:Statement ;
-    rdf:subject ?production ;
-    rdf:predicate crm:P7_took_place_at ;
-    rdf:object ?production_place ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # material reification
-  ?reification_material_uri
-    a rdf:Statement ;
-    rdf:subject ?manifestation_singleton;
-    rdf:predicate crm:P45_consists_of ;
-    rdf:object ?material ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # use reification
-
-  # folios reification
-  ?reification_folios_uri
-    a rdf:Statement;
-    rdf:subject ?manifestation_singleton;
-    rdf:predicate crm:P43_has_dimension ;
-    rdf:object ?folios_uri ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # lines reification
-  ?reification_lines_uri
-    a rdf:Statement;
-    rdf:subject ?manifestation_singleton;
-    rdf:predicate crm:P43_has_dimension ;
-    rdf:object ?lines_uri ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # columns reification
-  ?reification_columns_uri
-    a rdf:Statement;
-    rdf:subject ?manifestation_singleton;
-    rdf:predicate crm:P43_has_dimension ;
-    rdf:object ?columns_uri ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # height reification
-  ?reification_height_uri
-    a rdf:Statement;
-    rdf:subject ?manifestation_singleton;
-    rdf:predicate crm:P43_has_dimension ;
-    rdf:object ?height_uri ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # width reification
-  ?reification_width_uri
-    a rdf:Statement;
-    rdf:subject ?manifestation_singleton;
-    rdf:predicate crm:P43_has_dimension ;
-    rdf:object ?width_uri ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # alternate size reification
-
-  # miniatures reification
-  ?reification_miniatures_uri
-    a rdf:Statement;
-    rdf:subject ?manifestation_singleton;
-    rdf:predicate crm:P43_has_dimension ;
-    rdf:object ?miniatures_uri ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
-
-  # historiated initials reification
-
-  # decorated initials reification
-
-  # binding reification
-
-  # manuscript link reification
-
-  # other Info reification
+  #
+  # # title reification
+  # ?reification_label_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?manifestation_singleton ;
+  #   rdf:predicate rdfs:label ;
+  #   rdf:object ?title ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # identifier reification
+  # ?reification_id_uri a rdf:Statement ;
+  #   rdf:subject ?manifestation_singleton ;
+  #   rdf:predicate crm:P48_has_preferred_identifier ;
+  #   rdf:object ?manuscript_id ;
+  #   dct:source ?source .
+  #
+  # # author reification
+  # ?reification_author_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?expression_creation ;
+  #   rdf:predicate mmm-schema:carried_out_by_as_author ;
+  #   rdf:object ?author ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   :observed_author ?observed_author ;
+  #   dct:source ?source .
+  #
+  # # production date reification
+  # ?reification_production_time_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?production ;
+  #   rdf:predicate crm:P4_has_time-span ;
+  #   rdf:object ?production_timespan ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # artist reification
+  #
+  # # scribe reification
+  #
+  # # language reification
+  # ?reification_language_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?expression;
+  #   rdf:predicate crm:P72_has_language ;
+  #   rdf:object ?language ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # place reification
+  # ?reification_production_place_uri a rdf:Statement ;
+  #   rdf:subject ?production ;
+  #   rdf:predicate crm:P7_took_place_at ;
+  #   rdf:object ?production_place ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # material reification
+  # ?reification_material_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P45_consists_of ;
+  #   rdf:object ?material ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # use reification
+  #
+  # # folios reification
+  # ?reification_folios_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?folios_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # lines reification
+  # ?reification_lines_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?lines_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # columns reification
+  # ?reification_columns_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?columns_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # height reification
+  # ?reification_height_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?height_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # width reification
+  # ?reification_width_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?width_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # alternate size reification
+  #
+  # # miniatures reification
+  # ?reification_miniatures_uri
+  #   a rdf:Statement;
+  #   rdf:subject ?manifestation_singleton;
+  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:object ?miniatures_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
+  #
+  # # historiated initials reification
+  #
+  # # decorated initials reification
+  #
+  # # binding reification
+  #
+  # # manuscript link reification
+  #
+  # # other Info reification
 
 }
 #SELECT *
 WHERE {
-  #BIND (<https://sdbm.library.upenn.edu/manuscripts/12463> AS ?manuscript)
-  #BIND (<https://sdbm.library.upenn.edu/manuscripts/13354> AS ?manuscript) # manuscript with sales information: buyer, seller, sales agent known
-  #    ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript ;
-  #                      :entry_manuscripts_entry_id ?entry .
-  #BIND (<https://sdbm.library.upenn.edu/entries/51493> AS ?entry) # entry with no manuscript record
 
   ?entry a :entries .
   FILTER(NOT EXISTS { ?entry :entries_deprecated true })
@@ -299,55 +245,6 @@ WHERE {
   }
   # manuscripts_location is a deprecated field in SDBM
   # OPTIONAL { ?manuscript :manuscripts_location ?location . }
-
-  # ## TRANSACTION INFORMATION
-  #
-  # OPTIONAL {
-  #   # ?entry :entries_transaction_type "sale" or "gift"
-  #   ?sales_entry :sales_entry_id ?entry .
-  #   ?sales_entry :sales_id ?sales_id .
-  #   OPTIONAL { ?sales_entry :sales_price ?sales_price }
-  #   OPTIONAL { ?sales_entry :sales_currency ?sales_currency }
-  #   OPTIONAL { ?sales_entry :sales_other_currency ?sales_other_currency }
-  #   OPTIONAL {
-  #     ?sales_entry :sales_sold "Yes"
-  #     BIND(crm:E8_Acquisition as ?event_type)
-  #     BIND(crm:P24_transferred_title_of as ?event_property)
-  #     BIND(crm:P7_took_place_at as ?event_place_property)
-  #     BIND(crm:P4_has_time-span as ?event_timespan_property)
-  #     BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
-  #   }
-  #   OPTIONAL {
-  #     ?seller_agent :sale_agents_sale_id ?sales_entry .
-  #     ?seller_agent :sale_agents_role "seller_or_holder" .
-  #     ?seller_agent :sale_agents_agent_id/:names_id ?seller_id .
-  #   }
-  #   OPTIONAL {
-  #     ?buyer_agent :sale_agents_sale_id ?sales_entry .
-  #     ?buyer_agent :sale_agents_role "buyer" .
-  #     ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
-  #     BIND(crm:E8_Acquisition as ?event_type)
-  #     BIND(crm:P24_transferred_title_of as ?event_property)
-  #     BIND(crm:P7_took_place_at as ?event_place_property)
-  #     BIND(crm:P4_has_time-span as ?event_timespan_property)
-  #     BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
-  #   }
-  #   OPTIONAL {
-  #     ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
-  #     ?selling_agent_agent :sale_agents_role "selling_agent" .
-  #     ?selling_agent_agent :sale_agents_agent_id ?selling_agent_name .
-  #     ?selling_agent_name :names_id ?selling_agent_id .
-  #     # ?selling_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?place_local_id .
-  #     # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?selling_agent_location)
-  #   }
-  # }
-  # OPTIONAL {
-  #   BIND(mmm-schema:Manuscript_Observation as ?event_type)
-  #   BIND(mmm-schema:observed_manuscript as ?event_property)
-  #   BIND(mmm-schema:observed_location as ?event_place_property)
-  #   BIND(mmm-schema:observed_time-span as ?event_timespan_property)
-  #   BIND(mmm-schema:observed_owner as ?event_seller_or_holder_property)
-  # }
 
   ## MANUSCRIPT DETAILS ##
 
@@ -394,13 +291,13 @@ WHERE {
 
   # scribe
 
-  # language
-  OPTIONAL {
-    ?entry_language :entry_languages_entry_id ?entry .
-    ?entry_language :entry_languages_language_id/:languages_id ?language_id .
-    ?entry_language :entry_languages_language_id/:languages_name ?language_ .
-    BIND(STRLANG(?language_, 'en') AS ?language)
-  }
+  # # language
+  # OPTIONAL {
+  #   ?entry_language :entry_languages_entry_id ?entry .
+  #   ?entry_language :entry_languages_language_id/:languages_id ?language_id .
+  #   ?entry_language :entry_languages_language_id/:languages_name ?language_ .
+  #   BIND(STRLANG(?language_, 'en') AS ?language)
+  # }
 
   # place
   OPTIONAL {
@@ -511,10 +408,10 @@ WHERE {
   # generate IRIs in LDF.fi namespace
   BIND(STR(?manuscript_id_int) AS ?manuscript_id_)
   BIND(COALESCE(?manuscript_id_, "part_" + STR(?entry_partial_id), "orphan_" + STR(?entry_id)) AS ?manuscript_id)
-  # BIND(IRI(CONCAT(STR(mmm:), "work/", STR(?title_id))) as ?work)
-  # BIND(IRI(CONCAT(STR(mmm:), "work_conception/", STR(?title_id))) as ?work_conception)
-  # BIND(IRI(CONCAT(STR(mmm:), "expression/", STR(?title_id))) as ?expression)
-  # BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
+  BIND(IRI(CONCAT(STR(mmm:), "work/", STR(?title_id))) as ?work)
+  BIND(IRI(CONCAT(STR(mmm:), "work_conception/", STR(?title_id))) as ?work_conception)
+  BIND(IRI(CONCAT(STR(mmm:), "expression/", STR(?title_id))) as ?expression)
+  BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)

@@ -1,0 +1,77 @@
+PREFIX : <https://sdbm.library.upenn.edu/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+CONSTRUCT {
+  ?work a frbroo:F1_Work ;
+    skos:prefLabel ?title ;
+    dct:source mmm-schema:SDBM .
+
+  ?work_conception a frbroo:F27_Work_Conception ;
+    # skos:prefLabel # TODO
+    frbroo:R16_initiated ?work ;
+    mmm-schema:carried_out_by_as_possible_author ?author ;
+    # crm:P7_took_place_at  # TODO: author place/nationality
+    # crm:P4_has_time-span  # TODO: author life dates
+    dct:source mmm-schema:SDBM .
+
+  ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+    # skos:prefLabel # TODO
+    crm:P72_has_language ?language ;
+    dct:source mmm-schema:SDBM .
+
+  ?expression_creation a frbroo:F28_Expression_Creation ;
+    # skos:prefLabel # TODO
+    frbroo:R17_created ?expression ;
+    frbroo:R19_created_a_realisation_of ?work ;
+    dct:source mmm-schema:SDBM .
+
+}
+#SELECT *
+WHERE {
+
+  # title
+  ?entry_title :entry_titles_entry_id ?entry .
+  ?entry_title :entry_titles_id ?title_id .
+  OPTIONAL {
+    ?entry_title :entry_titles_title|:entry_titles_common_title ?title .
+    FILTER(STR(?title) != "")
+  }
+  OPTIONAL {
+    ?entry_title :entry_titles_common_title ?common_title .
+    FILTER(STR(?common_title) != "")
+  }
+
+  # author
+  OPTIONAL {
+    ?entry_author :entry_authors_entry_id ?entry .
+    ?entry_author :entry_authors_author_id/:names_id ?author_id .
+    ?entry_author :entry_authors_observed_name ?observed_author .
+  }
+
+  # language
+  OPTIONAL {
+    ?entry_language :entry_languages_entry_id ?entry .
+    ?entry_language :entry_languages_language_id/:languages_id ?language_id .
+    ?entry_language :entry_languages_language_id/:languages_name ?language_ .
+    BIND(STRLANG(?language_, 'en') AS ?language)
+  }
+
+  BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
+
+  # generate IRIs in LDF.fi namespace
+  BIND(IRI(CONCAT(STR(mmm:), "work/", STR(?title_id))) as ?work)
+  BIND(IRI(CONCAT(STR(mmm:), "work_conception/", STR(?title_id))) as ?work_conception)
+  BIND(IRI(CONCAT(STR(mmm:), "expression/", STR(?title_id))) as ?expression)
+  BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
+  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?author_id))) as ?author)
+
+  BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
+}

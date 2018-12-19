@@ -63,6 +63,8 @@ CONSTRUCT {
     crm:P128_carries ?expression ;
     crm:P51_has_former_or_current_owner ?prov_agent ;
     mmm-schema:data_provider_url ?manifestation_singleton ;
+    mmm-schema:manuscript_author ?work_conception_author ;  # shortcut
+    mmm-schema:manuscript_work ?work ;  # shortcut
     dct:source mmm-schema:Bodley .
 
 }

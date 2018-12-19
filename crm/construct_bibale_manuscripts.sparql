@@ -55,7 +55,9 @@ CONSTRUCT {
     crm:P128_carries ?expression ;
     skos:prefLabel ?preflabel ;
     mmm-schema:data_provider_url ?manifestation_singleton ;
-    mmm-schema:manuscript_work ?manifestation_work
+    mmm-schema:manuscript_work ?manifestation_work ;  # shortcut
+    mmm-schema:manuscript_author ?work_conception_author ;  # shortcut
+    mmm-schema:manuscript_author ?expression_author ;  # shortcut
     dct:source mmm-schema:Bibale .
 }
 WHERE
@@ -120,6 +122,24 @@ WHERE
            crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
            crm:P02_has_range ?expression_author ;
            ]
+      }
+    }
+  }
+
+  OPTIONAL {
+    ?work a frbroo2:F1_Work .
+    { ?work crm:P128i_is_carried_by ?manifestation_singleton }
+    UNION
+    { ?work ^crm:P128_carries ?manifestation_singleton }
+    OPTIONAL {
+      ?work frbroo2:R16i_was_initiated_by ?work_conception .
+      ?work_conception a crm:F27_Work_Conception .
+      OPTIONAL {
+        ?work_conception crm:P01i_is_domain_of  [
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
+          crm:P02_has_range ?work_conception_author ;
+        ] ;
       }
     }
   }
