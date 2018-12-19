@@ -12,7 +12,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 CONSTRUCT {
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
-    skos:prefLabel ?preflabel ;
+    skos:prefLabel ?manuscript_preflabel ;
     crm:P128_carries ?expression ;
     crm:P43_has_dimension ?width_uri ;
     crm:P43_has_dimension ?height_uri ;
@@ -434,8 +434,7 @@ WHERE {
 
   BIND(?miniatures_large_value + ?miniatures_small_value + ?miniatures_fullpage_value + ?miniatures_unspec_value as ?miniatures_value)
   BIND(CONCAT(STR(?production_date_start),"-",STR(?production_date_end)) as ?production_date_label)
-  BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
-  # TODO: for partial relations, take title as prefLabel
+  BIND("SDBM_MS_" + STR(?manuscript_id)) as ?manuscript_preflabel)
 
   BIND(COALESCE(?manuscript, ?entry) as ?provider_url)
 
