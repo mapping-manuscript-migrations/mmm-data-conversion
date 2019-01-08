@@ -41,7 +41,7 @@ WHERE
   OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_alt_label }
   OPTIONAL {
     ?work frbroo2:R16i_was_initiated_by ?work_conception .
-    ?work_conception a crm:F27_Work_Conception .
+    ?work_conception a frbroo2:F27_Work_Conception .
     OPTIONAL {
       ?work_conception crm:P01i_is_domain_of  [
         a crm:PC14_carried_out_by ;

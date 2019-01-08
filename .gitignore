@@ -1,4 +1,5 @@
 *.swp
+.idea
 input.ttl
 output.ttl
 data/

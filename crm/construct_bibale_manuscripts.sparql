@@ -127,13 +127,13 @@ WHERE
   }
 
   OPTIONAL {
-    ?work a frbroo2:F1_Work .
     { ?work crm:P128i_is_carried_by ?manifestation_singleton }
     UNION
     { ?work ^crm:P128_carries ?manifestation_singleton }
+    ?work a frbroo2:F1_Work .
     OPTIONAL {
       ?work frbroo2:R16i_was_initiated_by ?work_conception .
-      ?work_conception a crm:F27_Work_Conception .
+      ?work_conception a frbroo2:F27_Work_Conception .
       OPTIONAL {
         ?work_conception crm:P01i_is_domain_of  [
           a crm:PC14_carried_out_by ;
