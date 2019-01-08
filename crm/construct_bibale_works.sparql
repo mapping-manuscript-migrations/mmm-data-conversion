@@ -34,9 +34,7 @@ WHERE
 {
   # WORK
   ?work a frbroo2:F1_Work .
-  { ?work crm:P128i_is_carried_by ?manifestation_singleton }
-  UNION
-  { ?work ^crm:P128_carries ?manifestation_singleton }
+
   OPTIONAL { ?work rdfs:label ?work_pref_label }
   OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_alt_label }
   OPTIONAL {
