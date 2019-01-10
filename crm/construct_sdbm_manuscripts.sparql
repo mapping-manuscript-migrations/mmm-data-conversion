@@ -67,17 +67,17 @@ CONSTRUCT {
   ?miniatures_uri a mmm-schema:Miniatures ;
     crm:P90_has_value ?miniatures_value .
 
-  # # provenance reification
-  # ?reification_owner_uri
-  #   a rdf:Statement ;
-  #   rdf:subject ?manifestation_singleton ;
-  #   rdf:predicate crm:P51_has_former_or_current_owner ;
-  #   rdf:object ?prov_agent ;
-  #   mmm-schema:order ?prov_order ;
-  #   rdfs:comment ?prov_comment ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
+  # provenance reification
+  ?reification_owner_uri
+    a rdf:Statement ;
+    rdf:subject ?manifestation_singleton ;
+    rdf:predicate crm:P51_has_former_or_current_owner ;
+    rdf:object ?prov_agent ;
+    mmm-schema:order ?prov_order ;
+    rdfs:comment ?prov_comment ;
+    mmm-schema:data_provider_url ?entry ;
+    dct:source ?source .
+  
   # # title reification
   # ?reification_label_uri
   #   a rdf:Statement ;
