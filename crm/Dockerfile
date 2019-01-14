@@ -4,6 +4,18 @@ USER root
 
 RUN apk add --no-cache curl
 
+RUN apk add --no-cache python3 && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --upgrade pip setuptools && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+    if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+    rm -r /root/.cache
+
+COPY crm/requirements.txt /tmp/
+
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r /tmp/requirements.txt
+
 USER 9008
 
 ENV PATH "$PATH:/jena-fuseki/bin"
@@ -31,6 +43,9 @@ COPY crm/construct_bod_places.sparql $FUSEKI_HOME/construct_bod_places.sparql
 COPY crm/construct_bibale_actors.sparql $FUSEKI_HOME/construct_bibale_actors.sparql
 COPY crm/construct_bibale_manuscripts.sparql $FUSEKI_HOME/construct_bibale_manuscripts.sparql
 COPY crm/construct_bibale_places.sparql $FUSEKI_HOME/construct_bibale_places.sparql
+COPY crm/construct_bibale_works.sparql $FUSEKI_HOME/construct_bibale_works.sparql
+
+COPY crm/link_bibale_places.py $FUSEKI_HOME/link_bibale_places.py
 
 COPY --chown=9008 crm/convert.sh crm/convert_sdbm.sh crm/convert_bodley.sh crm/convert_bibale.sh crm/prune.sh tdbloader tdbindexer $FUSEKI_HOME/
 RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/convert_sdbm.sh $FUSEKI_HOME/convert_bodley.sh $FUSEKI_HOME/convert_bibale.sh $FUSEKI_HOME/prune.sh $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbindexer

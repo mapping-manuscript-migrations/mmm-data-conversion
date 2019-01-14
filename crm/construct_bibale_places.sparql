@@ -26,8 +26,6 @@ CONSTRUCT {
     mmm-schema:bibale_settlement ?settlement_label ;
     mmm-schema:bibale_region ?region_label ;
     mmm-schema:bibale_country ?country_label ;
-    crm:P89_falls_within ?parent_region ;
-    crm:P89_falls_within ?parent_country ;
     dct:source mmm-schema:Bibale .
 }
 WHERE
