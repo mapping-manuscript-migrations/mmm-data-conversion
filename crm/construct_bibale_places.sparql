@@ -23,18 +23,11 @@ CONSTRUCT {
     # wgs:long ?long ;
     # mmm-schema:data_provider_url ?bod_place_uri ;
     mmm-schema:place_type ?place_type ;
+    mmm-schema:bibale_settlement ?settlement_label ;
+    mmm-schema:bibale_region ?region_label ;
+    mmm-schema:bibale_country ?country_label ;
     crm:P89_falls_within ?parent_region ;
     crm:P89_falls_within ?parent_country ;
-    dct:source mmm-schema:Bibale .
-
-    ?parent_region a crm:E53_Place ;
-    rdfs:label ?parent_region_label ;
-    mmm-schema:place_type ?parent_region_type ;
-    dct:source mmm-schema:Bibale .
-
-    ?parent_country a crm:E53_Place ;
-    rdfs:label ?parent_country_label ;
-    mmm-schema:place_type ?parent_country_type ;
     dct:source mmm-schema:Bibale .
 }
 WHERE
@@ -45,36 +38,32 @@ WHERE
   OPTIONAL {
     ?bibale_place_uri crm:P88_consists_of ?settlement .
     ?settlement a bibale:type:settlement .
-    OPTIONAL { ?settlement rdfs:label ?settlement_label . }
-    BIND(bibale:type:settlement as ?place_type)
+    OPTIONAL {
+      ?settlement rdfs:label ?settlement_label .
+      FILTER(?settlement_label != "")
+    }
+    BIND(bibale:type:settlement as ?place_type_settlement)
   }
   OPTIONAL {
     ?bibale_place_uri crm:P88_consists_of ?region .
     ?region a bibale:type:region .
-    OPTIONAL { ?region rdfs:label ?region_label . }
-    BIND(bibale:type:region as ?place_type)
+    OPTIONAL {
+      ?region rdfs:label ?region_label .
+      FILTER(?region_label != "")
+    }
+    BIND(bibale:type:region as ?place_type_region)
   }
   OPTIONAL {
     ?bibale_place_uri crm:P88_consists_of ?country .
     ?country a bibale:type:country .
-    OPTIONAL { ?country rdfs:label ?country_label . }
-    BIND(bibale:type:country as ?place_type)
+    OPTIONAL {
+      ?country rdfs:label ?country_label .
+      FILTER(?country_label != "")
+    }
+    BIND(bibale:type:country as ?place_type_country)
   }
 
-  # TODO: Parents are not bound now
-  OPTIONAL {
-    FILTER(?place_type = bibale:type:settlement)
-    BIND(?region as ?parent_region)
-    BIND(?region_label as ?parent_region_label)
-    BIND(bibale:type:region as ?parent_region_type)
-  }
-  OPTIONAL {
-    FILTER(?place_type != bibale:type:country)
-    BIND(?region as ?parent_country)
-    BIND(?region_label as ?parent_country_label)
-    BIND(bibale:type:country as ?parent_country_type)
-  }
-
+  BIND(COALESCE(?place_type_settlement, ?place_type_region, ?place_type_country) as ?place_type)
   BIND(COALESCE(?settlement_label, ?region_label, ?country_label) as ?pref_label)
-  BIND(CONCAT(?country_label, ", ", ?region_label, ", ", ?settlement_label) as ?combined_label)
+  BIND(CONCAT(COALESCE(CONCAT(?country_label, ", "), ""), COALESCE(CONCAT(?region_label, ", "), ""), COALESCE(CONCAT(?settlement_label), "")) as ?combined_label)
 }
