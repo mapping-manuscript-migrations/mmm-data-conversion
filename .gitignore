@@ -3,3 +3,5 @@
 input.ttl
 output.ttl
 data/
+
+.env

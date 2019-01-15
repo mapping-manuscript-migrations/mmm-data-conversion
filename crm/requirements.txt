@@ -1,1 +1,2 @@
 rdflib==4.2.2
+geocoder==1.38.1

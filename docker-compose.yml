@@ -37,6 +37,8 @@ services:
         build:
             dockerfile: crm/Dockerfile
             context: .
+        environment:
+            - GEONAMES_KEY
         ports:
             - 3050:3030
         restart: "unless-stopped"
