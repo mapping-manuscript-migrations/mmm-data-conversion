@@ -8,6 +8,8 @@ import logging
 
 import os
 
+import geocoder
+from decimal import Decimal
 from rdflib import Graph, URIRef, Literal, RDF, Namespace, OWL
 from rdflib.util import guess_format
 
@@ -16,6 +18,8 @@ GEONAMES_APIKEY = os.environ['GEONAMES_KEY']
 CRM = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
 DCT = Namespace('http://purl.org/dc/terms/')
 SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
+GEO = Namespace('http://www.geonames.org/ontology#')
+WGS84 = Namespace('http://www.w3.org/2003/01/geo/wgs84_pos#')
 
 MMMS = Namespace('http://ldf.fi/mmm/schema/')
 MMMP = Namespace('http://ldf.fi/mmm/places/')
@@ -57,6 +61,31 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
     return graph
 
 
+def get_geonames_data(geonames_id: str):
+    """Fetch data from GeoNames API based on GeoNames ID"""
+    if not geonames_id:
+        return {}
+
+    log.info('Fetching data for GeoNames id %s' % geonames_id)
+    g = geocoder.geonames(geonames_id, method='details', key=GEONAMES_APIKEY)
+
+    if g.status != 'OK':
+        return {}
+
+    wikipedia = ('https://' + g.wikipedia) if hasattr(g, 'wikipedia') and g.wikipedia else None
+
+    return {'lat': g.lat,
+            'lon': g.lng,
+            'feature_class': g.feature_class,
+            'class_description': g.class_description,
+            'wikipedia': wikipedia,
+            'address': g.address,
+            'adm1': g.state,
+            'country': g.country,
+            'name': g.address,
+            }
+
+
 def handle_places(graph: Graph):
     """Modify places and create new instances"""
     places = group_places(graph)
@@ -65,7 +94,7 @@ def handle_places(graph: Graph):
 
     for (key, place_data) in places.items():
         # Get most common values (any of them) for place literals and authority URI
-        countries, regions, settlements, place_uris, authority_uris = zip(*place_data)
+        countries, regions, settlements, old_uris, authority_uris = zip(*place_data)
 
         country = max(set(countries), key=countries.count)
         region = max(set(regions), key=regions.count)
@@ -73,30 +102,48 @@ def handle_places(graph: Graph):
         authority_uri_set = set(authority_uris) - {None}
         authority_uri = max(authority_uri_set, key=authority_uris.count) if authority_uri_set else None
 
-        place_type = graph.value(place_uris[0], MMMS.place_type)
         place_label = settlement or region or country
+        place_type = graph.value(old_uris[0], MMMS.place_type)
+
+        # Fetch GeoNames data based on GeoNames id
+        geo = None
+        if authority_uri:
+            geo = get_geonames_data(str(authority_uri).split('/')[-1])
+            place_label = geo.get('name') or place_label
+
+        # TODO: Link to GeoNames based on place name if not yet linked
 
         # Mint new URI
-        new_uri = MMMP['bibale_' + str(sorted(place_uris)[0]).split(':')[-1]]
+        uri = MMMP['bibale_' + str(sorted(old_uris)[0]).split(':')[-1]]
 
         # Modify graph
-        graph = redirect_refs(graph, place_uris, new_uri)
+        graph = redirect_refs(graph, old_uris, uri)
 
         if authority_uri:
-            graph.add((new_uri, OWL.sameAs, authority_uri))
+            graph.add((uri, OWL.sameAs, authority_uri))
         if country:
-            graph.add((new_uri, MMMS.bibale_country, Literal(country)))
+            graph.add((uri, MMMS.bibale_country, Literal(country)))
         if region:
-            graph.add((new_uri, MMMS.bibale_region, Literal(region)))
+            graph.add((uri, MMMS.bibale_region, Literal(region)))
         if settlement:
-            graph.add((new_uri, MMMS.bibale_settlement, Literal(settlement)))
+            graph.add((uri, MMMS.bibale_settlement, Literal(settlement)))
 
-        graph.add((new_uri, RDF.type, CRM.E53_Place))
-        graph.add((new_uri, MMMS.place_type, place_type))
-        graph.add((new_uri, DCT.source, MMMS.Bibale))
-        graph.add((new_uri, SKOS.prefLabel, Literal(place_label)))
+        graph.add((uri, RDF.type, CRM.E53_Place))
+        graph.add((uri, MMMS.place_type, place_type))
+        graph.add((uri, DCT.source, MMMS.Bibale))
+        graph.add((uri, SKOS.prefLabel, Literal(place_label)))
 
-    # TODO: Get place coordinates from GeoNames
+        if geo:
+            graph.add((uri, WGS84.lat, Literal(Decimal(geo['lat']))))
+            graph.add((uri, WGS84.long, Literal(Decimal(geo['lon']))))
+            graph.add((uri, GEO.featureClass, Literal(geo['feature_class'])))
+            graph.add((uri, MMMS.geonames_class_description, Literal(geo['class_description'])))
+            if geo.get('wikipedia'):
+                graph.add((uri, GEO.wikipediaArticle, URIRef(geo['wikipedia'])))
+            graph.add((uri, GEO.name, Literal(geo['address'])))
+            graph.add((uri, GEO.parentADM1, Literal(geo['adm1'])))
+            graph.add((uri, MMMS.geonames_country_code, Literal(geo['country'])))
+            graph.add((uri, DCT.source, URIRef('http://www.geonames.org')))
 
     return graph
 
@@ -106,7 +153,7 @@ def main():
 
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output RDF file")
-    argparser.add_argument("--loglevel", default='DEBUG', help="Logging level, default is DEBUG.",
+    argparser.add_argument("--loglevel", default='INFO', help="Logging level",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
 
