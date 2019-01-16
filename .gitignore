@@ -1,5 +1,6 @@
 *.swp
 .idea
+__pycache__
 input.ttl
 output.ttl
 data/

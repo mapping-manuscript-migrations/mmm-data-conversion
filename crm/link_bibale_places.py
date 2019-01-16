@@ -10,6 +10,8 @@ import os
 
 import geocoder
 from decimal import Decimal
+
+import pycountry
 from rdflib import Graph, URIRef, Literal, RDF, Namespace, OWL
 from rdflib.util import guess_format
 
@@ -86,6 +88,61 @@ def get_geonames_data(geonames_id: str):
             }
 
 
+def search_geonames_country(country: str):
+    """
+    Search for a country in any language and return it's English label
+
+    >>> search_geonames_country('Allemagne')
+    'Germany'
+    >>> search_geonames_country('Foo') is None
+    True
+    """
+
+    g = geocoder.geonames(country, key=GEONAMES_APIKEY)
+
+    if g.address != g.country:
+        # Received a too specific place, ignore it
+        log.info('Country not found for %s' % country)
+        return None
+
+    return g.country
+
+
+def search_geonames_place(country: str, region: str, settlement: str):
+    """
+    Search for a place from GeoNames API and return place data
+
+    >>> search_geonames_place('Royaume Uni / Angleterre',  'Dorset', 'Abbotsbury').get('wikipedia')
+    'https://en.wikipedia.org/wiki/Abbotsbury'
+    """
+    COUNTRY_MAP = {
+        "Vatican City": "Holy See (Vatican City State)",
+    }
+
+    if (not region) or (not settlement):
+        log.warning('Place search with lacking information: %s - %s' %
+                    (country, region or settlement or ''))
+
+    country_en = search_geonames_country(country)
+
+    kw_params = dict(key=GEONAMES_APIKEY,
+                     featureClass=['A', 'P'])
+                     # name=settlement or region or country)
+    if country_en:
+        q = '%s %s' % (region, settlement)
+        country_en = COUNTRY_MAP.get(country_en, country_en)
+        pyc = pycountry.countries.get(name=country_en)
+        if not pyc:
+            log.warning('Country not found in pycountry: %s - %s' % (country, country_en))
+        kw_params['country'] = pyc.alpha_2 if pyc else country_en
+    else:
+        q = '%s %s %s' % (country, region, settlement)
+
+    g = geocoder.geonames(q, **kw_params)
+
+    return get_geonames_data(g.geonames_id)
+
+
 def handle_places(graph: Graph):
     """Modify places and create new instances"""
     places = group_places(graph)
@@ -109,9 +166,14 @@ def handle_places(graph: Graph):
         geo = None
         if authority_uri:
             geo = get_geonames_data(str(authority_uri).split('/')[-1])
-            place_label = geo.get('name') or place_label
 
-        # TODO: Link to GeoNames based on place name if not yet linked
+        if not geo:
+            geo = search_geonames_place(country, region, settlement)
+
+        if geo:
+            place_label = geo.get('name') or place_label
+        else:
+            log.info('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
         # Mint new URI
         uri = MMMP['bibale_' + str(sorted(old_uris)[0]).split(':')[-1]]

@@ -72,6 +72,17 @@ WHERE
   #   ?manifestation_singleton bibale:type:attested_or_curated/rdfs:label? "Volume ou texte attesté"
   # }
 
+  # # TODO: These give the last known location of a manuscript
+  # bibale:type:medium_country ?country ;
+  # bibale:type:medium_repository ?rep ;
+  # bibale:type:medium_settlement ?set ;
+  # bibale:type:medium_shelfmark ?mark .
+  #
+  # ?country rdfs:label ?country_label .
+  # ?rep rdfs:label ?rep_label .
+  # ?set rdfs:label ?settlement_label .
+  # ?mark rdfs:label ?shelfmark_label .
+
   # PRODUCTION
   OPTIONAL {
     ?production crm:P108_has_produced ?manifestation_singleton ;
