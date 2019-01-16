@@ -179,7 +179,7 @@ def handle_places(graph: Graph):
 
         if geo:
             place_label = geo.get('name') or place_label
-            authority_uri = 'http://sws.geonames.org/%s' % geo.get('id')
+            authority_uri = URIRef('http://sws.geonames.org/%s' % geo.get('id'))
         else:
             log.info('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
