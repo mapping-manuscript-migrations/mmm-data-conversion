@@ -64,7 +64,7 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
 
 
 def query_geonames(q, **kwargs):
-    g = {}
+    g = None
     while (not hasattr(g, 'status')) or ('Read timed out' in g.status):
         g = geocoder.geonames(q, **kwargs, key=GEONAMES_APIKEY)
 
@@ -93,6 +93,7 @@ def get_geonames_data(geonames_id: str):
             'adm1': g.state,
             'country': g.country,
             'name': g.address,
+            'id': g.geonames_id
             }
 
 
@@ -146,7 +147,7 @@ def search_geonames_place(country: str, region: str, settlement: str):
 
     g = query_geonames(q, **kw_params)
 
-    return get_geonames_data(g.geonames_id)
+    return get_geonames_data(g.geonames_id) if g else None
 
 
 def handle_places(graph: Graph):
@@ -178,6 +179,7 @@ def handle_places(graph: Graph):
 
         if geo:
             place_label = geo.get('name') or place_label
+            authority_uri = 'http://sws.geonames.org/%s' % geo.get('id')
         else:
             log.info('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
