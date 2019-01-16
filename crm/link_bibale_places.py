@@ -63,13 +63,21 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
     return graph
 
 
+def query_geonames(q, **kwargs):
+    g = {}
+    while (not hasattr(g, 'status')) or ('Read timed out' in g.status):
+        g = geocoder.geonames(q, **kwargs, key=GEONAMES_APIKEY)
+
+    return g or None
+
+
 def get_geonames_data(geonames_id: str):
     """Fetch data from GeoNames API based on GeoNames ID"""
     if not geonames_id:
         return {}
 
     log.info('Fetching data for GeoNames id %s' % geonames_id)
-    g = geocoder.geonames(geonames_id, method='details', key=GEONAMES_APIKEY)
+    g = query_geonames(geonames_id, method='details')
 
     if g.status != 'OK':
         return {}
@@ -98,7 +106,7 @@ def search_geonames_country(country: str):
     True
     """
 
-    g = geocoder.geonames(country, key=GEONAMES_APIKEY)
+    g = query_geonames(country)
 
     if g.address != g.country:
         # Received a too specific place, ignore it
@@ -120,13 +128,11 @@ def search_geonames_place(country: str, region: str, settlement: str):
     }
 
     if (not region) or (not settlement):
-        log.warning('Place search with lacking information: %s - %s' %
-                    (country, region or settlement or ''))
+        log.info('Place search with lacking information: %s - %s' % (country, region or settlement or ''))
 
     country_en = search_geonames_country(country)
 
-    kw_params = dict(key=GEONAMES_APIKEY,
-                     featureClass=['A', 'P'])
+    kw_params = dict(featureClass=['A', 'P'])
                      # name=settlement or region or country)
     if country_en:
         q = '%s %s' % (region, settlement)
@@ -138,7 +144,7 @@ def search_geonames_place(country: str, region: str, settlement: str):
     else:
         q = '%s %s %s' % (country, region, settlement)
 
-    g = geocoder.geonames(q, **kw_params)
+    g = query_geonames(q, **kw_params)
 
     return get_geonames_data(g.geonames_id)
 
