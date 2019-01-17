@@ -179,7 +179,7 @@ def handle_places(graph: Graph):
 
         if geo:
             place_label = geo.get('name') or place_label
-            authority_uri = URIRef('http://sws.geonames.org/%s' % geo.get('id'))
+            authority_uri = 'http://sws.geonames.org/%s' % geo.get('id')
         else:
             log.info('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
@@ -190,7 +190,7 @@ def handle_places(graph: Graph):
         graph = redirect_refs(graph, old_uris, uri)
 
         if authority_uri:
-            graph.add((uri, OWL.sameAs, authority_uri))
+            graph.add((uri, OWL.sameAs, URIRef(authority_uri)))
         if country:
             graph.add((uri, MMMS.bibale_country, Literal(country)))
         if region:
