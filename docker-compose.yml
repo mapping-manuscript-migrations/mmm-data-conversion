@@ -39,6 +39,11 @@ services:
             context: .
         environment:
             - GEONAMES_KEY
+            - GEONAMES_KEY2
+            - GEONAMES_KEY3
+            - GEONAMES_KEY4
+            - GEONAMES_KEY5
+            - GEONAMES_KEY6
         ports:
             - 3050:3030
         restart: "unless-stopped"
