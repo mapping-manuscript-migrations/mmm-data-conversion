@@ -5,7 +5,7 @@ case "$1" in
   "bibale")
     docker-compose up -d crm
     sleep 5
-    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-bibale/"
+    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-bibale/" # TODO: prune-operaatio kaatuu, jos graafia ei ole
     docker-compose down
   ;;
   "bodley")
@@ -17,7 +17,7 @@ case "$1" in
   "sdbm")
     docker-compose up -d crm
     sleep 5
-    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-sdbm/"
+    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-sdbm/" # TODO: sdbm-graafi on liian iso poistettavaksi s-deletellä
     docker-compose down
   ;;
   *)
@@ -27,9 +27,9 @@ case "$1" in
 esac
 
 docker-compose build crm
-docker-compose up -d input-sdbm
 docker-compose up -d input-bibale
 docker-compose up -d input-bodley
+docker-compose up -d input-sdbm
 sleep 5
 docker-compose run --rm crm ./convert.sh $1
 docker-compose up -d
