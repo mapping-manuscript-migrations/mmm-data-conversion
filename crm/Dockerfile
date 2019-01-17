@@ -46,6 +46,7 @@ COPY crm/construct_bibale_places.sparql $FUSEKI_HOME/construct_bibale_places.spa
 COPY crm/construct_bibale_works.sparql $FUSEKI_HOME/construct_bibale_works.sparql
 
 COPY crm/link_bibale_places.py $FUSEKI_HOME/link_bibale_places.py
+COPY crm/geonames.py $FUSEKI_HOME/geonames.py
 
 COPY --chown=9008 crm/convert.sh crm/convert_sdbm.sh crm/convert_bodley.sh crm/convert_bibale.sh crm/prune.sh tdbloader tdbindexer $FUSEKI_HOME/
 RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/convert_sdbm.sh $FUSEKI_HOME/convert_bodley.sh $FUSEKI_HOME/convert_bibale.sh $FUSEKI_HOME/prune.sh $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbindexer
