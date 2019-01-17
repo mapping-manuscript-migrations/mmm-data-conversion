@@ -109,8 +109,8 @@ def search_geonames_country(country: str):
 
     g = query_geonames(country)
 
-    if g.address != g.country:
-        # Received a too specific place, ignore it
+    if g is None or g.address != g.country:
+        # Received None or a too specific place, ignore it
         log.info('Country not found for %s' % country)
         return None
 
