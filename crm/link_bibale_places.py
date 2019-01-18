@@ -14,7 +14,7 @@ from rdflib.util import guess_format
 
 try:
     from . geonames import GeoNamesAPI
-except ImportError:
+except (ImportError, SystemError):
     from geonames import GeoNamesAPI
 
 
@@ -110,7 +110,7 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
             place_label = geo.get('name') or place_label
             authority_uri = 'http://sws.geonames.org/%s' % geo.get('id')
         else:
-            log.info('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
+            log.error('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
         # Mint new URI
         uri = MMMP['bibale_' + str(sorted(old_uris)[0]).split(':')[-1]]
@@ -158,7 +158,7 @@ def main():
 
     args = argparser.parse_args()
 
-    geo = GeoNamesAPI
+    geo = GeoNamesAPI(GEONAMES_APIKEYS)
 
     log = logging.getLogger()  # Get root logger
     log_handler = logging.StreamHandler()

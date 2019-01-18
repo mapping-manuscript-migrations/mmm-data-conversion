@@ -13,6 +13,9 @@ import pycountry
 
 
 class GeoNamesAPI:
+    """
+    GeoNames querying with geocoder library and API key switching when needed
+    """
 
     def __init__(self, apikeys: list):
         self.apikey_index = 0
@@ -20,13 +23,8 @@ class GeoNamesAPI:
 
         self.log = logging.getLogger(__name__)
 
-    def get_apikey(self):
-        return self.apikeys[self.apikey_index]
-
-    def change_apikey(self):
-        self.apikey_index = (self.apikey_index + 1) % len(self.apikeys)
-
     def _query(self, q, **kwargs):
+        """Query GeoNames, change API key if hourly limit reached for current key, """
         g = None
 
         while (not hasattr(g, 'status')) or ('Read timed out' in g.status) or ('hourly limit' in g.status):
@@ -34,9 +32,17 @@ class GeoNamesAPI:
             if 'hourly limit' in g.status:
                 self.change_apikey()
                 if self.apikey_index == 0:
-                    sleep(60 * 5)
+                    self.log.info('Hourly limit reached for all keys, waiting for 10 minutes')
+                    sleep(60 * 10)
 
         return g
+
+    def get_apikey(self):
+        return self.apikeys[self.apikey_index]
+
+    def change_apikey(self):
+        self.apikey_index = (self.apikey_index + 1) % len(self.apikeys)
+        self.log.info('Changed to GeoNames API key %s' % (self.get_apikey()))
 
     def get_place_data(self, geonames_id: str):
         """Fetch data from GeoNames API based on GeoNames ID"""
@@ -83,6 +89,21 @@ class GeoNamesAPI:
 
         return g.country
 
+    def _usa_state(self, place: str):
+        """
+        Handle case 'USA (state name)'
+
+        >>> geo = GeoNamesAPI([os.environ['GEONAMES_KEY']])
+        >>> geo._usa_state('USA (CALIFORNIE)')
+        ('United States', 'Californie')
+        >>> geo._usa_state('USA (NEW YORK)')
+        ('United States', 'New York')
+        """
+        country = 'United States'
+        region = country.split('(')[-1].strip(' ()').title()
+
+        return country, region
+
     def search_place(self, country: str, region: str, settlement: str):
         """
         Search for a place from GeoNames API and return place data
@@ -91,20 +112,29 @@ class GeoNamesAPI:
         >>> geo.search_place('Royaume Uni / Angleterre',  'Dorset', 'Abbotsbury').get('wikipedia')
         'https://en.wikipedia.org/wiki/Abbotsbury'
         """
-        COUNTRY_MAP = {
-            "Vatican City": "Holy See (Vatican City State)",
+        country_mapping = {
+            "états-unis": "United States",
+            "royaume uni / angleterre": "United Kingdom",
+            "royaume uni / ecosse": "United Kingdom",
+            "royaume uni / irlande du nord": "United Kingdom",
+            "royaume uni / pays de galles": "United Kingdom",
+            "vatican": "Holy See (Vatican City State)",
         }
+
+        if region == 'Indéterminée':
+            region = ''
 
         if (not region) or (not settlement):
             self.log.info('Place search with lacking information: %s - %s' % (country, region or settlement or ''))
 
-        country_en = self.search_country(country)
+        if country.startswith('USA (') and not region:
+            country, region = self._usa_state(country)
+
+        country_en = country_mapping.get(country.lower()) or self.search_country(country)
 
         kw_params = dict(featureClass=['A', 'P'])
-                         # name=settlement or region or country)
         if country_en:
             q = '%s %s' % (region, settlement)
-            country_en = COUNTRY_MAP.get(country_en, country_en)
             pyc = pycountry.countries.get(name=country_en)
             if not pyc:
                 self.log.warning('Country not found in pycountry: %s - %s' % (country, country_en))
