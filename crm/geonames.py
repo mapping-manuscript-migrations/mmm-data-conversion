@@ -100,7 +100,7 @@ class GeoNamesAPI:
         ('United States', 'New York')
         """
         country = 'United States'
-        region = country.split('(')[-1].strip(' ()').title()
+        region = place.split('(')[-1].strip(' ()').title()
 
         return country, region
 
@@ -118,6 +118,7 @@ class GeoNamesAPI:
             "royaume uni / ecosse": "United Kingdom",
             "royaume uni / irlande du nord": "United Kingdom",
             "royaume uni / pays de galles": "United Kingdom",
+            "russie": "Russian Federation",
             "vatican": "Holy See (Vatican City State)",
         }
 
@@ -137,7 +138,7 @@ class GeoNamesAPI:
             q = '%s %s' % (region, settlement)
             pyc = pycountry.countries.get(name=country_en)
             if not pyc:
-                self.log.warning('Country not found in pycountry: %s - %s' % (country, country_en))
+                self.log.warning('Country not found in pycountry: %s' % country_en)
             kw_params['country'] = pyc.alpha_2 if pyc else country_en
         else:
             q = '%s %s %s' % (country, region, settlement)
