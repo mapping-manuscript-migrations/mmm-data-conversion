@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+mkdir -p $OUTPUT/logs
+
 case "$1" in
   "bibale")
     ./convert_bibale.sh

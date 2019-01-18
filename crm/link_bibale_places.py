@@ -161,7 +161,7 @@ def main():
     geo = GeoNamesAPI(GEONAMES_APIKEYS)
 
     log = logging.getLogger()  # Get root logger
-    log_handler = logging.StreamHandler()
+    log_handler = logging.FileHandler(args.logfile)
     log_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     log.addHandler(log_handler)
     log.setLevel(args.loglevel)

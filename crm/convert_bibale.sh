@@ -15,6 +15,8 @@ curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_bibale_actors.sparq
 cat /tmp/bibale_manuscripts.ttl /tmp/bibale_works.ttl /tmp/bibale_places.ttl /tmp/bibale_actors.ttl > /tmp/bibale_cidoc_v1.ttl
 
 printf '\nLinking Bibale places\n\n'
-python link_bibale_places.py /tmp/bibale_cidoc_v1.ttl /tmp/bibale_cidoc.ttl
+python link_bibale_places.py /tmp/bibale_cidoc_v1.ttl /tmp/bibale_cidoc.ttl --logfile $OUTPUT/logs/bibale_linking.log
+
+cp /tmp/bibale_*.ttl $OUTPUT
 
 exec "$@"

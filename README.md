@@ -17,6 +17,14 @@ Currently the pipeline includes the following steps:
 
 ## Build, convert, and run
 
+Create a local directory for mounting the conversion output:
+
+```bash
+mkdir -p output/logs
+sudo chown -R :root output
+sudo chmod -R g+w output
+```
+
 Build the images:
 
 `docker-compose build`

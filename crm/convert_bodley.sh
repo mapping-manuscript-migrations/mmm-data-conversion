@@ -12,4 +12,6 @@ curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_bod_places.sparql)"
 
 cat /tmp/bodley_manuscripts.ttl /tmp/bodley_people.ttl /tmp/bodley_places.ttl > /tmp/bodley_cidoc.ttl
 
+cp /tmp/bodley_*.ttl $OUTPUT
+
 exec "$@"

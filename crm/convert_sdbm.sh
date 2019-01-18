@@ -18,4 +18,6 @@ curl -f --data-urlencode "query=$(cat $FUSEKI_HOME/construct_sdbm_sources.sparql
 
 cat /tmp/sdbm_manuscripts_transactions.ttl /tmp/sdbm_manuscripts.ttl /tmp/sdbm_works.ttl /tmp/sdbm_people.ttl /tmp/sdbm_places.ttl /tmp/sdbm_sources.ttl > /tmp/sdbm_cidoc.ttl
 
+cp /tmp/sdbm_*.ttl $OUTPUT
+
 exec "$@"

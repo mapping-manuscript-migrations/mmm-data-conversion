@@ -23,6 +23,7 @@ ENV ASSEMBLER "/fuseki-base/configuration/assembler.ttl"
 ENV INPUT_SDBM_SPARQL_ENDPOINT "http://input-sdbm:3030/ds/sparql"
 ENV INPUT_BODLEY_SPARQL_ENDPOINT "http://input-bodley:3030/ds/sparql"
 ENV INPUT_BIBALE_SPARQL_ENDPOINT "http://input-bibale:3030/ds/sparql"
+ENV OUTPUT "/output"
 
 RUN mkdir -p $FUSEKI_BASE/databases/tdb \
     $FUSEKI_BASE/databases/lucene \

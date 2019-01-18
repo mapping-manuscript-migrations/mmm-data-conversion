@@ -53,6 +53,7 @@ services:
           - input-bodley
         volumes:
             - mmm-crm:/fuseki-base/databases
+            - ./output:/output
         restart: unless-stopped
 volumes:
     mmm-crm:

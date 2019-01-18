@@ -5,7 +5,7 @@ case "$1" in
   "bibale")
     docker-compose up -d crm
     sleep 5
-    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-bibale/" # TODO: prune-operaatio kaatuu, jos graafia ei ole
+    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-bibale/"
     docker-compose down
   ;;
   "bodley")

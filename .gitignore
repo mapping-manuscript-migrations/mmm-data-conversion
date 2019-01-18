@@ -4,5 +4,6 @@ __pycache__
 input.ttl
 output.ttl
 data/
+output/
 
 .env
