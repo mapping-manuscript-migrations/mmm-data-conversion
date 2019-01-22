@@ -2,8 +2,8 @@ version: '3.5'
 services:
     input-sdbm:
         build:
-            dockerfile: input/Dockerfile
             context: .
+            dockerfile: input/Dockerfile
         ports:
             - 3051:3030
         restart: "unless-stopped"
@@ -13,8 +13,8 @@ services:
         restart: unless-stopped
     input-bibale:
         build:
-            dockerfile: input/Dockerfile
             context: .
+            dockerfile: input/Dockerfile
         ports:
             - 3052:3030
         restart: "unless-stopped"
@@ -24,8 +24,8 @@ services:
         restart: unless-stopped
     input-bodley:
         build:
-            dockerfile: input/Dockerfile
             context: .
+            dockerfile: input/Dockerfile
         ports:
             - 3053:3030
         restart: "unless-stopped"
@@ -33,10 +33,13 @@ services:
             - ./data/bodley:/staging
             - mmm-bodley:/fuseki-base/databases
         restart: unless-stopped
-    crm:
+    transform:
         build:
-            dockerfile: crm/Dockerfile
-            context: .
+            context: ./transform
+        depends_on:
+            - input-sdbm
+            - input-bibale
+            - input-bodley
         environment:
             - GEONAMES_KEY
             - GEONAMES_KEY2
@@ -44,17 +47,20 @@ services:
             - GEONAMES_KEY4
             - GEONAMES_KEY5
             - GEONAMES_KEY6
+        volumes:
+            - ./output:/output
+    crm:
+        build:
+            context: .
+            dockerfile: crm/Dockerfile
         ports:
             - 3050:3030
         restart: "unless-stopped"
-        depends_on:
-          - input-sdbm
-          - input-bibale
-          - input-bodley
         volumes:
             - mmm-crm:/fuseki-base/databases
             - ./output:/output
         restart: unless-stopped
+
 volumes:
     mmm-crm:
     mmm-sdbm:

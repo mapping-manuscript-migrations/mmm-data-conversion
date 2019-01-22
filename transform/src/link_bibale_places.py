@@ -3,10 +3,9 @@
 """Linking Bibale places"""
 
 import argparse
-from collections import defaultdict
 import logging
-
 import os
+from collections import defaultdict
 from decimal import Decimal
 
 from rdflib import Graph, URIRef, Literal, RDF, Namespace, OWL
@@ -15,7 +14,7 @@ from rdflib.util import guess_format
 try:
     from . geonames import GeoNamesAPI
 except (ImportError, SystemError):
-    from geonames import GeoNamesAPI
+    from src.geonames import GeoNamesAPI
 
 
 GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
@@ -80,10 +79,10 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
 
 
 def handle_places(geonames: GeoNamesAPI, graph: Graph):
-    """Modify places and create new instances"""
+    """Modify places, link them to GeoNames, and create new place instances"""
     places = group_places(graph)
 
-    log.info('Got %s places.' % len(places))
+    log.info('Got %s places for linking.' % len(places))
 
     for (key, place_data) in places.items():
         # Get most common values (any of them) for place literals and authority URI
@@ -144,6 +143,7 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
             graph.add((uri, MMMS.geonames_country_code, Literal(geo['country'])))
             graph.add((uri, DCT.source, URIRef('http://www.geonames.org')))
 
+    log.info('Place linking finished.')
     return graph
 
 

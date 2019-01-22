@@ -31,5 +31,6 @@ docker-compose up -d input-bibale
 docker-compose up -d input-bodley
 docker-compose up -d input-sdbm
 sleep 5
-docker-compose run --rm crm ./convert.sh $1
+docker-compose run --rm transform ./convert.sh $1
+docker-compose run --rm crm ./deploy.sh
 docker-compose up -d

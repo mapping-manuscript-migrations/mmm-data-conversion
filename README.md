@@ -12,18 +12,13 @@ Currently the pipeline includes the following steps:
     * Load `data/bodley/input.ttl` to `http://localhost:3052/ds/sparql`
     * Load `data/bibale/input.ttl` to `http://localhost:3053/ds/sparql`
 
-3. Convert to unified data model using SPARQL CONSTRUCT (automated)
-    * The final result is loaded into `http://localhost:3050/ds/sparql`
+3. Convert input datasets to unified data model using SPARQL CONSTRUCTs (automated)
+    * Link Bibale places to GeoNames
+
+4. Load the final result into `http://localhost:3050/ds/sparql` 
+
 
 ## Build, convert, and run
-
-Create a local directory for mounting the conversion output:
-
-```bash
-mkdir -p output/logs
-sudo chown -R :root output
-sudo chmod -R g+w output
-```
 
 Build the images:
 
@@ -33,20 +28,6 @@ Convert and run:
 
 `./rebuild.sh`
 
-Or manually:
-
-```bash
-# Stop the services and volumes if running:
-docker-compose down -v
-# Load input data from ./data
-docker-compose run --rm input ./load_data.sh
-# Start the input Fuseki
-docker-compose up -d input
-# Convert to CRM
-docker-compose run --rm crm ./convert.sh
-# Start Fuseki with converted data
-docker-compose up -d crm
-```
 
 ## Rebuild after updating CONSTRUCT queries
 
@@ -56,22 +37,14 @@ Convert again and run:
 
 `./convert_again.sh`
 
-Or manually:
+Convert only from a single input dataset:
 
-```bash
-# Stop the services
-docker-compose down
-# Remove the old CRM volume
-docker volume rm mmmsdbmdata_mmm-crm
-# Build the CRM container again (with updated SPARQL CONSTRUCT)
-docker-compose build crm
-# Start the input Fuseki
-docker-compose up -d input
-# Convert to CRM
-docker-compose run --rm crm ./convert.sh
-# Start the CRM Fuseki with converted data
-docker-compose up -d crm
-```
+`./convert_again.sh bibale`
+or
+`./convert_again.sh bodley`
+or
+`./convert_again.sh sdbm`
+
 
 ## Rebuild after updating input data
 

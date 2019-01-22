@@ -4,18 +4,6 @@ USER root
 
 RUN apk add --no-cache curl
 
-RUN apk add --no-cache python3 && \
-    python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools && \
-    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
-    if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
-    rm -r /root/.cache
-
-COPY --chown=9008 crm/requirements.txt /tmp/
-
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r /tmp/requirements.txt
-
 USER 9008
 
 ENV PATH "$PATH:/jena-fuseki/bin"
@@ -32,25 +20,9 @@ RUN mkdir -p $FUSEKI_BASE/databases/tdb \
 COPY fuseki-config-crm.ttl $FUSEKI_BASE/config.ttl
 COPY crm/assembler.ttl $FUSEKI_BASE/configuration/assembler.ttl
 COPY crm/mmm-schema.ttl $FUSEKI_HOME/mmm-schema.ttl
-COPY crm/construct_sdbm_manuscripts.sparql $FUSEKI_HOME/construct_sdbm_manuscripts.sparql
-COPY crm/construct_sdbm_works.sparql $FUSEKI_HOME/construct_sdbm_works.sparql
-COPY crm/construct_sdbm_manuscripts_transactions.sparql $FUSEKI_HOME/construct_sdbm_manuscripts_transactions.sparql
-COPY crm/construct_sdbm_people.sparql $FUSEKI_HOME/construct_sdbm_people.sparql
-COPY crm/construct_sdbm_places.sparql $FUSEKI_HOME/construct_sdbm_places.sparql
-COPY crm/construct_sdbm_sources.sparql $FUSEKI_HOME/construct_sdbm_sources.sparql
-COPY crm/construct_bod_manuscripts.sparql $FUSEKI_HOME/construct_bod_manuscripts.sparql
-COPY crm/construct_bod_people.sparql $FUSEKI_HOME/construct_bod_people.sparql
-COPY crm/construct_bod_places.sparql $FUSEKI_HOME/construct_bod_places.sparql
-COPY crm/construct_bibale_actors.sparql $FUSEKI_HOME/construct_bibale_actors.sparql
-COPY crm/construct_bibale_manuscripts.sparql $FUSEKI_HOME/construct_bibale_manuscripts.sparql
-COPY crm/construct_bibale_places.sparql $FUSEKI_HOME/construct_bibale_places.sparql
-COPY crm/construct_bibale_works.sparql $FUSEKI_HOME/construct_bibale_works.sparql
 
-COPY crm/link_bibale_places.py $FUSEKI_HOME/link_bibale_places.py
-COPY crm/geonames.py $FUSEKI_HOME/geonames.py
-
-COPY --chown=9008 crm/convert.sh crm/convert_sdbm.sh crm/convert_bodley.sh crm/convert_bibale.sh crm/prune.sh tdbloader tdbindexer $FUSEKI_HOME/
-RUN chmod +x $FUSEKI_HOME/convert.sh $FUSEKI_HOME/convert_sdbm.sh $FUSEKI_HOME/convert_bodley.sh $FUSEKI_HOME/convert_bibale.sh $FUSEKI_HOME/prune.sh $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbindexer
+COPY --chown=9008 tdbloader tdbindexer crm/deploy.sh crm/prune.sh $FUSEKI_HOME/
+RUN chmod +x $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbindexer $FUSEKI_HOME/deploy.sh $FUSEKI_HOME/prune.sh
 
 EXPOSE 3030
 
