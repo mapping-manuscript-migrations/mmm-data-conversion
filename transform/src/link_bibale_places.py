@@ -95,7 +95,7 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km', endpoi
     :return: dict of TGN place information
 
     >>> link_place_to_tgn('Buarcos', '40.19', '-8.865', radius='5km')
-    ('http://vocab.getty.edu/tgn/7744552', 'Buarcos', '40.166039', '-8.876801', 'Buarcos', 'inhabited places')
+    {'uri': 'http://vocab.getty.edu/tgn/7744552', 'pref_label': 'Buarcos', 'lat': '40.166039', 'long': '-8.876801', 'label': 'Buarcos', 'place_type': 'inhabited places'}
     """
     query_template = """
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -113,10 +113,10 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km', endpoi
           ?uri (xl:prefLabel|xl:altLabel)/xl:literalForm ?label .
           FILTER(LANG(?label) in ("en", "fr", ""))
 
-          OPTIONAL {
-            ?uri xl:prefLabel/xl:literalForm ?pref_label_en .
+          OPTIONAL {{
+            ?uri (xl:prefLabel/xl:literalForm) ?pref_label_en .
             FILTER(LANG(?pref_label_en) in ("en"))
-          }
+          }}
           BIND(COALESCE(?pref_label_en, ?gvp_pref_label) as ?pref_label)
         }}
     """
@@ -127,15 +127,15 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km', endpoi
 
     tgn_match = None
     for place in results['results']['bindings']:
-        place_label = place['tgn_label']['value']
+        place_label = place['label']['value']
         if place_label == place_name:  # TODO: Fuzzy match
 
-            tgn = {'uri': place['tgn_uri']['value'],
-                   'pref_label': place['tgn_pref_label']['value'],
-                   'lat': place['tgn_lat']['value'],
-                   'long': place['tgn_long']['value'],
-                   'label': place['tgn_label']['value'],
-                   'place_type': place['tgn_place_type_en']['value']}
+            tgn = {'uri': place['uri']['value'],
+                   'pref_label': place['pref_label']['value'],
+                   'lat': place['lat']['value'],
+                   'long': place['long']['value'],
+                   'label': place['label']['value'],
+                   'place_type': place['place_type_en']['value']}
 
             if tgn_match:
                 if tgn['place_type'] != 'inhabited places':
