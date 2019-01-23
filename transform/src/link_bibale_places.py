@@ -132,13 +132,14 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km', endpoi
 
     results = requests.post(endpoint, {'query': query_template.format(lat=lat, lon=lon, radius=radius)}).json()
 
-    tgn_match = None
+    tgn_match = {}
     for place in results['results']['bindings']:
         label = place['label']['value']
         pref_label = place['pref_label']['value']
-        if place_name in [label, pref_label]:  # TODO: Fuzzy match
+        uri = place['uri']['value']
+        if place_name in [label, pref_label] and tgn_match.get('uri') != uri:  # TODO: Fuzzy match
 
-            tgn = {'uri': place['uri']['value'],
+            tgn = {'uri': uri,
                    'pref_label': pref_label,
                    'lat': place['lat']['value'],
                    'long': place['long']['value'],

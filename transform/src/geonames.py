@@ -122,8 +122,12 @@ class GeoNamesAPI:
             "vatican": "Holy See (Vatican City State)",
         }
 
-        if region in ['Indéterminée', 'Picardie']:
-            region = ''
+        region_mapping = {
+            'Indéterminée': '',
+            'Picardie': 'Hauts-de-France',
+        }
+
+        region = region_mapping.get(region, region)
 
         if (not region) or (not settlement):
             self.log.info('Place search with lacking information: %s - %s' % (country, region or settlement or ''))
