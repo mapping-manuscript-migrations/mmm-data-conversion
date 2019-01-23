@@ -13,18 +13,12 @@ Currently the pipeline includes the following steps:
     * Load `data/bibale/input.ttl` to `http://localhost:3053/ds/sparql`
 
 3. Convert input datasets to unified data model using SPARQL CONSTRUCTs (automated)
-    * Link Bibale places to GeoNames
+    * Link Bibale places to GeoNames (You'll need GeoNames API key(s) for this)
 
 4. Load the final result into `http://localhost:3050/ds/sparql` 
 
 
 ## Build, convert, and run
-
-Build the images:
-
-`docker-compose build`
-
-Convert and run:
 
 `./rebuild.sh`
 
@@ -32,6 +26,10 @@ Convert and run:
 ## Rebuild after updating CONSTRUCT queries
 
 Avoid rebuilding the input Fuseki.
+
+Build the images:
+
+`docker-compose build`
 
 Convert again and run:
 
@@ -48,9 +46,7 @@ or
 
 ## Rebuild after updating input data
 
-```bash
-./rebuild.sh
-```
+`./rebuild.sh`
 
 
 ## Logs

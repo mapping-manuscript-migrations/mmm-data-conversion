@@ -64,6 +64,13 @@ def group_places(graph: Graph):
         place_settlement = str(graph.value(place, MMMS.bibale_settlement, default=''))
         place_authority_uri = graph.value(place, OWL.sameAs)
 
+        if place_country == '?':
+            place_country = ''
+        if place_region == '?':
+            place_region = ''
+        if place_settlement == '?':
+            place_settlement = ''
+
         key = generate_place_key(place_country, place_region, place_settlement)
 
         places[key].append((place_country, place_region, place_settlement, place, place_authority_uri))
@@ -127,14 +134,15 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km', endpoi
 
     tgn_match = None
     for place in results['results']['bindings']:
-        place_label = place['label']['value']
-        if place_label == place_name:  # TODO: Fuzzy match
+        label = place['label']['value']
+        pref_label = place['pref_label']['value']
+        if place_name in [label, pref_label]:  # TODO: Fuzzy match
 
             tgn = {'uri': place['uri']['value'],
-                   'pref_label': place['pref_label']['value'],
+                   'pref_label': pref_label,
                    'lat': place['lat']['value'],
                    'long': place['long']['value'],
-                   'label': place['label']['value'],
+                   'label': label,
                    'place_type': place['place_type_en']['value']}
 
             if tgn_match:
@@ -238,12 +246,26 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
                 place_ontology.add((uri, GEO.wikipediaArticle, URIRef(geo['wikipedia'])))
             place_ontology.add((uri, GEO.name, Literal(geo['address'])))
             place_ontology.add((uri, GEO.parentADM1, Literal(geo['adm1'])))
-            place_ontology.add((uri, MMMS.geonames_country_code, Literal(geo['country'])))
+            place_ontology.add((uri, MMMS.geonames_country, Literal(geo['country'])))
             place_ontology.add((uri, DCT.source, URIRef('http://www.geonames.org')))
         place_ontology.add((uri, DCT.source, MMMS.Bibale))
 
     log.info('Place linking finished.')
     return graph, place_ontology
+
+
+def bind_namespaces(graph: Graph):
+    graph.bind("dct", DCT)
+    graph.bind("crm", CRM)
+    graph.bind("geo", GEO)
+    graph.bind("gvp", GVP)
+    graph.bind("skos", SKOS)
+    graph.bind("wgs84", WGS84)
+
+    graph.bind("mmms", MMMS)
+    graph.bind("mmmp", MMMP)
+
+    return graph
 
 
 def main():
@@ -272,8 +294,8 @@ def main():
 
     g, place_g = handle_places(geo, input_graph)
 
-    g.serialize(args.output, format=guess_format(args.output))
-    place_g.serialize(args.output_place_ontology, format=guess_format(args.output_place_ontology))
+    bind_namespaces(g).serialize(args.output, format=guess_format(args.output))
+    bind_namespaces(place_g).serialize(args.output_place_ontology, format=guess_format(args.output_place_ontology))
 
 
 if __name__ == '__main__':

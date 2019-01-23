@@ -122,7 +122,7 @@ class GeoNamesAPI:
             "vatican": "Holy See (Vatican City State)",
         }
 
-        if region == 'Indéterminée':
+        if region in ['Indéterminée', 'Picardie']:
             region = ''
 
         if (not region) or (not settlement):
