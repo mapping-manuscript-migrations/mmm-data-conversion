@@ -20,12 +20,12 @@ except (ImportError, SystemError):
         from transform.src.geonames import GeoNamesAPI
 
 try:
-    from . tgn import search_tgn_place
+    from .tgn import search_tgn_place, place_rdf, mint_mmm_tgn_uri
 except (ImportError, SystemError):
     try:
-        from src.tgn import search_tgn_place
+        from src.tgn import search_tgn_place, place_rdf, mint_mmm_tgn_uri
     except (ImportError, SystemError):
-        from transform.src.tgn import search_tgn_place
+        from transform.src.tgn import search_tgn_place, place_rdf, mint_mmm_tgn_uri
 
 try:
     from . namespaces import *
@@ -134,11 +134,7 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
             log.error('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
         if tgn:
-            tgn_uri = tgn['uri']
-            tgn_id = tgn_uri.split('/')[-1]
-
-            # Mint new URI
-            uri = MMMP['tgn_' + tgn_id]
+            uri = mint_mmm_tgn_uri(tgn['uri'])
         else:
             uri = MMMP['bibale_' + str(sorted(old_uris)[0]).split(':')[-1]]
 
@@ -160,13 +156,7 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
         place_ontology.add((uri, SKOS.prefLabel, Literal(place_label)))
 
         if tgn:
-            place_ontology.add((uri, MMMS.tgn_uri, URIRef(tgn_uri)))
-            place_ontology.add((uri, SKOS.prefLabel, Literal(tgn['pref_label'])))
-            place_ontology.add((uri, WGS84.lat, Literal(Decimal(tgn['lat']))))
-            place_ontology.add((uri, WGS84.long, Literal(Decimal(tgn['long']))))
-            place_ontology.add((uri, SKOS.altLabel, Literal(tgn['label'])))
-            place_ontology.add((uri, GVP.placeTypePreferred, Literal(tgn['place_type'])))
-            place_ontology.add((uri, DCT.source, URIRef('http://vocab.getty.edu/tgn/')))
+            place_ontology += place_rdf(uri, tgn)
         if geo:
             place_ontology.add((uri, MMMS.geonames_lat, Literal(Decimal(geo['lat']))))
             place_ontology.add((uri, MMMS.geonames_long, Literal(Decimal(geo['lon']))))

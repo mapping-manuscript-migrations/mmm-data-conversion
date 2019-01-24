@@ -5,6 +5,10 @@
 import logging
 
 import requests
+from decimal import Decimal
+from rdflib import Graph, URIRef, Literal
+
+from namespaces import *
 
 log = logging.getLogger(__name__)
 
@@ -136,3 +140,39 @@ def get_place_by_uri(uri: str, endpoint='http://vocab.getty.edu/sparql.json'):
            }
 
     return tgn
+
+
+def place_rdf(uri: URIRef, tgn: dict):
+    """
+    Map place dict to an RDF graph
+
+    >>> len(place_rdf(URIRef('http://test.com/place_1'), get_place_by_uri('http://vocab.getty.edu/tgn/7003820')))
+    6
+    """
+
+    alt_label = tgn.get('label')
+    g = Graph()
+    g.add((uri, MMMS.tgn_uri, URIRef(tgn['uri'])))
+    g.add((uri, SKOS.prefLabel, Literal(tgn['pref_label'])))
+    g.add((uri, WGS84.lat, Literal(Decimal(tgn['lat']))))
+    g.add((uri, WGS84.long, Literal(Decimal(tgn['long']))))
+    g.add((uri, GVP.placeTypePreferred, Literal(tgn['place_type'])))
+    g.add((uri, DCT.source, URIRef('http://vocab.getty.edu/tgn/')))
+    if alt_label:
+        g.add((uri, SKOS.altLabel, Literal(alt_label)))
+
+    return g
+
+
+def mint_mmm_tgn_uri(tgn_uri: str, namespace=MMMP):
+    """
+    Create new MMM place uri with tgn_ prefixed localname
+
+    >>> mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820')
+    rdflib.term.URIRef('http://ldf.fi/mmm/places/tgn_7003820')
+    """
+
+    tgn_id = tgn_uri.split('/')[-1]
+    uri = namespace['tgn_' + tgn_id]
+
+    return uri
