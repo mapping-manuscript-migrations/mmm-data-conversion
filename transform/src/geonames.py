@@ -111,6 +111,9 @@ class GeoNamesAPI:
         >>> geo = GeoNamesAPI([os.environ['GEONAMES_KEY']])
         >>> geo.search_place('Royaume Uni / Angleterre',  'Dorset', 'Abbotsbury').get('wikipedia')
         'https://en.wikipedia.org/wiki/Abbotsbury'
+
+        >>> geo.search_place('France',  'Languedoc-Roussillon', 'Toulouse').get('wikipedia')
+        'https://en.wikipedia.org/wiki/Toulouse'
         """
         country_mapping = {
             "états-unis": "United States",
@@ -124,7 +127,18 @@ class GeoNamesAPI:
 
         region_mapping = {
             'Indéterminée': '',
+            'Alsace': 'Grand-Est',
+            'Champagne-Ardenne': 'Grand-Est',
+            'Lorraine': 'Grand-Est',
+            'Aquitaine': 'Nouvelle-Aquitaine',
+            'Limousin': 'Nouvelle-Aquitaine',
+            'Poitou-Charentes': 'Nouvelle-Aquitaine',
+            'Languedoc-Roussillon': 'Occitanie',
+            'Midi-Pyrénées': 'Occitanie',
+            'Nord-Pas-de-Calais': 'Hauts-de-France',
             'Picardie': 'Hauts-de-France',
+            'Basse-Normandie': 'Normandie',
+            'Haute-Normandie': 'Normandie',
         }
 
         region = region_mapping.get(region, region)
