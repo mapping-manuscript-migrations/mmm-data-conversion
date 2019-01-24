@@ -239,7 +239,7 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
             place_ontology.add((uri, SKOS.altLabel, Literal(tgn['label'])))
             place_ontology.add((uri, GVP.placeTypePreferred, Literal(tgn['place_type'])))
             place_ontology.add((uri, DCT.source, URIRef('http://vocab.getty.edu/tgn/')))
-        elif geo:
+        if geo:
             place_ontology.add((uri, MMMS.geonames_lat, Literal(Decimal(geo['lat']))))
             place_ontology.add((uri, MMMS.geonames_long, Literal(Decimal(geo['lon']))))
             place_ontology.add((uri, MMMS.geonames_class_description, Literal(geo['class_description'])))
@@ -249,13 +249,13 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
             place_ontology.add((uri, GEO.parentADM1, Literal(geo['adm1'])))
             place_ontology.add((uri, MMMS.geonames_country, Literal(geo['country'])))
             place_ontology.add((uri, DCT.source, URIRef('http://www.geonames.org')))
-        place_ontology.add((uri, DCT.source, MMMS.Bibale))
 
     log.info('Place linking finished.')
     return graph, place_ontology
 
 
 def bind_namespaces(graph: Graph):
+    """Bind common namespaces to the graph"""
     graph.bind("dct", DCT)
     graph.bind("crm", CRM)
     graph.bind("geo", GEO)
