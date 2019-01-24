@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
-"""Linking Bibale places"""
+"""Linking places to GeoNames and TGN"""
 
 import argparse
 import logging
@@ -11,40 +11,10 @@ from decimal import Decimal
 from rdflib import Graph, URIRef, Literal, RDF, Namespace, OWL
 from rdflib.util import guess_format
 
-try:
-    from . geonames import GeoNamesAPI
-except (ImportError, SystemError):
-    try:
-        from src.geonames import GeoNamesAPI
-    except (ImportError, SystemError):
-        from transform.src.geonames import GeoNamesAPI
+from geonames import GeoNamesAPI
+from tgn import TGN
+from namespaces import *
 
-try:
-    from . tgn import TGN
-except (ImportError, SystemError):
-    try:
-        from src.tgn import TGN
-    except (ImportError, SystemError):
-        from transform.src.tgn import TGN
-
-try:
-    from . namespaces import *
-except (ImportError, SystemError):
-    try:
-        from src.namespaces import *
-    except (ImportError, SystemError):
-        from transform.src.namespaces import *
-
-
-GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
-try:
-    GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY2'])
-    GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY3'])
-    GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY4'])
-    GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY5'])
-    GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY6'])
-except KeyError:
-    pass
 
 log = logging.getLogger(__name__)
 
@@ -95,12 +65,12 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
     return graph
 
 
-def handle_places(geonames: GeoNamesAPI, tgn: TGN, graph: Graph):
+def handle_bibale_places(geonames: GeoNamesAPI, tgn: TGN, bibale: Graph):
     """Modify places, link them to GeoNames and TGN, and create a new place ontology"""
-    places = group_places(graph)
+    places = group_places(bibale)
     place_ontology = Graph()
 
-    log.info('Got %s places for linking.' % len(places))
+    log.info('Got %s places for Bibale place handling.' % len(places))
 
     for (key, place_data) in places.items():
         # Get most common values (any of them) for place literals and authority URI
@@ -113,7 +83,7 @@ def handle_places(geonames: GeoNamesAPI, tgn: TGN, graph: Graph):
         geonames_uri = max(authority_uri_set, key=authority_uris.count) if authority_uri_set else None
 
         place_label = settlement or region or country
-        place_type = graph.value(old_uris[0], MMMS.place_type)
+        place_type = bibale.value(old_uris[0], MMMS.place_type)
 
         # Fetch GeoNames data based on GeoNames id
         geo_match = None
@@ -139,7 +109,7 @@ def handle_places(geonames: GeoNamesAPI, tgn: TGN, graph: Graph):
             uri = MMMP['bibale_' + str(sorted(old_uris)[0]).split(':')[-1]]
 
         # Modify graph
-        graph = redirect_refs(graph, old_uris, uri)
+        bibale = redirect_refs(bibale, old_uris, uri)
 
         if geonames_uri:
             place_ontology.add((uri, MMMS.geonames_uri, URIRef(geonames_uri)))
@@ -169,21 +139,62 @@ def handle_places(geonames: GeoNamesAPI, tgn: TGN, graph: Graph):
             place_ontology.add((uri, DCT.source, URIRef('http://www.geonames.org')))
 
     log.info('Place linking finished.')
-    return graph, place_ontology
+    return bibale, place_ontology
+
+
+def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Graph):
+    """Handle SDBM places"""
+
+    for place in sdbm.subjects(RDF.type, CRM.E53_Place):
+        data_provider_url = sdbm.value(place, MMMS.data_provider_url)
+        place_authority_uri = sdbm.value(place, OWL.sameAs)
+        label = sdbm.value(place, SKOS.prefLabel)
+
+        if str(place_authority_uri).startswith('http://vocab.getty.edu/tgn/'):
+            mmm_uri = tgn.mint_mmm_tgn_uri(place_authority_uri)
+
+            if not len(list(places.triples((mmm_uri, MMMS.tgn_uri, place_authority_uri)))):
+                # Place doesn't exist in place ontology
+
+                tgn_match = tgn.get_place_by_uri(place_authority_uri)
+                places += tgn.place_rdf(mmm_uri, tgn_match)
+                if str(label) != tgn_match['pref_label']:
+                    places.add((mmm_uri, SKOS.altLabel, label))
+
+            places.add((mmm_uri, MMMS.data_provider_url, data_provider_url))
+        else:
+            mmm_uri = MMMP['sdbm_' + str(place).split('/')[-1]]
+            for triple in sdbm.triples((place, None, None)):
+                places.add((mmm_uri, triple[1], triple[2]))
+
+        sdbm = redirect_refs(sdbm, [place], mmm_uri)
+
+    return sdbm, places
 
 
 def main():
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
+    argparser.add_argument("task", help="Task to perform", choices=['bibale_places', 'sdbm_places'])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output RDF file")
-    argparser.add_argument("--output_place_ontology", help="Output place ontology RDF file",
+    argparser.add_argument("--place_ontology", help="Output place ontology RDF file",
                            default="/output/mmm_places.ttl")
     argparser.add_argument("--loglevel", default='INFO', help="Logging level",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
 
     args = argparser.parse_args()
+
+    GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
+    try:
+        GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY2'])
+        GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY3'])
+        GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY4'])
+        GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY5'])
+        GEONAMES_APIKEYS.append(os.environ['GEONAMES_KEY6'])
+    except KeyError:
+        pass
 
     geo = GeoNamesAPI(GEONAMES_APIKEYS)
     tgn = TGN()
@@ -197,10 +208,18 @@ def main():
     input_graph = Graph()
     input_graph.parse(args.input, format=guess_format(args.input))
 
-    g, place_g = handle_places(geo, tgn, input_graph)
+    if args.task == 'bibale_places':
+        g, place_g = handle_bibale_places(geo, tgn, input_graph)
+    elif args.task == 'sdbm_places':
+        place_g = Graph()
+        place_g.parse(args.place_ontology, format=guess_format(args.place_ontology))
+        g, place_g = handle_sdbm_places(geo, tgn, input_graph, place_g)
+    else:
+        log.error('No valid task given.')
+        return
 
     bind_namespaces(g).serialize(args.output, format=guess_format(args.output))
-    bind_namespaces(place_g).serialize(args.output_place_ontology, format=guess_format(args.output_place_ontology))
+    bind_namespaces(place_g).serialize(args.place_ontology, format=guess_format(args.place_ontology))
 
 
 if __name__ == '__main__':

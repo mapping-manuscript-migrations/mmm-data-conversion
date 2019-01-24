@@ -32,8 +32,7 @@ COPY SPARQL/construct_bibale_manuscripts.sparql /app/construct_bibale_manuscript
 COPY SPARQL/construct_bibale_places.sparql /app/construct_bibale_places.sparql
 COPY SPARQL/construct_bibale_works.sparql /app/construct_bibale_works.sparql
 
-COPY src/link_bibale_places.py /app/link_bibale_places.py
-COPY src/geonames.py /app/geonames.py
+COPY src/* /app/
 
 #COPY convert.sh /app/convert.sh
 #COPY convert_bibale.sh /app/convert_bibale.sh

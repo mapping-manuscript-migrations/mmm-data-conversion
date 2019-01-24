@@ -393,7 +393,7 @@ WHERE {
     #   ?source_agent :source_agents_source_id ?entry_source .
     #   ?source_agent :source_agents_agent_id ?source_agent_name .
     #   ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
-    #   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?source_place_local_id))) as ?source_agent_location)
+    #   BIND(IRI(CONCAT(STR(mmm:), "places/", STR(?source_place_local_id))) as ?source_agent_location)
     # }
   }
 
@@ -421,7 +421,7 @@ WHERE {
   #BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?buyer_id))) as ?buyer)
   #BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?selling_agent_id))) as ?selling_agent)
   BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?prov_agent_id))) as ?prov_agent)
-  BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?production_place_id))) as ?production_place)
+  BIND(IRI(CONCAT(STR(mmm:), "places/", STR(?production_place_id))) as ?production_place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?production_date_id))) as ?production_timespan)
   #BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "height/", ?entry_id)) as ?height_uri)

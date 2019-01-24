@@ -6,7 +6,7 @@ import logging
 
 import requests
 from decimal import Decimal
-from rdflib import Graph, URIRef, Literal
+from rdflib import Graph, URIRef, Literal, RDF
 
 from namespaces import *
 
@@ -21,7 +21,7 @@ class TGN:
 
         self.log = logging.getLogger(__name__)
 
-    def search_tgn_place(self, place_name: str, lat: str, lon: str, radius='50km'):
+    def search_tgn_place(self, place_name: str, lat: str, lon: str, radius='30km'):
         """
         Search for a single place in TGN based on name and coordinates
 
@@ -153,11 +153,12 @@ class TGN:
         >>> tgn = TGN()
         >>> place = tgn.get_place_by_uri('http://vocab.getty.edu/tgn/7003820')
         >>> len(tgn.place_rdf(URIRef('http://test.com/place_1'), place))
-        6
+        7
         """
 
         alt_label = tgn.get('label')
         g = Graph()
+        g.add((uri, RDF.type, CRM.E53_Place))
         g.add((uri, MMMS.tgn_uri, URIRef(tgn['uri'])))
         g.add((uri, SKOS.prefLabel, Literal(tgn['pref_label'])))
         g.add((uri, WGS84.lat, Literal(Decimal(tgn['lat']))))

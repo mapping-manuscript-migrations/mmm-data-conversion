@@ -15,7 +15,7 @@ curl -f --data-urlencode "query=$(cat /app/construct_bibale_actors.sparql)" $INP
 cat $OUTPUT/_bibale_manuscripts.ttl $OUTPUT/_bibale_works.ttl $OUTPUT/_bibale_places.ttl $OUTPUT/_bibale_actors.ttl > $OUTPUT/_bibale_all.ttl
 
 printf '\nLinking Bibale places\n\n'
-python link_bibale_places.py $OUTPUT/_bibale_all.ttl $OUTPUT/_bibale_cidoc_places_linked.ttl --logfile $OUTPUT/logs/bibale_linking.log
+python linker.py bibale_places $OUTPUT/_bibale_all.ttl $OUTPUT/_bibale_cidoc_places_linked.ttl --logfile $OUTPUT/logs/bibale_linking.log
 
 rapper -i turtle $OUTPUT/_bibale_cidoc_places_linked.ttl -o turtle > $OUTPUT/bibale_cidoc.ttl
 

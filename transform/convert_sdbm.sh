@@ -4,18 +4,21 @@ set -eo pipefail
 
 # run the SPARQL construct query
 printf '\nConstructing SDBM manuscripts transactions\n\n'
-curl -f --data-urlencode "query=$(cat /app/construct_sdbm_manuscripts_transactions.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/sdbm_manuscripts_transactions.ttl
+curl -f --data-urlencode "query=$(cat /app/construct_sdbm_manuscripts_transactions.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/_sdbm_manuscripts_transactions.ttl
 printf '\nConstructing SDBM manuscripts\n\n'
-curl -f --data-urlencode "query=$(cat /app/construct_sdbm_manuscripts.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/sdbm_manuscripts.ttl
+curl -f --data-urlencode "query=$(cat /app/construct_sdbm_manuscripts.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/_sdbm_manuscripts.ttl
 printf '\nConstructing SDBM works\n\n'
-curl -f --data-urlencode "query=$(cat /app/construct_sdbm_works.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/sdbm_works.ttl
+curl -f --data-urlencode "query=$(cat /app/construct_sdbm_works.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/_sdbm_works.ttl
 printf '\nConstructing SDBM actors\n\n'
-curl -f --data-urlencode "query=$(cat /app/construct_sdbm_people.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/sdbm_people.ttl
+curl -f --data-urlencode "query=$(cat /app/construct_sdbm_people.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/_sdbm_people.ttl
 printf '\nConstructing SDBM places\n\n'
-curl -f --data-urlencode "query=$(cat /app/construct_sdbm_places.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/sdbm_places.ttl
+curl -f --data-urlencode "query=$(cat /app/construct_sdbm_places.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/_sdbm_places.ttl
 printf '\nConstructing SDBM sources\n\n'
-curl -f --data-urlencode "query=$(cat /app/construct_sdbm_sources.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/sdbm_sources.ttl
+curl -f --data-urlencode "query=$(cat /app/construct_sdbm_sources.sparql)" $INPUT_SDBM_SPARQL_ENDPOINT -v > $OUTPUT/_sdbm_sources.ttl
 
-cat $OUTPUT/sdbm_manuscripts_transactions.ttl $OUTPUT/sdbm_manuscripts.ttl $OUTPUT/sdbm_works.ttl $OUTPUT/sdbm_people.ttl $OUTPUT/sdbm_places.ttl $OUTPUT/sdbm_sources.ttl > $OUTPUT/sdbm_cidoc.ttl
+cat $OUTPUT/_sdbm_manuscripts_transactions.ttl $OUTPUT/_sdbm_manuscripts.ttl $OUTPUT/_sdbm_works.ttl $OUTPUT/_sdbm_people.ttl $OUTPUT/_sdbm_places.ttl $OUTPUT/_sdbm_sources.ttl > $OUTPUT/_sdbm_all.ttl
+
+printf '\nLinking SDBM places\n\n'
+python linker.py sdbm_places $OUTPUT/_sdbm_all.ttl $OUTPUT/_sdbm_cidoc_places_linked.ttl --logfile $OUTPUT/logs/sdbm_linking.log
 
 exec "$@"

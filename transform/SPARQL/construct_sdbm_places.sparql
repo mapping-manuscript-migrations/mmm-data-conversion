@@ -47,5 +47,5 @@ WHERE {
     FILTER(STR(?long_) != "")
     ?place_id :places_longitude ?long .
   }
-  BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?local_id))) as ?place)
+  BIND(IRI(CONCAT(STR(mmm:), "places/sdbm_", STR(?local_id))) as ?place)
 }
