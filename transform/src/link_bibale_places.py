@@ -20,12 +20,12 @@ except (ImportError, SystemError):
         from transform.src.geonames import GeoNamesAPI
 
 try:
-    from .tgn import search_tgn_place, place_rdf, mint_mmm_tgn_uri
+    from . tgn import TGN
 except (ImportError, SystemError):
     try:
-        from src.tgn import search_tgn_place, place_rdf, mint_mmm_tgn_uri
+        from src.tgn import TGN
     except (ImportError, SystemError):
-        from transform.src.tgn import search_tgn_place, place_rdf, mint_mmm_tgn_uri
+        from transform.src.tgn import TGN
 
 try:
     from . namespaces import *
@@ -95,7 +95,7 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
     return graph
 
 
-def handle_places(geonames: GeoNamesAPI, graph: Graph):
+def handle_places(geonames: GeoNamesAPI, tgn: TGN, graph: Graph):
     """Modify places, link them to GeoNames and TGN, and create a new place ontology"""
     places = group_places(graph)
     place_ontology = Graph()
@@ -116,25 +116,25 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
         place_type = graph.value(old_uris[0], MMMS.place_type)
 
         # Fetch GeoNames data based on GeoNames id
-        geo = None
-        tgn = None
+        geo_match = None
+        tgn_match = None
         if geonames_uri:
-            geo = geonames.get_place_data(str(geonames_uri).split('/')[-1])
+            geo_match = geonames.get_place_data(str(geonames_uri).split('/')[-1])
 
-        if not geo:
-            geo = geonames.search_place(country, region, settlement)
-            if not geo and country and region:
-                geo = geonames.search_place(country, region, '')
+        if not geo_match:
+            geo_match = geonames.search_place(country, region, settlement)
+            if not geo_match and country and region:
+                geo_match = geonames.search_place(country, region, '')
 
-        if geo:
-            place_label = geo.get('name') or place_label
-            geonames_uri = 'http://sws.geonames.org/%s' % geo.get('id')
-            tgn = search_tgn_place(place_label, geo['lat'], geo['lon'])
+        if geo_match:
+            place_label = geo_match.get('name') or place_label
+            geonames_uri = 'http://sws.geonames.org/%s' % geo_match.get('id')
+            tgn_match = tgn.search_tgn_place(place_label, geo_match['lat'], geo_match['lon'])
         else:
             log.error('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
-        if tgn:
-            uri = mint_mmm_tgn_uri(tgn['uri'])
+        if tgn_match:
+            uri = tgn.mint_mmm_tgn_uri(tgn_match['uri'])
         else:
             uri = MMMP['bibale_' + str(sorted(old_uris)[0]).split(':')[-1]]
 
@@ -155,17 +155,17 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
         place_ontology.add((uri, DCT.source, MMMS.Bibale))
         place_ontology.add((uri, SKOS.prefLabel, Literal(place_label)))
 
-        if tgn:
-            place_ontology += place_rdf(uri, tgn)
-        if geo:
-            place_ontology.add((uri, MMMS.geonames_lat, Literal(Decimal(geo['lat']))))
-            place_ontology.add((uri, MMMS.geonames_long, Literal(Decimal(geo['lon']))))
-            place_ontology.add((uri, MMMS.geonames_class_description, Literal(geo['class_description'])))
-            if geo.get('wikipedia'):
-                place_ontology.add((uri, GEO.wikipediaArticle, URIRef(geo['wikipedia'])))
-            place_ontology.add((uri, GEO.name, Literal(geo['address'])))
-            place_ontology.add((uri, GEO.parentADM1, Literal(geo['adm1'])))
-            place_ontology.add((uri, MMMS.geonames_country, Literal(geo['country'])))
+        if tgn_match:
+            place_ontology += tgn.place_rdf(uri, tgn_match)
+        if geo_match:
+            place_ontology.add((uri, MMMS.geonames_lat, Literal(Decimal(geo_match['lat']))))
+            place_ontology.add((uri, MMMS.geonames_long, Literal(Decimal(geo_match['lon']))))
+            place_ontology.add((uri, MMMS.geonames_class_description, Literal(geo_match['class_description'])))
+            if geo_match.get('wikipedia'):
+                place_ontology.add((uri, GEO.wikipediaArticle, URIRef(geo_match['wikipedia'])))
+            place_ontology.add((uri, GEO.name, Literal(geo_match['address'])))
+            place_ontology.add((uri, GEO.parentADM1, Literal(geo_match['adm1'])))
+            place_ontology.add((uri, MMMS.geonames_country, Literal(geo_match['country'])))
             place_ontology.add((uri, DCT.source, URIRef('http://www.geonames.org')))
 
     log.info('Place linking finished.')
@@ -186,6 +186,7 @@ def main():
     args = argparser.parse_args()
 
     geo = GeoNamesAPI(GEONAMES_APIKEYS)
+    tgn = TGN()
 
     log = logging.getLogger()  # Get root logger
     log_handler = logging.FileHandler(args.logfile)
@@ -196,7 +197,7 @@ def main():
     input_graph = Graph()
     input_graph.parse(args.input, format=guess_format(args.input))
 
-    g, place_g = handle_places(geo, input_graph)
+    g, place_g = handle_places(geo, tgn, input_graph)
 
     bind_namespaces(g).serialize(args.output, format=guess_format(args.output))
     bind_namespaces(place_g).serialize(args.output_place_ontology, format=guess_format(args.output_place_ontology))
