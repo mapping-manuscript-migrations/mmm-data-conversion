@@ -11,6 +11,8 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
+BASE <http://>
+
 CONSTRUCT {
   ?place a crm:E53_Place ;
     skos:prefLabel ?name ;
@@ -33,7 +35,8 @@ WHERE {
     ?place_id :places_authority_source ?authority_source .
     ?place_id :places_authority_id ?authority_localname .
   }
-  BIND(URI(REPLACE(STR(?authority_source), " ", "") + STR("/") + STR(?authority_localname)) as ?authority_uri) .
+  BIND(IRI(REPLACE(STR(?authority_source), " ", "") + STR("/") + STR(?authority_localname)) as ?_authority_uri) .
+  BIND(IRI(REPLACE(STR(?_authority_uri), "http:///", "http://")) as ?authority_uri) .
   OPTIONAL {
     ?place_id :places_latitude ?lat_ .
     FILTER(STR(?lat_) != "")
@@ -44,5 +47,5 @@ WHERE {
     FILTER(STR(?long_) != "")
     ?place_id :places_longitude ?long .
   }
-  BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?local_id))) as ?place)
+  BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?local_id))) as ?place)
 }
