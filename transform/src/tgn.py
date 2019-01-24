@@ -9,10 +9,10 @@ import requests
 log = logging.getLogger(__name__)
 
 
-def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km',
-                      endpoint='http://vocab.getty.edu/sparql.json'):
+def search_tgn_place(place_name: str, lat: str, lon: str, radius='50km',
+                     endpoint='http://vocab.getty.edu/sparql.json'):
     """
-    Link a single place to TGN
+    Search for a single place in TGN based on name and coordinates
 
     :param place_name: Place name in English (or French)
     :param lat: Latitude (wgs84)
@@ -21,8 +21,8 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km',
     :param endpoint: Getty endpoint
     :return: dict of TGN place information
 
-    >>> link_place_to_tgn('Buarcos', '40.19', '-8.865', radius='5km')
-    {'uri': 'http://vocab.getty.edu/tgn/7744552', 'pref_label': 'Buarcos', 'lat': '40.166039', 'long': '-8.876801', 'label': 'Buarcos', 'place_type': 'inhabited places'}
+    >>> search_tgn_place('Buarcos', '40.19', '-8.865', radius='5km')
+    {'uri': 'http://vocab.getty.edu/tgn/7744552', 'pref_label': 'Buarcos', 'lat': '40.166039', 'long': '-8.876801', 'label': 'Buarcos', 'place_type': 'inhabited places', 'parent': 'http://vocab.getty.edu/tgn/7003820'}
     """
     query_template = """
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -31,11 +31,12 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km',
         prefix ontogeo: <http://www.ontotext.com/owlim/geo#>
         PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 
-        SELECT ?uri ?pref_label ?lat ?long ?label ?place_type_en {{
+        SELECT ?uri ?pref_label ?lat ?long ?label ?place_type_en ?parent_uri {{
           ?uri foaf:focus [ ontogeo:nearby( {lat} {lon} "{radius}") ] .
           ?uri foaf:focus [ wgs84:lat ?lat ; wgs84:long ?long ] .
           ?uri gvp:placeTypePreferred/gvp:prefLabelGVP/xl:literalForm ?place_type_en .
           ?uri gvp:prefLabelGVP/xl:literalForm ?gvp_pref_label .
+          ?uri gvp:broaderPreferred ?parent_uri .
 
           ?uri (xl:prefLabel|xl:altLabel)/xl:literalForm ?label .
           FILTER(LANG(?label) in ("en", "fr", ""))
@@ -48,8 +49,6 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km',
         }}
     """
 
-    # TODO: Get gvp:broaderPreferred
-
     log.info('Finding TGN place for: %s, %s, %s' % (place_name, lat, lon))
 
     results = requests.post(endpoint, {'query': query_template.format(lat=lat, lon=lon, radius=radius)}).json()
@@ -59,14 +58,18 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km',
         label = place['label']['value']
         pref_label = place['pref_label']['value']
         uri = place['uri']['value']
-        if place_name in [label, pref_label] and tgn_match.get('uri') != uri:  # TODO: Fuzzy match
+
+        # TODO: Fuzzy match
+        if place_name in [label, pref_label] and tgn_match.get('uri') != uri:
 
             tgn = {'uri': uri,
                    'pref_label': pref_label,
                    'lat': place['lat']['value'],
                    'long': place['long']['value'],
                    'label': label,
-                   'place_type': place['place_type_en']['value']}
+                   'place_type': place['place_type_en']['value'],
+                   'parent': place['parent_uri']['value'],
+                   }
 
             if tgn_match:
                 if tgn['place_type'] != 'inhabited places':
@@ -89,3 +92,47 @@ def link_place_to_tgn(place_name: str, lat: str, lon: str, radius='50km',
     return tgn_match
 
 
+def get_place_by_uri(uri: str, endpoint='http://vocab.getty.edu/sparql.json'):
+    """
+    Get place by TGN URI
+
+    >>> get_place_by_uri('http://vocab.getty.edu/tgn/7003820')['pref_label']
+    'Coimbra'
+    """
+
+    query_template = """
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
+        PREFIX gvp: <http://vocab.getty.edu/ontology#>
+        prefix ontogeo: <http://www.ontotext.com/owlim/geo#>
+        PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+        
+        SELECT ?uri ?pref_label ?lat ?long ?place_type_en ?parent_uri {{
+          VALUES ?uri {{ <{place_uri}> }}
+          ?uri foaf:focus [ wgs84:lat ?lat ; wgs84:long ?long ] .
+          ?uri gvp:placeTypePreferred/gvp:prefLabelGVP/xl:literalForm ?place_type_en .
+          ?uri gvp:prefLabelGVP/xl:literalForm ?gvp_pref_label .
+          ?uri gvp:broaderPreferred ?parent_uri .
+        
+          OPTIONAL {{
+            ?uri (xl:prefLabel/xl:literalForm) ?pref_label_en .
+            FILTER(LANG(?pref_label_en) in ("en"))
+          }}
+          BIND(COALESCE(?pref_label_en, ?gvp_pref_label) as ?pref_label)
+        }}
+    """
+
+    log.info('Retrieving TGN place %s' % uri)
+
+    results = requests.post(endpoint, {'query': query_template.format(place_uri=str(uri))}).json()
+
+    res = results['results']['bindings'][0]
+    tgn = {'uri': uri,
+           'pref_label': res['pref_label']['value'],
+           'lat': res['lat']['value'],
+           'long': res['long']['value'],
+           'place_type': res['place_type_en']['value'],
+           'parent': res['parent_uri']['value'],
+           }
+
+    return tgn

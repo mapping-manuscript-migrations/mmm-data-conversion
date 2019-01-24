@@ -20,12 +20,12 @@ except (ImportError, SystemError):
         from transform.src.geonames import GeoNamesAPI
 
 try:
-    from . tgn import link_place_to_tgn
+    from . tgn import search_tgn_place
 except (ImportError, SystemError):
     try:
-        from src.tgn import link_place_to_tgn
+        from src.tgn import search_tgn_place
     except (ImportError, SystemError):
-        from transform.src.tgn import link_place_to_tgn
+        from transform.src.tgn import search_tgn_place
 
 try:
     from . namespaces import *
@@ -129,7 +129,7 @@ def handle_places(geonames: GeoNamesAPI, graph: Graph):
         if geo:
             place_label = geo.get('name') or place_label
             geonames_uri = 'http://sws.geonames.org/%s' % geo.get('id')
-            tgn = link_place_to_tgn(place_label, geo['lat'], geo['lon'])
+            tgn = search_tgn_place(place_label, geo['lat'], geo['lon'])
         else:
             log.error('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
