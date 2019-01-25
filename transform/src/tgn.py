@@ -107,6 +107,8 @@ class TGN:
 
         >>> TGN().get_place_by_uri('http://vocab.getty.edu/tgn/7003820')['pref_label']
         'Coimbra'
+        >>> TGN().get_place_by_uri('http://vocab.getty.edu/tgn/7003820_bad_uri')
+        {}
         """
 
         query_template = """
@@ -135,7 +137,12 @@ class TGN:
 
         results = requests.post(self.endpoint, {'query': query_template.format(place_uri=str(uri))}).json()
 
-        res = results['results']['bindings'][0]
+        try:
+            res = results['results']['bindings'][0]
+        except IndexError:
+            self.log.error('No TGN result found for URI: %s' % uri)
+            return {}
+
         tgn = {'uri': uri,
                'pref_label': res['pref_label']['value'],
                'lat': res['lat']['value'],
