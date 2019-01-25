@@ -152,21 +152,26 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
         place_authority_uri = sdbm.value(place, OWL.sameAs)
         label = sdbm.value(place, SKOS.prefLabel)
 
+        tgn_match = None
+        in_place_ontology = False
         if str(place_authority_uri).startswith('http://vocab.getty.edu/tgn/'):
             mmm_uri = tgn.mint_mmm_tgn_uri(place_authority_uri)
 
-            if not len(list(places.triples((mmm_uri, MMMS.tgn_uri, place_authority_uri)))):
-                # Place doesn't exist in place ontology
+            in_place_ontology = len(list(places.triples((mmm_uri, MMMS.tgn_uri, place_authority_uri))))
+            if not in_place_ontology:
+                # Add place to place ontology
 
                 tgn_match = tgn.get_place_by_uri(place_authority_uri)
                 places += tgn.place_rdf(mmm_uri, tgn_match)
-                if str(label) != tgn_match['pref_label']:
+                if str(label) != tgn_match.get('pref_label'):
                     places.add((mmm_uri, SKOS.altLabel, label))
 
                 log.info('Added %s to place ontology.' % tgn_match['pref_label'])
 
             places.add((mmm_uri, MMMS.data_provider_url, data_provider_url))
-        else:
+
+        if not (tgn_match or in_place_ontology):
+            # No better information, so add SDBM annotations to place ontology
             mmm_uri = MMMP['sdbm_' + str(place).split('/')[-1]]
             for triple in sdbm.triples((place, None, None)):
                 places.add((mmm_uri, triple[1], triple[2]))
