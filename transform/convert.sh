@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eo pipefail
 
 mkdir -p $OUTPUT/logs
 

@@ -143,7 +143,9 @@ def handle_bibale_places(geonames: GeoNamesAPI, tgn: TGN, bibale: Graph):
 
 
 def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Graph):
-    """Handle SDBM places"""
+    """Handle and link SDBM places"""
+
+    log.info('Starting to link SDBM places.')
 
     for place in sdbm.subjects(RDF.type, CRM.E53_Place):
         data_provider_url = sdbm.value(place, MMMS.data_provider_url)
@@ -160,6 +162,8 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
                 places += tgn.place_rdf(mmm_uri, tgn_match)
                 if str(label) != tgn_match['pref_label']:
                     places.add((mmm_uri, SKOS.altLabel, label))
+
+                log.info('Added %s to place ontology.' % tgn_match['pref_label'])
 
             places.add((mmm_uri, MMMS.data_provider_url, data_provider_url))
         else:
@@ -205,6 +209,7 @@ def main():
     log.addHandler(log_handler)
     log.setLevel(args.loglevel)
 
+    log.info('Reading input graphs.')
     input_graph = Graph()
     input_graph.parse(args.input, format=guess_format(args.input))
 
