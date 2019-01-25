@@ -161,10 +161,15 @@ class TGN:
         >>> place = tgn.get_place_by_uri('http://vocab.getty.edu/tgn/7003820')
         >>> len(tgn.place_rdf(URIRef('http://test.com/place_1'), place))
         7
+        >>> len(tgn.place_rdf(URIRef('http://test.com/place_2'), {}))
+        0
         """
+        g = Graph()
+
+        if not tgn:
+            return g
 
         alt_label = tgn.get('label')
-        g = Graph()
         g.add((uri, RDF.type, CRM.E53_Place))
         g.add((uri, MMMS.tgn_uri, URIRef(tgn['uri'])))
         g.add((uri, SKOS.prefLabel, Literal(tgn['pref_label'])))
