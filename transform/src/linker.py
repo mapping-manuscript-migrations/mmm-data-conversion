@@ -138,14 +138,15 @@ def handle_bibale_places(geonames: GeoNamesAPI, tgn: TGN, bibale: Graph):
             place_ontology.add((uri, MMMS.geonames_country, Literal(geo_match['country'])))
             place_ontology.add((uri, DCT.source, URIRef('http://www.geonames.org')))
 
-    log.info('Place linking finished.')
+    log.info('Bibale place linking finished.')
+
     return bibale, place_ontology
 
 
 def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Graph):
     """Handle and link SDBM places"""
 
-    log.info('Starting to link SDBM places.')
+    log.info('Starting SDBM place linking.')
 
     for place in sdbm.subjects(RDF.type, CRM.E53_Place):
         data_provider_url = sdbm.value(place, MMMS.data_provider_url)
@@ -185,6 +186,8 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
         places.add((mmm_uri, DCT.source, MMMS.SDBM))
 
         sdbm = redirect_refs(sdbm, [place], mmm_uri)
+
+    log.info('SDBM place linking finished.')
 
     return sdbm, places
 
@@ -236,8 +239,12 @@ def main():
         log.error('No valid task given.')
         return
 
+    log.info('Task finished.')
+
     bind_namespaces(g).serialize(args.output, format=guess_format(args.output))
     bind_namespaces(place_g).serialize(args.place_ontology, format=guess_format(args.place_ontology))
+
+    log.info('Serialized output files.')
 
 
 if __name__ == '__main__':
