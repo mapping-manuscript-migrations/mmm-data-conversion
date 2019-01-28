@@ -52,3 +52,10 @@ or
 ## Logs
 
 `docker-compose logs -f`
+
+
+## Running tests
+
+`GEONAMES_KEY=<APIKEY> nosetests --with-doctest .`
+
+Replace `<APIKEY>` with your GeoNames APIKEY.

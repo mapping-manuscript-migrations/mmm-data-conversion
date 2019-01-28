@@ -159,11 +159,11 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
 
             in_place_ontology = len(list(places.triples((mmm_uri, MMMS.tgn_uri, place_authority_uri))))
             if not in_place_ontology:
-                # Add place to place ontology
-
                 tgn_match = tgn.get_place_by_uri(place_authority_uri)
 
             if tgn_match:
+                # Add place to place ontology
+
                 if str(label) != tgn_match.get('pref_label'):
                     tgn_match['label'] = label
                 if not tgn_match.get('lat'):
