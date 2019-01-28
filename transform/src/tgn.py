@@ -120,8 +120,8 @@ class TGN:
             
             SELECT ?uri ?pref_label ?lat ?long ?place_type_en ?parent_uri {{
               VALUES ?uri {{ <{place_uri}> }}
-              ?uri foaf:focus [ wgs84:lat ?lat ; wgs84:long ?long ] .
-              ?uri gvp:placeTypePreferred/gvp:prefLabelGVP/xl:literalForm ?place_type_en .
+              OPTIONAL {{ ?uri foaf:focus [ wgs84:lat ?lat ; wgs84:long ?long ] }}
+              OPTIONAL {{ ?uri gvp:placeTypePreferred/gvp:prefLabelGVP/xl:literalForm ?place_type_en }}
               ?uri gvp:prefLabelGVP/xl:literalForm ?gvp_pref_label .
               ?uri gvp:broaderPreferred ?parent_uri .
             
@@ -135,7 +135,14 @@ class TGN:
 
         self.log.info('Retrieving TGN place %s' % uri)
 
-        results = requests.post(self.endpoint, {'query': query_template.format(place_uri=str(uri))}).json()
+        retries = 5
+        results = None
+        while not results and retries:
+            results = requests.post(self.endpoint,
+                                     {'query': query_template.format(place_uri=str(uri))},
+                                     timeout=31,
+                                    ).json()
+            retries -= 1
 
         try:
             res = results['results']['bindings'][0]
@@ -145,9 +152,9 @@ class TGN:
 
         tgn = {'uri': uri,
                'pref_label': res['pref_label']['value'],
-               'lat': res['lat']['value'],
-               'long': res['long']['value'],
-               'place_type': res['place_type_en']['value'],
+               'lat': res.get('lat', {}).get('value'),
+               'long': res.get('long', {}).get('value'),
+               'place_type': res.get('place_type_en', {}).get('value'),
                'parent': res['parent_uri']['value'],
                }
 
@@ -169,16 +176,20 @@ class TGN:
         if not tgn:
             return g
 
-        alt_label = tgn.get('label')
         g.add((uri, RDF.type, CRM.E53_Place))
+        g.add((uri, DCT.source, URIRef('http://vocab.getty.edu/tgn/')))
         g.add((uri, MMMS.tgn_uri, URIRef(tgn['uri'])))
         g.add((uri, SKOS.prefLabel, Literal(tgn['pref_label'])))
-        g.add((uri, WGS84.lat, Literal(Decimal(tgn['lat']))))
-        g.add((uri, WGS84.long, Literal(Decimal(tgn['long']))))
-        g.add((uri, GVP.placeTypePreferred, Literal(tgn['place_type'])))
-        g.add((uri, DCT.source, URIRef('http://vocab.getty.edu/tgn/')))
-        if alt_label:
-            g.add((uri, SKOS.altLabel, Literal(alt_label)))
+
+        if tgn.get('lat'):
+            g.add((uri, WGS84.lat, Literal(Decimal(tgn['lat']))))
+        if tgn.get('long'):
+            g.add((uri, WGS84.long, Literal(Decimal(tgn['long']))))
+        if tgn.get('place_type'):
+            g.add((uri, GVP.placeTypePreferred, Literal(tgn['place_type'])))
+
+        if tgn.get('label'):
+            g.add((uri, SKOS.altLabel, Literal(tgn['label'])))
 
         return g
 

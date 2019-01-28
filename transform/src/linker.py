@@ -162,19 +162,27 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
                 # Add place to place ontology
 
                 tgn_match = tgn.get_place_by_uri(place_authority_uri)
-                places += tgn.place_rdf(mmm_uri, tgn_match)
+
+            if tgn_match:
                 if str(label) != tgn_match.get('pref_label'):
-                    places.add((mmm_uri, SKOS.altLabel, label))
+                    tgn_match['label'] = label
+                if not tgn_match.get('lat'):
+                    tgn_match['lat'] = sdbm.value(place, WGS84.lat)
+                    tgn_match['long'] = sdbm.value(place, WGS84.long)
 
-                log.info('Added %s to place ontology.' % tgn_match['pref_label'])
+                places += tgn.place_rdf(mmm_uri, tgn_match)
 
-            places.add((mmm_uri, MMMS.data_provider_url, data_provider_url))
+                log.info('Added %s (%s) to place ontology.' % (place_authority_uri, tgn_match.get('pref_label')))
+
+                places.add((mmm_uri, MMMS.data_provider_url, data_provider_url))
 
         if not (tgn_match or in_place_ontology):
             # No better information, so add SDBM annotations to place ontology
-            mmm_uri = MMMP['sdbm_' + str(place).split('/')[-1]]
+            mmm_uri = MMMP[str(place).split('/')[-1]]
             for triple in sdbm.triples((place, None, None)):
                 places.add((mmm_uri, triple[1], triple[2]))
+
+        places.add((mmm_uri, DCT.source, MMMS.SDBM))
 
         sdbm = redirect_refs(sdbm, [place], mmm_uri)
 

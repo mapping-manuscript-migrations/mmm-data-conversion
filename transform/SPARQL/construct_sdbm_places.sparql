@@ -29,7 +29,7 @@ WHERE {
             :places_name ?name .
   OPTIONAL {
     ?place_id :places_parent_id ?parent_id .
-    BIND(IRI(CONCAT(STR(mmm:), "place/", REPLACE(STR(?parent_id), "^(.*)places/(.*)$", "$2"))) as ?parent)
+    BIND(IRI(CONCAT(STR(mmm:), "places/", REPLACE(STR(?parent_id), "^(.*)places/(.*)$", "$2"))) as ?parent)
   }
   OPTIONAL {
     ?place_id :places_authority_source ?authority_source .
