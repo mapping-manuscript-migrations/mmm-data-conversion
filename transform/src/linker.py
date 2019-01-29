@@ -148,13 +148,14 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
 
     log.info('Starting SDBM place linking.')
 
-    for place in sdbm.subjects(RDF.type, CRM.E53_Place):
+    for place in list(sdbm.subjects(RDF.type, CRM.E53_Place)):
         data_provider_url = sdbm.value(place, MMMS.data_provider_url)
         place_authority_uri = sdbm.value(place, OWL.sameAs)
         label = sdbm.value(place, SKOS.prefLabel)
 
         tgn_match = None
         in_place_ontology = False
+        mmm_uri = None
         if str(place_authority_uri).startswith('http://vocab.getty.edu/tgn/'):
             mmm_uri = tgn.mint_mmm_tgn_uri(place_authority_uri)
 

@@ -83,8 +83,13 @@ class TestLinker(unittest.TestCase):
 
         self.assertIsNone(g.value(place1, SKOS.prefLabel))
 
+        pprint.pprint(list(g))
         pprint.pprint(list(places))
+
         self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 2)
         self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 2)
 
+        self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
+        self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 1)
+        self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_1005755'))))), 1)
 

@@ -19,10 +19,10 @@ curl -f --data-urlencode "query=$(cat /app/construct_sdbm_sources.sparql)" $INPU
 
 # Take only relevant parts of the data for place linking, and combine with the rest later
 
-cat $OUTPUT/_sdbm_manuscripts_transactions.ttl $OUTPUT/_sdbm_manuscripts.ttl $OUTPUT/_sdbm_people.ttl $OUTPUT/_sdbm_places.ttl $OUTPUT/_sdbm_sources.ttl > $OUTPUT/_sdbm_places_not_linked.ttl
+cat $OUTPUT/_sdbm_manuscripts_transactions.ttl $OUTPUT/_sdbm_manuscripts.ttl $OUTPUT/_sdbm_people.ttl $OUTPUT/_sdbm_places.ttl $OUTPUT/_sdbm_sources.ttl > $OUTPUT/_sdbm_cidoc_not_linked.ttl
 
 printf '\nLinking SDBM places\n\n'
-python linker.py sdbm_places $OUTPUT/_sdbm_all.ttl $OUTPUT/_sdbm_cidoc_places_linked.ttl --logfile $OUTPUT/logs/sdbm_linking.log
+python linker.py sdbm_places $OUTPUT/_sdbm_cidoc_not_linked.ttl $OUTPUT/_sdbm_cidoc_places_linked.ttl --logfile $OUTPUT/logs/sdbm_linking.log
 
 cat $OUTPUT/_sdbm_works.ttl $OUTPUT/_sdbm_cidoc_places_linked.ttl  | rapper - "http://ldf.fi/mmm/" -i turtle -o turtle > $OUTPUT/sdbm_cidoc.ttl
 
