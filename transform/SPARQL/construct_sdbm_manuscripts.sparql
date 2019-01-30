@@ -77,7 +77,7 @@ CONSTRUCT {
     rdfs:comment ?prov_comment ;
     mmm-schema:data_provider_url ?entry ;
     dct:source ?source .
-  
+
   # # title reification
   # ?reification_label_uri
   #   a rdf:Statement ;

@@ -55,6 +55,9 @@ def group_places(graph: Graph):
 
 def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
     """Remove old instances and redirect old URI references to the new URI"""
+
+    log.debug('Redirecting %s to %s' % (old_uris, new_uri))
+
     for uri in old_uris:
         for s, p in graph.subject_predicates(uri):
             graph.add((s, p, new_uri))
@@ -180,7 +183,7 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
 
         if not (tgn_match or in_place_ontology):
             # No better information, so add SDBM annotations to place ontology
-            mmm_uri = MMMP[str(place).split('/')[-1]]
+            mmm_uri = MMMP['sdbm_' + str(place).split('/')[-1]]
             for triple in sdbm.triples((place, None, None)):
                 places.add((mmm_uri, triple[1], triple[2]))
 
