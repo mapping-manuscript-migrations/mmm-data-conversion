@@ -17,7 +17,7 @@ case "$1" in
   "sdbm")
     docker-compose up -d crm
     sleep 5
-    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-sdbm/" # TODO: sdbm-graafi on liian iso poistettavaksi s-deletellä
+    docker-compose exec crm ./prune.sh "http://ldf.fi/mmm-sdbm/"
     docker-compose down
   ;;
   *)

@@ -21,7 +21,7 @@ class TGN:
 
         self.log = logging.getLogger(__name__)
 
-    def search_tgn_place(self, place_name: str, lat: str, lon: str, radius='30km'):
+    def search_tgn_place(self, place_name: str, lat: str, lon: str, radius='50km'):
         """
         Search for a single place in TGN based on name and coordinates
 

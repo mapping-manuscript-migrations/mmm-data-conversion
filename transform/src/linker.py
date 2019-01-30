@@ -146,15 +146,15 @@ def handle_bibale_places(geonames: GeoNamesAPI, tgn: TGN, bibale: Graph):
     return bibale, place_ontology
 
 
-def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Graph):
-    """Handle and link SDBM places"""
+def handle_tgn_places(geonames: GeoNamesAPI, tgn: TGN, data: Graph, places: Graph, localname_prefix, source_uri):
+    """Handle and link places with TGN references, or add a new place if TGN reference missing"""
 
-    log.info('Starting SDBM place linking.')
+    log.info('Starting TGN place linking with prefix "%s".' % localname_prefix)
 
-    for place in list(sdbm.subjects(RDF.type, CRM.E53_Place)):
-        data_provider_url = sdbm.value(place, MMMS.data_provider_url)
-        place_authority_uri = sdbm.value(place, OWL.sameAs)
-        label = sdbm.value(place, SKOS.prefLabel)
+    for place in list(data.subjects(RDF.type, CRM.E53_Place)):
+        data_provider_url = data.value(place, MMMS.data_provider_url)
+        place_authority_uri = data.value(place, OWL.sameAs)
+        label = data.value(place, SKOS.prefLabel)
 
         tgn_match = None
         in_place_ontology = False
@@ -172,8 +172,8 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
                 if str(label) != tgn_match.get('pref_label'):
                     tgn_match['label'] = label
                 if not tgn_match.get('lat'):
-                    tgn_match['lat'] = sdbm.value(place, WGS84.lat)
-                    tgn_match['long'] = sdbm.value(place, WGS84.long)
+                    tgn_match['lat'] = data.value(place, WGS84.lat)
+                    tgn_match['long'] = data.value(place, WGS84.long)
 
                 places += tgn.place_rdf(mmm_uri, tgn_match)
 
@@ -182,27 +182,27 @@ def handle_sdbm_places(geonames: GeoNamesAPI, tgn: TGN, sdbm: Graph, places: Gra
                 places.add((mmm_uri, MMMS.data_provider_url, data_provider_url))
 
         if not (tgn_match or in_place_ontology):
-            # No better information, so add SDBM annotations to place ontology
-            mmm_uri = MMMP['sdbm_' + str(place).split('/')[-1]]
-            for triple in sdbm.triples((place, None, None)):
+            # No better information, so add annotations from data to place ontology
+            mmm_uri = MMMP[localname_prefix + str(place).split('/')[-1]]
+            for triple in data.triples((place, None, None)):
                 places.add((mmm_uri, triple[1], triple[2]))
 
-        places.add((mmm_uri, DCT.source, MMMS.SDBM))
+        places.add((mmm_uri, DCT.source, source_uri))
 
-        sdbm = redirect_refs(sdbm, [place], mmm_uri)
+        data = redirect_refs(data, [place], mmm_uri)
 
-    log.info('SDBM place linking finished.')
+    log.info('TGN place linking finished with prefix "%s".' % localname_prefix)
 
-    return sdbm, places
+    return data, places
 
 
 def main():
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
-    argparser.add_argument("task", help="Task to perform", choices=['bibale_places', 'sdbm_places'])
+    argparser.add_argument("task", help="Task to perform", choices=['bodley_places', 'bibale_places', 'sdbm_places'])
     argparser.add_argument("input", help="Input RDF file")
     argparser.add_argument("output", help="Output RDF file")
-    argparser.add_argument("--place_ontology", help="Output place ontology RDF file",
+    argparser.add_argument("--place_ontology", help="Place ontology RDF file",
                            default="/output/mmm_places.ttl")
     argparser.add_argument("--loglevel", default='INFO', help="Logging level",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
@@ -235,20 +235,27 @@ def main():
 
     if args.task == 'bibale_places':
         g, place_g = handle_bibale_places(geo, tgn, input_graph)
+
+    elif args.task == 'bodley_places':
+        place_g = Graph()
+        place_g.parse(args.place_ontology, format=guess_format(args.place_ontology))
+        g, place_g = handle_tgn_places(geo, tgn, input_graph, place_g, 'bodley_', MMMS.Bodley)
+
     elif args.task == 'sdbm_places':
         place_g = Graph()
         place_g.parse(args.place_ontology, format=guess_format(args.place_ontology))
-        g, place_g = handle_sdbm_places(geo, tgn, input_graph, place_g)
+        g, place_g = handle_tgn_places(geo, tgn, input_graph, place_g, 'sdbm_', MMMS.SDBM)
+
     else:
         log.error('No valid task given.')
         return
 
-    log.info('Task finished.')
+    log.info('Serializing output files...')
 
     bind_namespaces(g).serialize(args.output, format=guess_format(args.output))
     bind_namespaces(place_g).serialize(args.place_ontology, format=guess_format(args.place_ontology))
 
-    log.info('Serialized output files.')
+    log.info('Task finished.')
 
 
 if __name__ == '__main__':
