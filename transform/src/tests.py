@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
-"""Linking places to GeoNames and TGN"""
+"""
+Tests for linking places of MMM datasets to GeoNames and TGN
+
+Requires GeoNames API key, and also that GeoNames and TGN APIs are accessible. The linking requires is completely
+dependent on these APIs, hence they get also tested to work as expected with these tests.
+"""
 
 import os
 import pprint
@@ -12,7 +17,7 @@ from linker import PlaceLinker
 from namespaces import *
 
 
-class TestLinker(unittest.TestCase):
+class TestLinkerSDBM(unittest.TestCase):
     test_sdbm_data = """
     @prefix :      <https://sdbm.library.upenn.edu/> .
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
@@ -55,6 +60,34 @@ class TestLinker(unittest.TestCase):
             skos:prefLabel                "Mexico" .
     """
 
+    def test_handle_tgn_places_sdbm(self):
+        place1 = URIRef('http://ldf.fi/mmm/places/2121')
+
+        g = Graph()
+        g.parse(data=self.test_sdbm_data, format='turtle')
+
+        places = Graph()
+
+        self.assertIsNotNone(g.value(place1, SKOS.prefLabel))
+
+        GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
+        linker = PlaceLinker(GEONAMES_APIKEYS, places)
+
+        g = linker.handle_tgn_places(g, 'sdbm_', MMMS.SDBM)
+
+        self.assertIsNone(g.value(place1, SKOS.prefLabel))
+
+        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 9)
+        self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 9)
+
+        self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
+        self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 1)
+        self.assertEquals(
+            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_1005755'))))), 1)
+
+
+class TestLinkerBodley(unittest.TestCase):
+
     test_bodley_data = """
     @prefix :      <https://sdbm.library.upenn.edu/> .
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
@@ -76,7 +109,7 @@ class TestLinker(unittest.TestCase):
             crm:P89_falls_within          <https://medieval.bodleian.ox.ac.uk/catalog/place_place_7002445> ;
             wgs:lat                       "51.983333" ;
             wgs:long                      "-1.483333" ;
-            owl:sameAs <http://vocab.getty.edu/tgn/7011931> ;
+            owl:sameAs                    <http://vocab.getty.edu/tgn/7011931> ;
             skos:altLabel                 "Hochenartone" , "Hook Norton, Oxfordshire" ;
             skos:prefLabel                "Hook Norton, Oxfordshire" .
 
@@ -108,52 +141,29 @@ class TestLinker(unittest.TestCase):
             skos:prefLabel                "Christ Church MS. 343"@en .
     """
 
-    def test_handle_tgn_places_sdbm(self):
-        place1 = URIRef('http://ldf.fi/mmm/places/2121')
-
-        g = Graph()
-        g.parse(data=self.test_sdbm_data, format='turtle')
-
-        places = Graph()
-
-        self.assertIsNotNone(g.value(place1, SKOS.prefLabel))
-
-        GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
-        linker = PlaceLinker(GEONAMES_APIKEYS, places)
-
-        g = linker.handle_tgn_places(g, 'sdbm_', MMMS.SDBM)
-
-        self.assertIsNone(g.value(place1, SKOS.prefLabel))
-
-        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 2)
-        self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 2)
-
-        self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
-        self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 1)
-        self.assertEquals(
-            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_1005755'))))), 1)
-
     def test_handle_tgn_places_bodley(self):
         place1 = URIRef('https://medieval.bodleian.ox.ac.uk/catalog/place_1029598')
 
         g = Graph()
         g.parse(data=self.test_bodley_data, format='turtle')
 
-        places = Graph()
-
         self.assertIsNotNone(g.value(place1, SKOS.prefLabel))
 
         GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
+        places = Graph()
         linker = PlaceLinker(GEONAMES_APIKEYS, places)
+
+        pprint.pprint(sorted(places))
+        self.assertEquals(len(places), 0)
 
         g = linker.handle_tgn_places(g, 'bodley_', MMMS.Bodley)
 
-        # pprint.pprint(list(places))
+        pprint.pprint(sorted(places.objects(None, MMMS.tgn_uri)))
 
         self.assertIsNone(g.value(place1, SKOS.prefLabel))
 
-        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 2)
-        self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 1)
+        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 7)
+        self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 6)  # Oxford and her 5 parents
 
         self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
         self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 2)
@@ -162,3 +172,58 @@ class TestLinker(unittest.TestCase):
 
         self.assertEquals(
             len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7011931'))))), 1)
+
+
+class TestLinkerBibale(unittest.TestCase):
+
+    test_bibale_data = """
+    @prefix mmm-schema: <http://ldf.fi/mmm/schema/> .
+    @prefix dct:   <http://purl.org/dc/terms/> .
+    @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix owl:   <http://www.w3.org/2002/07/owl#> .
+    @prefix afn:   <http://jena.hpl.hp.com/ARQ/function#> .
+    @prefix frbroo2: <http://www.cidoc-crm.org/frbroo/> .
+    @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+    @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix mmm:   <http://ldf.fi/mmm/> .
+    @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
+    @prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix bibale: <http://bibale.irht.cnrs.fr/> .
+    
+    bibale:element:876437
+            a                             crm:E53_Place ;
+            mmm-schema:bibale_country     "France" ;
+            mmm-schema:bibale_region      "Grand Est" ;
+            mmm-schema:bibale_settlement  "Épinal" ;
+            mmm-schema:place_type         bibale:type:settlement ;
+            dct:source                    mmm-schema:Bibale ;
+            owl:sameAs                    <http://www.geonames.org/3020035> ;
+            skos:altLabel                 "France, Grand Est, Épinal" ;
+            skos:prefLabel                "Épinal" .
+    
+    bibale:element:57644-272
+            a                             crm:E53_Place ;
+            mmm-schema:bibale_country     "Allemagne" ;
+            mmm-schema:bibale_region      "Rheinland-Pfalz (Rhénanie-Palatinat)" ;
+            mmm-schema:bibale_settlement  "Trier (Trèves)" ;
+            mmm-schema:place_type         bibale:type:settlement ;
+            dct:source                    mmm-schema:Bibale ;
+            skos:altLabel                 "Allemagne, Rheinland-Pfalz (Rhénanie-Palatinat), Trier (Trèves)" ;
+            skos:prefLabel                "Trier (Trèves)" .    
+    """
+
+    def test_bibale_places(self):
+
+        g = Graph()
+        g.parse(data=self.test_bibale_data, format='turtle')
+
+        GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
+        linker = PlaceLinker(GEONAMES_APIKEYS)
+        places = linker.places
+
+        g = linker.handle_bibale_places(g)
+
+        self.assertEquals(len(g), 0)
+
+        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 8)
+        self.assertEquals(len(list(places.triples((None, GVP.broaderPreferred, None)))), 7)

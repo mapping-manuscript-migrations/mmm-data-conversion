@@ -7,6 +7,7 @@ import logging
 import os
 from collections import defaultdict
 from decimal import Decimal
+from itertools import chain
 
 from rdflib import URIRef, Literal, RDF, OWL
 from rdflib.util import guess_format
@@ -68,24 +69,10 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
 
 
 class PlaceLinker:
-    def __init__(self, geonames_apikeys: list, places: Graph = Graph()):
+    def __init__(self, geonames_apikeys: list, places: Graph = None):
         self.geonames = GeoNamesAPI(geonames_apikeys)
         self.tgn = TGN()
-        self.places = places
-
-    @staticmethod
-    def mint_mmm_tgn_uri(tgn_uri: str, namespace=MMMP):
-        """
-        Create new MMM place uri with tgn_ prefixed localname
-
-        >>> PlaceLinker.mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820')
-        rdflib.term.URIRef('http://ldf.fi/mmm/places/tgn_7003820')
-        """
-
-        tgn_id = tgn_uri.split('/')[-1]
-        uri = namespace['tgn_' + tgn_id]
-
-        return uri
+        self.places = places or Graph()
 
     @staticmethod
     def mint_mmm_uri(localname):
@@ -95,10 +82,23 @@ class PlaceLinker:
         """
         return MMMP[localname]
 
+    @staticmethod
+    def mint_mmm_tgn_uri(tgn_uri: str):
+        """
+        Create new MMM place uri with tgn_ prefixed localname
+
+        >>> PlaceLinker.mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820')
+        rdflib.term.URIRef('http://ldf.fi/mmm/places/tgn_7003820')
+        """
+
+        tgn_id = tgn_uri.split('/')[-1]
+        uri = PlaceLinker.mint_mmm_uri('tgn_' + tgn_id)
+
+        return uri
+
     def handle_bibale_places(self, bibale: Graph):
         """Modify places, link them to GeoNames and TGN, and create a new place ontology"""
         places = group_places(bibale)
-        place_ontology = Graph()
 
         log.info('Got %s places for Bibale place handling.' % len(places))
 
@@ -142,73 +142,110 @@ class PlaceLinker:
             bibale = redirect_refs(bibale, old_uris, uri)
 
             if geonames_uri:
-                place_ontology.add((uri, MMMS.geonames_uri, URIRef(geonames_uri)))
+                self.places.add((uri, MMMS.geonames_uri, URIRef(geonames_uri)))
             if country:
-                place_ontology.add((uri, MMMS.bibale_country, Literal(country)))
+                self.places.add((uri, MMMS.bibale_country, Literal(country)))
             if region:
-                place_ontology.add((uri, MMMS.bibale_region, Literal(region)))
+                self.places.add((uri, MMMS.bibale_region, Literal(region)))
             if settlement:
-                place_ontology.add((uri, MMMS.bibale_settlement, Literal(settlement)))
+                self.places.add((uri, MMMS.bibale_settlement, Literal(settlement)))
 
-            place_ontology.add((uri, RDF.type, CRM.E53_Place))
-            place_ontology.add((uri, MMMS.place_type, place_type))
-            place_ontology.add((uri, DCT.source, MMMS.Bibale))
-            place_ontology.add((uri, SKOS.prefLabel, Literal(place_label)))
+            self.places.add((uri, RDF.type, CRM.E53_Place))
+            self.places.add((uri, MMMS.place_type, place_type))
+            self.places.add((uri, DCT.source, MMMS.Bibale))
+            self.places.add((uri, SKOS.prefLabel, Literal(place_label)))
 
             if tgn_match:
-                place_ontology += self.tgn.place_rdf(uri, tgn_match)
+                self.places += self.tgn.place_rdf(uri, tgn_match)
+                self.places += self.get_tgn_parents(uri)
             if geo_match:
-                place_ontology.add((uri, MMMS.geonames_lat, Literal(Decimal(geo_match['lat']))))
-                place_ontology.add((uri, MMMS.geonames_long, Literal(Decimal(geo_match['lon']))))
-                place_ontology.add((uri, MMMS.geonames_class_description, Literal(geo_match['class_description'])))
+                self.places.add((uri, MMMS.geonames_lat, Literal(Decimal(geo_match['lat']))))
+                self.places.add((uri, MMMS.geonames_long, Literal(Decimal(geo_match['lon']))))
+                self.places.add((uri, MMMS.geonames_class_description, Literal(geo_match['class_description'])))
                 if geo_match.get('wikipedia'):
-                    place_ontology.add((uri, GEO.wikipediaArticle, URIRef(geo_match['wikipedia'])))
-                place_ontology.add((uri, GEO.name, Literal(geo_match['address'])))
-                place_ontology.add((uri, GEO.parentADM1, Literal(geo_match['adm1'])))
-                place_ontology.add((uri, MMMS.geonames_country, Literal(geo_match['country'])))
-                place_ontology.add((uri, DCT.source, URIRef('http://www.geonames.org')))
+                    self.places.add((uri, GEO.wikipediaArticle, URIRef(geo_match['wikipedia'])))
+                self.places.add((uri, GEO.name, Literal(geo_match['address'])))
+                self.places.add((uri, GEO.parentADM1, Literal(geo_match['adm1'])))
+                self.places.add((uri, MMMS.geonames_country, Literal(geo_match['country'])))
+                self.places.add((uri, DCT.source, URIRef('http://www.geonames.org')))
 
         log.info('Bibale place linking finished.')
 
-        return bibale, place_ontology
+        return bibale
 
-    def _handle_tgn_place(self, uri: URIRef, data: Graph, localname_prefix):
-        data_provider_url = data.value(uri, MMMS.data_provider_url)
-        place_authority_uri = data.value(uri, OWL.sameAs)
-        label = data.value(uri, SKOS.prefLabel)
+    def get_tgn_parents(self, uri: URIRef):
+        """
+        Get all TGN parents and add them to place ontology. Parent relation of uri must be present in self.places.
 
-        place_dict = None
-        place_graph = Graph()
-        mmm_uri = None
+        :param uri: URI of the place whose parents we are retrieving
+        :return:
+        """
+        parent = self.places.value(uri, GVP.broaderPreferred)
+        places = Graph()
 
-        if str(place_authority_uri).startswith('http://vocab.getty.edu/tgn/'):
-            mmm_uri = self.mint_mmm_tgn_uri(place_authority_uri)
-            if len(list(self.places.triples((mmm_uri, MMMS.tgn_uri, uri)))):
-                # Already in place ontology, don't bother
-                return mmm_uri, place_graph
-
-            place_dict = self.tgn.get_place_by_uri(str(place_authority_uri))
-
-        if place_dict:
-            assert mmm_uri
-            if str(label) != place_dict.get('pref_label'):
-                place_dict['label'] = label
-            if not place_dict.get('lat'):
-                place_dict['lat'] = data.value(uri, WGS84.lat)
-                place_dict['long'] = data.value(uri, WGS84.long)
-
+        while parent:
+            place_dict = self.tgn.get_place_by_uri(parent)
+            mmm_uri = self.mint_mmm_tgn_uri(parent)
             place_graph = self.tgn.place_rdf(mmm_uri, place_dict)
-            place_graph.add((mmm_uri, MMMS.data_provider_url, data_provider_url))
+            places += place_graph
 
             log.info('Added TGN place %s (%s) to place ontology.' % (mmm_uri, place_dict.get('pref_label')))
 
-        else:
-            # No better information, so add annotations from data to place ontology
-            mmm_uri = self.mint_mmm_uri(localname_prefix + str(uri).split('/')[-1])
-            for triple in data.triples((uri, None, None)):
-                place_graph.add((mmm_uri, triple[1], triple[2]))
+            parent = place_graph.value(mmm_uri, GVP.broaderPreferred)
 
-            log.info('Added unlinked %s (%s) to place ontology.' % (mmm_uri, label))
+        return places
+
+    def _handle_tgn_linked_place(self, data_uri: URIRef, tgn_uri: URIRef, data: Graph, source_uri):
+        """
+        Handle a place instance that might have an owl:sameAs link to a TGN place
+
+        :param data_uri: place instance URI in data graph
+        :param data: data graph
+        :param localname_prefix: prefix to use for local name, e.g. 'sdbm_'
+        """
+        place_graph = Graph()
+
+        if not str(tgn_uri).startswith('http://vocab.getty.edu/tgn/'):
+            return None, Graph()
+
+        mmm_uri = self.mint_mmm_tgn_uri(tgn_uri)
+        if not len(list(self.places.triples((mmm_uri, MMMS.tgn_uri, data_uri)))):
+
+            # Doesn't exist in place ontology yet, so fetch it
+
+            place_dict = self.tgn.get_place_by_uri(tgn_uri)
+            place_graph = self.tgn.place_rdf(mmm_uri, place_dict)
+
+            if not place_graph:
+                # Probably invalid TGN URI, just ignore it
+                return None, Graph()
+
+        # Add coordinates and label for the place from data if they are missing
+
+        data_lat = data.value(data_uri, WGS84.lat)
+        data_long = data.value(data_uri, WGS84.long)
+        data_added = False
+
+        if not place_graph.value(mmm_uri, WGS84.lat) and data_lat:
+            place_graph.add((mmm_uri, WGS84.lat, Literal(Decimal(data_lat))))
+            data_added = True
+
+        if not place_graph.value(mmm_uri, WGS84.long) and data_long:
+            place_graph.add((mmm_uri, WGS84.long, Literal(Decimal(data_long))))
+            data_added = True
+
+        data_label = str(data.value(data_uri, SKOS.prefLabel))
+        labels = [str(lbl) for lbl in chain(place_graph.objects(mmm_uri, SKOS.prefLabel),
+                                            place_graph.objects(mmm_uri, SKOS.altLabel))]
+
+        if data_label not in labels:
+            place_graph.add((mmm_uri, SKOS.altLabel, Literal(data_label)))
+            data_added = True
+
+        if data_added:
+            data_provider_url = data.value(data_uri, MMMS.data_provider_url)
+            place_graph.add((mmm_uri, MMMS.data_provider_url, data_provider_url))
+            place_graph.add((mmm_uri, DCT.source, source_uri))
 
         return mmm_uri, place_graph
 
@@ -219,17 +256,30 @@ class PlaceLinker:
 
         for place in list(data.subjects(RDF.type, CRM.E53_Place)):
 
+            place_authority_uri = data.value(place, OWL.sameAs)
+
             # Get place information from TGN
 
-            mmm_uri, place_graph = self._handle_tgn_place(place, data, localname_prefix)
+            mmm_uri, place_graph = self._handle_tgn_linked_place(place, place_authority_uri, data, source_uri)
+
+            if not place_graph:
+
+                # No information received, so add place instance annotations from data graph
+
+                mmm_uri = self.mint_mmm_uri(localname_prefix + str(place).split('/')[-1])
+                for triple in data.triples((place, None, None)):
+                    place_graph.add((mmm_uri, triple[1], triple[2]))
+
+                log.info('Added unlinked %s (%s) to place ontology.' % (mmm_uri, data.value(place, SKOS.prefLabel)))
 
             if not len(place_graph):
                 continue
 
             self.places += place_graph
-            self.places.add((mmm_uri, DCT.source, source_uri))
 
             data = redirect_refs(data, [place], mmm_uri)
+
+            self.places += self.get_tgn_parents(mmm_uri)
 
         log.info('TGN place linking finished with prefix "%s".' % localname_prefix)
 

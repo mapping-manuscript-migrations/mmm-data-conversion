@@ -4,6 +4,7 @@
 
 import logging
 from decimal import Decimal
+from typing import Union
 
 import requests
 from rdflib import URIRef, Literal, RDF
@@ -44,9 +45,9 @@ class TGN:
             SELECT ?uri ?pref_label ?lat ?long ?label ?place_type_en ?parent_uri {{
               ?uri foaf:focus [ ontogeo:nearby( {lat} {lon} "{radius}") ] .
               ?uri foaf:focus [ wgs84:lat ?lat ; wgs84:long ?long ] .
-              ?uri gvp:placeTypePreferred/gvp:prefLabelGVP/xl:literalForm ?place_type_en .
+              OPTIONAL {{ ?uri gvp:placeTypePreferred/gvp:prefLabelGVP/xl:literalForm ?place_type_en }}
               ?uri gvp:prefLabelGVP/xl:literalForm ?gvp_pref_label .
-              ?uri gvp:broaderPreferred ?parent_uri .
+              OPTIONAL {{ ?uri gvp:broaderPreferred ?parent_uri }}
     
               ?uri (xl:prefLabel|xl:altLabel)/xl:literalForm ?label .
               FILTER(LANG(?label) in ("en", "fr", ""))
@@ -77,8 +78,8 @@ class TGN:
                        'lat': place['lat']['value'],
                        'long': place['long']['value'],
                        'label': label,
-                       'place_type': place['place_type_en']['value'],
-                       'parent': place['parent_uri']['value'],
+                       'place_type': place.get('place_type_en', {}).get('value'),
+                       'parent': place.get('parent_uri', {}).get('value'),
                        }
 
                 if tgn_match:
@@ -101,11 +102,13 @@ class TGN:
 
         return tgn_match
 
-    def get_place_by_uri(self, uri: str):
+    def get_place_by_uri(self, uri: Union[str, URIRef]):
         """
         Get place by TGN URI
 
         >>> TGN().get_place_by_uri('http://vocab.getty.edu/tgn/7003820')['pref_label']
+        'Coimbra'
+        >>> TGN().get_place_by_uri(URIRef('http://vocab.getty.edu/tgn/7003820'))['pref_label']
         'Coimbra'
         >>> TGN().get_place_by_uri('http://vocab.getty.edu/tgn/7003820_bad_uri')
         {}
@@ -154,7 +157,7 @@ class TGN:
                'lat': res.get('lat', {}).get('value'),
                'long': res.get('long', {}).get('value'),
                'place_type': res.get('place_type_en', {}).get('value'),
-               'parent': res['parent_uri']['value'],
+               'parent': res.get('parent_uri', {}).get('value'),
                }
 
         return tgn
@@ -179,7 +182,8 @@ class TGN:
         g.add((uri, DCT.source, URIRef('http://vocab.getty.edu/tgn/')))
         g.add((uri, MMMS.tgn_uri, URIRef(tgn['uri'])))
         g.add((uri, SKOS.prefLabel, Literal(tgn['pref_label'])))
-        g.add((uri, GVP.broaderPreferred, URIRef(tgn['parent'])))
+        if tgn.get('parent'):
+            g.add((uri, GVP.broaderPreferred, URIRef(tgn['parent'])))
 
         if tgn.get('lat'):
             g.add((uri, WGS84.lat, Literal(Decimal(tgn['lat']))))
