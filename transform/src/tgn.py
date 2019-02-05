@@ -22,6 +22,16 @@ class TGN:
 
         self.log = logging.getLogger(__name__)
 
+    def query_tgn(self, query, retries=5):
+        results = None
+        while not results and retries:
+            results = requests.post(self.endpoint,
+                                    {'query': query},
+                                    timeout=31).json()
+            retries -= 1
+
+        return results['results']['bindings']
+
     def search_tgn_place(self, place_name: str, lat: str, lon: str, radius='50km'):
         """
         Search for a single place in TGN based on name and coordinates
@@ -62,15 +72,15 @@ class TGN:
 
         self.log.info('Finding TGN place for: %s, %s, %s' % (place_name, lat, lon))
 
-        results = requests.post(self.endpoint, {'query': query_template.format(lat=lat, lon=lon, radius=radius)}).json()
+        results = self.query_tgn(query_template.format(lat=lat, lon=lon, radius=radius))
 
         tgn_match = {}
-        for place in results['results']['bindings']:
+        for place in results:
             label = place['label']['value']
             pref_label = place['pref_label']['value']
             uri = place['uri']['value']
 
-            # TODO: Fuzzy match
+            # TODO: Fuzzy matching of labels
             if place_name in [label, pref_label] and tgn_match.get('uri') != uri:
 
                 tgn = {'uri': uri,
@@ -102,7 +112,7 @@ class TGN:
 
         return tgn_match
 
-    def get_place_by_uri(self, uri: Union[str, URIRef]):
+    def get_place_by_uri(self, uri: URIRef):
         """
         Get place by TGN URI
 
@@ -138,18 +148,11 @@ class TGN:
 
         self.log.info('Retrieving TGN place %s' % uri)
 
-        retries = 5
-        results = None
-        while not results and retries:
-            results = requests.post(self.endpoint,
-                                    {'query': query_template.format(place_uri=str(uri))}, timeout=31,
-                                    ).json()
-            retries -= 1
+        res = self.query_tgn(query_template.format(place_uri=str(uri)))
 
-        try:
-            res = results['results']['bindings'][0]
-        except IndexError:
-            self.log.error('No TGN result found for URI: %s' % uri)
+        if len(res):
+            res = res[0]
+        else:
             return {}
 
         tgn = {'uri': uri,
