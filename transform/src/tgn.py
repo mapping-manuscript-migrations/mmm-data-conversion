@@ -3,10 +3,10 @@
 """Link Getty TGN places and retrieve data"""
 
 import logging
+from decimal import Decimal
 
 import requests
-from decimal import Decimal
-from rdflib import Graph, URIRef, Literal, RDF
+from rdflib import URIRef, Literal, RDF
 
 from namespaces import *
 
@@ -123,7 +123,7 @@ class TGN:
               OPTIONAL {{ ?uri foaf:focus [ wgs84:lat ?lat ; wgs84:long ?long ] }}
               OPTIONAL {{ ?uri gvp:placeTypePreferred/gvp:prefLabelGVP/xl:literalForm ?place_type_en }}
               ?uri gvp:prefLabelGVP/xl:literalForm ?gvp_pref_label .
-              ?uri gvp:broaderPreferred ?parent_uri .
+              OPTIONAL {{ ?uri gvp:broaderPreferred ?parent_uri . }}
             
               OPTIONAL {{
                 ?uri (xl:prefLabel/xl:literalForm) ?pref_label_en .
@@ -139,8 +139,7 @@ class TGN:
         results = None
         while not results and retries:
             results = requests.post(self.endpoint,
-                                     {'query': query_template.format(place_uri=str(uri))},
-                                     timeout=31,
+                                    {'query': query_template.format(place_uri=str(uri))}, timeout=31,
                                     ).json()
             retries -= 1
 
@@ -167,7 +166,7 @@ class TGN:
         >>> tgn = TGN()
         >>> place = tgn.get_place_by_uri('http://vocab.getty.edu/tgn/7003820')
         >>> len(tgn.place_rdf(URIRef('http://test.com/place_1'), place))
-        7
+        8
         >>> len(tgn.place_rdf(URIRef('http://test.com/place_2'), {}))
         0
         """
@@ -180,6 +179,7 @@ class TGN:
         g.add((uri, DCT.source, URIRef('http://vocab.getty.edu/tgn/')))
         g.add((uri, MMMS.tgn_uri, URIRef(tgn['uri'])))
         g.add((uri, SKOS.prefLabel, Literal(tgn['pref_label'])))
+        g.add((uri, GVP.broaderPreferred, URIRef(tgn['parent'])))
 
         if tgn.get('lat'):
             g.add((uri, WGS84.lat, Literal(Decimal(tgn['lat']))))
@@ -192,16 +192,3 @@ class TGN:
             g.add((uri, SKOS.altLabel, Literal(tgn['label'])))
 
         return g
-
-    def mint_mmm_tgn_uri(self, tgn_uri: str, namespace=MMMP):
-        """
-        Create new MMM place uri with tgn_ prefixed localname
-
-        >>> TGN().mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820')
-        rdflib.term.URIRef('http://ldf.fi/mmm/places/tgn_7003820')
-        """
-
-        tgn_id = tgn_uri.split('/')[-1]
-        uri = namespace['tgn_' + tgn_id]
-
-        return uri

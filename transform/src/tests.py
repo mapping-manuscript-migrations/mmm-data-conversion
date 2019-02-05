@@ -2,27 +2,17 @@
 #  -*- coding: UTF-8 -*-
 """Linking places to GeoNames and TGN"""
 
-import argparse
-import logging
 import os
 import pprint
-from collections import defaultdict
-from decimal import Decimal
 import unittest
 
-import copy
-from rdflib import Graph, URIRef, Literal, RDF, Namespace, OWL
-from rdflib.compare import graph_diff
-from rdflib.util import guess_format
+from rdflib import URIRef, RDF
 
-from geonames import GeoNamesAPI
-from linker import handle_tgn_places
-from tgn import TGN
+from linker import PlaceLinker
 from namespaces import *
 
 
 class TestLinker(unittest.TestCase):
-
     test_sdbm_data = """
     @prefix :      <https://sdbm.library.upenn.edu/> .
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
@@ -129,10 +119,9 @@ class TestLinker(unittest.TestCase):
         self.assertIsNotNone(g.value(place1, SKOS.prefLabel))
 
         GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
-        geo = GeoNamesAPI(GEONAMES_APIKEYS)
-        tgn = TGN()
+        linker = PlaceLinker(GEONAMES_APIKEYS, places)
 
-        g, places = handle_tgn_places(geo, tgn, g, places, 'sdbm_', MMMS.SDBM)
+        g = linker.handle_tgn_places(g, 'sdbm_', MMMS.SDBM)
 
         self.assertIsNone(g.value(place1, SKOS.prefLabel))
 
@@ -141,7 +130,8 @@ class TestLinker(unittest.TestCase):
 
         self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
         self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 1)
-        self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_1005755'))))), 1)
+        self.assertEquals(
+            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_1005755'))))), 1)
 
     def test_handle_tgn_places_bodley(self):
         place1 = URIRef('https://medieval.bodleian.ox.ac.uk/catalog/place_1029598')
@@ -154,16 +144,14 @@ class TestLinker(unittest.TestCase):
         self.assertIsNotNone(g.value(place1, SKOS.prefLabel))
 
         GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
-        geo = GeoNamesAPI(GEONAMES_APIKEYS)
-        tgn = TGN()
+        linker = PlaceLinker(GEONAMES_APIKEYS, places)
 
-        g, places = handle_tgn_places(geo, tgn, g, places, 'bodley_', MMMS.Bodley)
+        g = linker.handle_tgn_places(g, 'bodley_', MMMS.Bodley)
 
-        pprint.pprint(list(places))
+        # pprint.pprint(list(places))
 
         self.assertIsNone(g.value(place1, SKOS.prefLabel))
 
-        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 2)
         self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 2)
         self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 1)
 
@@ -172,4 +160,5 @@ class TestLinker(unittest.TestCase):
 
         pprint.pprint(list(g.triples((None, CRM.P7_took_place_at, None))))
 
-        self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7011931'))))), 1)
+        self.assertEquals(
+            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7011931'))))), 1)
