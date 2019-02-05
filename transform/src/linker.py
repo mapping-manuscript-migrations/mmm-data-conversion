@@ -12,7 +12,7 @@ from itertools import chain
 from rdflib import URIRef, Literal, RDF, OWL
 from rdflib.util import guess_format
 
-from geonames import GeoNamesAPI
+from geonames import GeoNames
 from namespaces import *
 from tgn import TGN
 
@@ -70,9 +70,9 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
 
 class PlaceLinker:
     def __init__(self, geonames_apikeys: list, places: Graph = None):
-        self.geonames = GeoNamesAPI(geonames_apikeys)
+        self.geonames = GeoNames(geonames_apikeys)
         self.tgn = TGN()
-        self.places = places or Graph()
+        self.places = places if places is not None else Graph()
 
     @staticmethod
     def mint_mmm_uri(localname):
@@ -116,6 +116,7 @@ class PlaceLinker:
             place_type = bibale.value(old_uris[0], MMMS.place_type)
 
             # Fetch GeoNames data based on GeoNames id
+
             geo_match = None
             tgn_match = None
             if geonames_uri:
@@ -128,7 +129,9 @@ class PlaceLinker:
 
             if geo_match:
                 place_label = geo_match.get('name') or place_label
-                geonames_uri = 'http://sws.geonames.org/%s' % geo_match.get('id')
+                geonames_uri = geo_match['uri']
+
+                # Try to find the place from TGN
                 tgn_match = self.tgn.search_tgn_place(place_label, geo_match['lat'], geo_match['lon'])
             else:
                 log.error('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
@@ -139,10 +142,9 @@ class PlaceLinker:
                 uri = self.mint_mmm_uri('bibale_' + str(sorted(old_uris)[0]).split(':')[-1])
 
             # Modify graph
+
             bibale = redirect_refs(bibale, old_uris, uri)
 
-            if geonames_uri:
-                self.places.add((uri, MMMS.geonames_uri, URIRef(geonames_uri)))
             if country:
                 self.places.add((uri, MMMS.bibale_country, Literal(country)))
             if region:
@@ -153,21 +155,13 @@ class PlaceLinker:
             self.places.add((uri, RDF.type, CRM.E53_Place))
             self.places.add((uri, MMMS.place_type, place_type))
             self.places.add((uri, DCT.source, MMMS.Bibale))
-            self.places.add((uri, SKOS.prefLabel, Literal(place_label)))
 
             if tgn_match:
                 self.places += self.tgn.place_rdf(uri, tgn_match)
                 self.places += self.get_tgn_parents(uri)
+                self.places.add((uri, MMMS.geonames_uri, URIRef(geonames_uri)))
             if geo_match:
-                self.places.add((uri, MMMS.geonames_lat, Literal(Decimal(geo_match['lat']))))
-                self.places.add((uri, MMMS.geonames_long, Literal(Decimal(geo_match['lon']))))
-                self.places.add((uri, MMMS.geonames_class_description, Literal(geo_match['class_description'])))
-                if geo_match.get('wikipedia'):
-                    self.places.add((uri, GEO.wikipediaArticle, URIRef(geo_match['wikipedia'])))
-                self.places.add((uri, GEO.name, Literal(geo_match['address'])))
-                self.places.add((uri, GEO.parentADM1, Literal(geo_match['adm1'])))
-                self.places.add((uri, MMMS.geonames_country, Literal(geo_match['country'])))
-                self.places.add((uri, DCT.source, URIRef('http://www.geonames.org')))
+                self.places += self.geonames.get_place_rdf(uri, geo_match)
 
         log.info('Bibale place linking finished.')
 

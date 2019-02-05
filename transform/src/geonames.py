@@ -10,9 +10,13 @@ from time import sleep
 import geocoder
 
 import pycountry
+from decimal import Decimal
+from rdflib import Literal, URIRef, Graph
+
+from namespaces import MMMS, GEO, DCT, SKOS, WGS84
 
 
-class GeoNamesAPI:
+class GeoNames:
     """
     GeoNames querying with geocoder library and API key switching when needed
     """
@@ -38,14 +42,18 @@ class GeoNamesAPI:
         return g
 
     def get_apikey(self):
+        """Get current API key"""
         return self.apikeys[self.apikey_index]
 
     def change_apikey(self):
+        """Switch GeoNames API key to next one"""
         self.apikey_index = (self.apikey_index + 1) % len(self.apikeys)
         self.log.info('Changed to GeoNames API key %s' % (self.get_apikey()))
 
     def get_place_data(self, geonames_id: str):
-        """Fetch data from GeoNames API based on GeoNames ID"""
+        """
+        Fetch data from GeoNames API based on GeoNames ID
+        """
         if not geonames_id:
             return {}
 
@@ -66,14 +74,38 @@ class GeoNamesAPI:
                 'adm1': g.state,
                 'country': g.country,
                 'name': g.address,
-                'id': g.geonames_id
+                'id': g.geonames_id,
+                'uri': 'http://sws.geonames.org/%s' % g.geonames_id
                 }
+
+    def get_place_rdf(self, uri, geo: dict):
+        """
+        Transform place data dict to RDF
+        """
+        g = Graph()
+
+        if not geo:
+            return g
+
+        g.add((uri, SKOS.prefLabel, Literal(geo['name'])))
+        g.add((uri, WGS84.lat, Literal(Decimal(geo['lat']))))
+        g.add((uri, WGS84.long, Literal(Decimal(geo['lon']))))
+        if geo.get('wikipedia'):
+            g.add((uri, GEO.wikipediaArticle, URIRef(geo['wikipedia'])))
+        g.add((uri, GEO.name, Literal(geo['address'])))
+        g.add((uri, GEO.parentADM1, Literal(geo['adm1'])))
+        g.add((uri, MMMS.geonames_country, Literal(geo['country'])))
+        g.add((uri, MMMS.geonames_uri, URIRef(geo['uri'])))
+        g.add((uri, MMMS.geonames_class_description, Literal(geo['class_description'])))
+        g.add((uri, DCT.source, URIRef('http://www.geonames.org')))
+
+        return g
 
     def search_country(self, country: str):
         """
         Search for a country in any language and return it's English label
 
-        >>> geo = GeoNamesAPI([os.environ['GEONAMES_KEY']])
+        >>> geo = GeoNames([os.environ['GEONAMES_KEY']])
         >>> geo.search_country('Allemagne')
         'Germany'
         >>> geo.search_country('Foo') is None
@@ -93,7 +125,7 @@ class GeoNamesAPI:
         """
         Handle case 'USA (state name)'
 
-        >>> geo = GeoNamesAPI([os.environ['GEONAMES_KEY']])
+        >>> geo = GeoNames([os.environ['GEONAMES_KEY']])
         >>> geo._usa_state('USA (CALIFORNIE)')
         ('United States', 'Californie')
         >>> geo._usa_state('USA (NEW YORK)')
@@ -108,7 +140,7 @@ class GeoNamesAPI:
         """
         Search for a place from GeoNames API and return place data
 
-        >>> geo = GeoNamesAPI([os.environ['GEONAMES_KEY']])
+        >>> geo = GeoNames([os.environ['GEONAMES_KEY']])
         >>> geo.search_place('Royaume Uni / Angleterre',  'Dorset', 'Abbotsbury').get('wikipedia')
         'https://en.wikipedia.org/wiki/Abbotsbury'
 

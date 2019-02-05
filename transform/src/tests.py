@@ -77,6 +77,8 @@ class TestLinkerSDBM(unittest.TestCase):
 
         self.assertIsNone(g.value(place1, SKOS.prefLabel))
 
+        pprint.pprint(sorted(places))
+
         self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 9)
         self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 9)
 
@@ -158,7 +160,7 @@ class TestLinkerBodley(unittest.TestCase):
 
         g = linker.handle_tgn_places(g, 'bodley_', MMMS.Bodley)
 
-        pprint.pprint(sorted(places.objects(None, MMMS.tgn_uri)))
+        pprint.pprint(sorted(places))
 
         self.assertIsNone(g.value(place1, SKOS.prefLabel))
 
