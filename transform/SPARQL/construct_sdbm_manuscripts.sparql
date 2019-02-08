@@ -39,7 +39,8 @@ CONSTRUCT {
     crm:P7_took_place_at ?production_place ;
     # mmm-schema:carried_out_by_as_artist ?production_artist ;
     # mmm-schema:carried_out_by_as_scribe ?production_scribe ;
-    dct:source mmm-schema:SDBM .
+    # dct:source mmm-schema:SDBM .
+    .
 
   ?production_timespan a crm:E52_Time-Span ;
     skos:prefLabel ?production_date_label ;
@@ -76,7 +77,8 @@ CONSTRUCT {
     mmm-schema:order ?prov_order ;
     rdfs:comment ?prov_comment ;
     mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
+    # dct:source ?source .
+    .
 
   # # title reification
   # ?reification_label_uri

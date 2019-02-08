@@ -25,7 +25,8 @@ CONSTRUCT {
     mmm-schema:data_provider_url ?bod_place_uri ;
     dct:source mmm-schema:Bodley .
 }
-WHERE {
+WHERE
+{
   ?bod_place_uri a crm:E53_Place .
   OPTIONAL { ?bod_place_uri rdfs:label ?place_label }
   OPTIONAL {

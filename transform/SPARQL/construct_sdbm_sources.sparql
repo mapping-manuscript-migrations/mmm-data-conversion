@@ -20,7 +20,8 @@ CONSTRUCT {
     mmm-schema:data_provider_url ?source ;
     mmm-schema:source_agent ?mmm_source_actor ;
     mmm-schema:source_type ?mmm_source_type ;
-    dct:source mmm-schema:SDBM .
+    # dct:source mmm-schema:SDBM .
+    .
 
   ?mmm_source_type a mmm-schema:Source_Type ;
     skos:prefLabel ?source_type_label .

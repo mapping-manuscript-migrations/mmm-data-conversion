@@ -18,7 +18,7 @@ CONSTRUCT {
     crm:P30_transferred_custody_of ?collection ;
     crm:P29_custody_received_by ?actor ;
     crm:P7_took_place_at ?place ;
-    dct:source mmm-schema:Bibale .
+    .
 }
 WHERE
 {

@@ -98,22 +98,23 @@ CONSTRUCT {
     # mmm-schema:place_literal ?cat_location_literal ;
     ?event_timespan_property ?cat_date ;
     crm:P179_had_sales_price ?monetary_amount_uri ;
-    crm:P70i_is_documented_in ?source ;
-    dct:source mmm-schema:SDBM .
+    crm:P70i_is_documented_in ?source .
+    # dct:source mmm-schema:SDBM .
 
   ?monetary_amount_uri a crm:E97_Monetary_Amount ;
     crm:P180_has_currency ?sales_currency ;
     crm:P181_has_amount ?sales_price ;
     rdfs:comment ?sales_other_currency .
+    # dct:source mmm-schema:SDBM .
 
   # Monetary amount reification
-  ?reification_monetary_amount_uri
-    a rdf:Statement ;
-    rdf:subject ?acquisition_uri ;
-    rdf:predicate crm:P179_had_sales_price ;
-    rdf:object ?monetary_amount_uri ;
-    mmm-schema:data_provider_url ?entry ;
-    dct:source ?source .
+  # ?reification_monetary_amount_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?acquisition_uri ;
+  #   rdf:predicate crm:P179_had_sales_price ;
+  #   rdf:object ?monetary_amount_uri ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   dct:source ?source .
 
   # # provenance reification
   # ?reification_owner_uri

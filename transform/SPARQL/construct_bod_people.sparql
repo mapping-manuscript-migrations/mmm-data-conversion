@@ -25,7 +25,9 @@ CONSTRUCT {
     owl:sameAs ?external_uri ;
     mmm-schema:data_provider_url ?bod_person_uri ;
     dct:source mmm-schema:Bodley .
-} WHERE {
+}
+WHERE
+{
   ?bod_person_uri a crm:E21_Person .
   BIND(IRI(mmm-schema:Person) as ?actor_class)
   OPTIONAL {

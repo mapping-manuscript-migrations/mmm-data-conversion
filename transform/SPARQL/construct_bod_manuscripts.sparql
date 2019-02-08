@@ -24,7 +24,7 @@ CONSTRUCT {
     mmm-schema:carried_out_by_as_author ?work_conception_author ;
     # crm:P7_took_place_at  # TODO: author place/nationality
     # crm:P4_has_time-span  # TODO: author life dates
-    dct:source mmm-schema:Bodley .
+    .
 
   ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
     skos:prefLabel ?expression_label ;
@@ -36,7 +36,7 @@ CONSTRUCT {
     # skos:prefLabel # TODO
     frbroo:R17_created ?expression ;
     frbroo:R19_created_a_realisation_of ?work ;
-    dct:source mmm-schema:Bodley .
+    .
 
   ?production a crm:E12_Production ;
     crm:P108_has_produced ?manifestation_singleton ;
@@ -51,7 +51,7 @@ CONSTRUCT {
     mmm-schema:carried_out_by_as_patron ?production_patron ;
     mmm-schema:carried_out_by_as_scribe ?production_scribe ;
     mmm-schema:carried_out_by_as_signer ?production_signer ;
-    dct:source mmm-schema:Bodley .
+    .
 
   ?production_timespan a crm:E52_Time-Span ;
     skos:prefLabel ?production_timespan_label ;
