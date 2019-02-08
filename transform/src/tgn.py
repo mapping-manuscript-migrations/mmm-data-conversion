@@ -238,3 +238,32 @@ class TGN:
             g.add((uri, SKOS.altLabel, Literal(tgn['label'])))
 
         return g
+
+    def get_tgn_parents(self, parent_uri: URIRef):
+        """
+        Get all TGN parent places as a graph.
+
+        :param parent_uri: The MMM namespace URI of the parent who are retrieving with all parents+
+        :return:
+
+        >>> tgn = TGN()
+        >>> parents = tgn.get_tgn_parents(tgn.mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820'))
+        >>> len(list(parents.subjects(RDF.type, CRM.E53_Place)))
+        4
+        """
+        parent_tgn = self.mint_tgn_uri_from_mmm(parent_uri)
+        places = Graph()
+
+        while parent_tgn:
+            place_dict = self.get_place_by_uri(parent_tgn)
+            parent_mmm = self.mint_mmm_tgn_uri(parent_tgn)
+
+            place = self.place_rdf(parent_mmm, place_dict)
+            places += place
+
+            self.log.info('Found TGN parent place %s (%s).' % (parent_mmm, place_dict.get('pref_label')))
+
+            parent_tgn = self.mint_tgn_uri_from_mmm(place.value(parent_mmm, GVP.broaderPreferred))
+
+        return places
+

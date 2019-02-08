@@ -136,7 +136,7 @@ class PlaceLinker:
 
             if tgn_match:
                 self.places += self.tgn.place_rdf(uri, tgn_match)
-                self.places += self.get_tgn_parents(uri)
+                self.places += self.tgn.get_tgn_parents(self.places.value(uri, GVP.broaderPreferred))
                 self.places.add((uri, MMMS.geonames_uri, URIRef(geonames_uri)))
             if geo_match:
                 self.places += self.geonames.get_place_rdf(uri, geo_match)
@@ -144,30 +144,6 @@ class PlaceLinker:
         log.info('Bibale place linking finished.')
 
         return bibale
-
-    def get_tgn_parents(self, uri: URIRef):
-        """
-        Get all TGN parents as a graph. Parent relation of uri must be present in self.places.
-
-        :param uri: URI of the place whose parents we are retrieving
-        :return:
-        """
-        parent_mmm = self.places.value(uri, GVP.broaderPreferred)
-        parent_tgn = self.tgn.mint_tgn_uri_from_mmm(parent_mmm)
-        places = Graph()
-
-        while parent_tgn:
-            place_dict = self.tgn.get_place_by_uri(parent_tgn)
-            parent_mmm = self.tgn.mint_mmm_tgn_uri(parent_tgn)
-            place_graph = self.tgn.place_rdf(parent_mmm, place_dict)
-            places += place_graph
-
-            log.info('Added TGN place %s (%s) to place ontology.' % (parent_mmm, place_dict.get('pref_label')))
-
-            parent_mmm = place_graph.value(parent_mmm, GVP.broaderPreferred)
-            parent_tgn = self.tgn.mint_tgn_uri_from_mmm(parent_mmm)
-
-        return places
 
     def _handle_tgn_linked_place(self, data_uri: URIRef, tgn_uri: URIRef, data: Graph, source_uri):
         """
@@ -253,7 +229,7 @@ class PlaceLinker:
 
             data = redirect_refs(data, [place], mmm_uri)
 
-            self.places += self.get_tgn_parents(mmm_uri)
+            self.places += self.tgn.get_tgn_parents(self.places.value(mmm_uri, GVP.broaderPreferred))
 
         log.info('TGN place linking finished with prefix "%s".' % localname_prefix)
 
