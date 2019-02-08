@@ -74,28 +74,6 @@ class PlaceLinker:
         self.tgn = TGN()
         self.places = places if places is not None else Graph()
 
-    @staticmethod
-    def mint_mmm_uri(localname):
-        """
-        >>> PlaceLinker.mint_mmm_uri('sdbm_7003820')
-        rdflib.term.URIRef('http://ldf.fi/mmm/places/sdbm_7003820')
-        """
-        return MMMP[localname]
-
-    @staticmethod
-    def mint_mmm_tgn_uri(tgn_uri: str):
-        """
-        Create new MMM place uri with tgn_ prefixed localname
-
-        >>> PlaceLinker.mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820')
-        rdflib.term.URIRef('http://ldf.fi/mmm/places/tgn_7003820')
-        """
-
-        tgn_id = tgn_uri.split('/')[-1]
-        uri = PlaceLinker.mint_mmm_uri('tgn_' + tgn_id)
-
-        return uri
-
     def handle_bibale_places(self, bibale: Graph):
         """Modify places, link them to GeoNames and TGN, and create a new place ontology"""
         places = group_places(bibale)
@@ -137,9 +115,9 @@ class PlaceLinker:
                 log.error('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
             if tgn_match:
-                uri = self.mint_mmm_tgn_uri(tgn_match['uri'])
+                uri = self.tgn.mint_mmm_tgn_uri(tgn_match['uri'])
             else:
-                uri = self.mint_mmm_uri('bibale_' + str(sorted(old_uris)[0]).split(':')[-1])
+                uri = self.tgn.mint_mmm_uri('bibale_' + str(sorted(old_uris)[0]).split(':')[-1])
 
             # Modify graph
 
@@ -169,23 +147,25 @@ class PlaceLinker:
 
     def get_tgn_parents(self, uri: URIRef):
         """
-        Get all TGN parents and add them to place ontology. Parent relation of uri must be present in self.places.
+        Get all TGN parents as a graph. Parent relation of uri must be present in self.places.
 
         :param uri: URI of the place whose parents we are retrieving
         :return:
         """
-        parent = self.places.value(uri, GVP.broaderPreferred)
+        parent_mmm = self.places.value(uri, GVP.broaderPreferred)
+        parent_tgn = self.tgn.mint_tgn_uri_from_mmm(parent_mmm)
         places = Graph()
 
-        while parent:
-            place_dict = self.tgn.get_place_by_uri(parent)
-            mmm_uri = self.mint_mmm_tgn_uri(parent)
-            place_graph = self.tgn.place_rdf(mmm_uri, place_dict)
+        while parent_tgn:
+            place_dict = self.tgn.get_place_by_uri(parent_tgn)
+            parent_mmm = self.tgn.mint_mmm_tgn_uri(parent_tgn)
+            place_graph = self.tgn.place_rdf(parent_mmm, place_dict)
             places += place_graph
 
-            log.info('Added TGN place %s (%s) to place ontology.' % (mmm_uri, place_dict.get('pref_label')))
+            log.info('Added TGN place %s (%s) to place ontology.' % (parent_mmm, place_dict.get('pref_label')))
 
-            parent = place_graph.value(mmm_uri, GVP.broaderPreferred)
+            parent_mmm = place_graph.value(parent_mmm, GVP.broaderPreferred)
+            parent_tgn = self.tgn.mint_tgn_uri_from_mmm(parent_mmm)
 
         return places
 
@@ -202,7 +182,7 @@ class PlaceLinker:
         if not str(tgn_uri).startswith('http://vocab.getty.edu/tgn/'):
             return None, Graph()
 
-        mmm_uri = self.mint_mmm_tgn_uri(tgn_uri)
+        mmm_uri = self.tgn.mint_mmm_tgn_uri(tgn_uri)
         if not len(list(self.places.triples((mmm_uri, MMMS.tgn_uri, data_uri)))):
 
             # Doesn't exist in place ontology yet, so fetch it
@@ -260,7 +240,7 @@ class PlaceLinker:
 
                 # No information received, so add place instance annotations from data graph
 
-                mmm_uri = self.mint_mmm_uri(localname_prefix + str(place).split('/')[-1])
+                mmm_uri = self.tgn.mint_mmm_uri(localname_prefix + str(place).split('/')[-1])
                 for triple in data.triples((place, None, None)):
                     place_graph.add((mmm_uri, triple[1], triple[2]))
 

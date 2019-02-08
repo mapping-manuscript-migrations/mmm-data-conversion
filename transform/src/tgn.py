@@ -7,7 +7,7 @@ from decimal import Decimal
 from typing import Union
 
 import requests
-from rdflib import URIRef, Literal, RDF
+from rdflib import URIRef, Literal, RDF, OWL
 
 from namespaces import *
 
@@ -21,6 +21,45 @@ class TGN:
         self.endpoint = endpoint
 
         self.log = logging.getLogger(__name__)
+
+    @staticmethod
+    def mint_mmm_uri(localname):
+        """
+        >>> TGN.mint_mmm_uri('sdbm_7003820')
+        rdflib.term.URIRef('http://ldf.fi/mmm/places/sdbm_7003820')
+        """
+        return MMMP[localname]
+
+    @staticmethod
+    def mint_mmm_tgn_uri(tgn_uri: str):
+        """
+        Create new MMM place uri with tgn_ prefixed localname
+
+        >>> TGN.mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820')
+        rdflib.term.URIRef('http://ldf.fi/mmm/places/tgn_7003820')
+        """
+
+        tgn_id = tgn_uri.split('/')[-1]
+        uri = TGN.mint_mmm_uri('tgn_' + tgn_id)
+
+        return uri
+
+    @staticmethod
+    def mint_tgn_uri_from_mmm(tgn_uri: URIRef):
+        """
+        MMM URI -> TGN URI
+
+        >>> TGN.mint_tgn_uri_from_mmm(URIRef('http://ldf.fi/mmm/places/tgn_8711850'))
+        rdflib.term.URIRef('http://vocab.getty.edu/tgn/8711850')
+        """
+
+        if not tgn_uri:
+            return None
+
+        tgn_id = str(tgn_uri).split('/tgn_')[-1]
+        uri = URIRef('http://vocab.getty.edu/tgn/' + tgn_id)
+
+        return uri
 
     def query_tgn(self, query, retries=5):
         results = None
@@ -170,7 +209,7 @@ class TGN:
         Map place dict to an RDF graph
 
         >>> tgn = TGN()
-        >>> place = tgn.get_place_by_uri('http://vocab.getty.edu/tgn/7003820')
+        >>> place = tgn.get_place_by_uri(URIRef('http://vocab.getty.edu/tgn/7003820'))
         >>> len(tgn.place_rdf(URIRef('http://test.com/place_1'), place))
         8
         >>> len(tgn.place_rdf(URIRef('http://test.com/place_2'), {}))
@@ -183,10 +222,10 @@ class TGN:
 
         g.add((uri, RDF.type, CRM.E53_Place))
         g.add((uri, DCT.source, URIRef('http://vocab.getty.edu/tgn/')))
-        g.add((uri, MMMS.tgn_uri, URIRef(tgn['uri'])))
+        g.add((uri, OWL.sameAs, URIRef(tgn['uri'])))
         g.add((uri, SKOS.prefLabel, Literal(tgn['pref_label'])))
         if tgn.get('parent'):
-            g.add((uri, GVP.broaderPreferred, URIRef(tgn['parent'])))
+            g.add((uri, GVP.broaderPreferred, self.mint_mmm_tgn_uri(URIRef(tgn['parent']))))
 
         if tgn.get('lat'):
             g.add((uri, WGS84.lat, Literal(Decimal(tgn['lat']))))

@@ -11,7 +11,7 @@ import os
 import pprint
 import unittest
 
-from rdflib import URIRef, RDF
+from rdflib import URIRef, RDF, OWL
 
 from linker import PlaceLinker
 from namespaces import *
@@ -80,12 +80,18 @@ class TestLinkerSDBM(unittest.TestCase):
         pprint.pprint(sorted(places))
 
         self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 9)
-        self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 9)
+        self.assertEquals(len(list(places.triples((None, OWL.sameAs, None)))), 9)
 
         self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
         self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 1)
         self.assertEquals(
             len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_1005755'))))), 1)
+
+        # Test all parents have labels
+
+        for parent in places.objects(None, GVP.broaderPreferred):
+            print(parent)
+            self.assertIsNotNone(places.value(parent, SKOS.prefLabel))
 
 
 class TestLinkerBodley(unittest.TestCase):
@@ -165,7 +171,7 @@ class TestLinkerBodley(unittest.TestCase):
         self.assertIsNone(g.value(place1, SKOS.prefLabel))
 
         self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 7)
-        self.assertEquals(len(list(places.triples((None, MMMS.tgn_uri, None)))), 6)  # Oxford and her 5 parents
+        self.assertEquals(len(list(places.triples((None, OWL.sameAs, None)))), 6)  # Oxford and her 5 parents
 
         self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
         self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 2)
@@ -174,6 +180,12 @@ class TestLinkerBodley(unittest.TestCase):
 
         self.assertEquals(
             len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7011931'))))), 1)
+
+        # Test all parents have labels
+
+        for parent in places.objects(None, GVP.broaderPreferred):
+            print(parent)
+            self.assertIsNotNone(places.value(parent, SKOS.prefLabel))
 
 
 class TestLinkerBibale(unittest.TestCase):
@@ -229,3 +241,10 @@ class TestLinkerBibale(unittest.TestCase):
 
         self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 8)
         self.assertEquals(len(list(places.triples((None, GVP.broaderPreferred, None)))), 7)
+
+        # Test all parents have labels
+
+        for parent in places.objects(None, GVP.broaderPreferred):
+            print(parent)
+            self.assertIsNotNone(places.value(parent, SKOS.prefLabel))
+
