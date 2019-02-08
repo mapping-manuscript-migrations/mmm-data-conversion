@@ -45,8 +45,8 @@ CONSTRUCT {
   ?production_timespan a crm:E52_Time-Span ;
     skos:prefLabel ?production_date_label ;
     skos:altLabel ?production_date_observed ;
-    crm:P79_beginning_is_qualified_by ?production_date_start ;
-    crm:P80_end_is_qualified_by ?production_date_end .
+    crm:P82a_begin_of_the_begin ?production_date_start ;
+    crm:P82b_end_of_the_end ?production_date_end .
 
   ?width_uri a mmm-schema:Width ;
     crm:P90_has_value ?width_value ;

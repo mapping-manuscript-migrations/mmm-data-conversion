@@ -278,7 +278,7 @@ def main():
         g = linker.handle_bibale_places(input_graph)
 
     elif args.task == 'bodley_places':
-        place_g = Graph(geonames_apikeys)
+        place_g = Graph()
         place_g.parse(args.place_ontology, format=guess_format(args.place_ontology))
 
         linker = PlaceLinker(geonames_apikeys, places=place_g)

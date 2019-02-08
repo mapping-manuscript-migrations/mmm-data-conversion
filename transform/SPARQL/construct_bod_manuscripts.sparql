@@ -55,8 +55,8 @@ CONSTRUCT {
 
   ?production_timespan a crm:E52_Time-Span ;
     skos:prefLabel ?production_timespan_label ;
-    crm:P79_beginning_is_qualified_by ?production_timespan_begin ;
-    crm:P80_end_is_qualified_by ?production_timespan_end .
+    crm:P82a_begin_of_the_begin ?production_timespan_begin ;
+    crm:P82b_end_of_the_end ?production_timespan_end .
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?manifestation_singleton_preflabel ;
