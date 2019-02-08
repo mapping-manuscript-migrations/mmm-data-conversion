@@ -310,7 +310,7 @@ WHERE {
     OPTIONAL { ?sales_entry :sales_other_currency ?sales_other_currency }
     OPTIONAL {
       ?sales_entry :sales_sold "Yes"
-      BIND(crm:E8_Acquisition as ?event_type)
+      BIND(crm:E10_Transfer_of_Custody as ?event_type)
       BIND(crm:P24_transferred_title_of as ?event_property)
       BIND(crm:P7_took_place_at as ?event_place_property)
       BIND(crm:P4_has_time-span as ?event_timespan_property)
@@ -325,7 +325,7 @@ WHERE {
       ?buyer_agent :sale_agents_sale_id ?sales_entry .
       ?buyer_agent :sale_agents_role "buyer" .
       ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
-      BIND(crm:E8_Acquisition as ?event_type)
+      BIND(crm:E10_Transfer_of_Custody as ?event_type)
       BIND(crm:P24_transferred_title_of as ?event_property)
       BIND(crm:P7_took_place_at as ?event_place_property)
       BIND(crm:P4_has_time-span as ?event_timespan_property)

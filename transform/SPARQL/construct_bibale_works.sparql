@@ -28,6 +28,7 @@ CONSTRUCT {
     mmm-schema:carried_out_by_as_editor ?work_conception_editor ;
     mmm-schema:carried_out_by_as_commissioner ?work_conception_commissioner ;
     mmm-schema:carried_out_by_as_recipient ?work_conception_recipient ;
+    crm:P7_took_place_at ?work_place ;
     dct:source mmm-schema:Bibale .
 }
 WHERE
@@ -40,6 +41,7 @@ WHERE
   OPTIONAL {
     ?work frbroo2:R16i_was_initiated_by ?work_conception .
     ?work_conception a frbroo2:F27_Work_Conception .
+    OPTIONAL { ?work_conception crm:P7_took_place_at ?work_place }
     OPTIONAL {
       ?work_conception crm:P01i_is_domain_of  [
         a crm:PC14_carried_out_by ;

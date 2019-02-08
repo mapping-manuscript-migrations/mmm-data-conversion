@@ -27,6 +27,7 @@ CONSTRUCT {
     frbroo:R18_created ?manifestation_singleton ;
     frbroo:R19_created_a_realisation_of ?expression_work ;
     mmm-schema:carried_out_by_as_author ?expression_author ;
+    crm:P7_took_place_at ?expression_place ;
     dct:source mmm-schema:Bibale .
   #   # crm:P7_took_place_at ?place ;
   #   # crm:P4_has_time-span ?creation_timespan ;
@@ -122,6 +123,7 @@ WHERE
     OPTIONAL {
       ?expression_creation a frbroo2:F28_Expression_Creation ;
         frbroo2:R17_created ?expression ;
+      OPTIONAL { ?expression_creation crm:P7_took_place_at ?expression_place }
       OPTIONAL {
         { ?expression_creation frbroo2:R19_created_a_realisation_of ?expression_work }
         UNION
