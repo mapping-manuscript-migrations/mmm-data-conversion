@@ -229,7 +229,10 @@ class PlaceLinker:
 
             data = redirect_refs(data, [place], mmm_uri)
 
-            self.places += self.tgn.get_tgn_parents(self.places.value(mmm_uri, GVP.broaderPreferred))
+            parent = self.places.value(mmm_uri, GVP.broaderPreferred)
+
+            if not (parent, RDF.type, CRM.E53_Place) in self.places:  # Skip if parent already known
+                self.places += self.tgn.get_tgn_parents(parent)
 
         log.info('TGN place linking finished with prefix "%s".' % localname_prefix)
 

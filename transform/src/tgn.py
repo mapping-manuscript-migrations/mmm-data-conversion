@@ -251,19 +251,18 @@ class TGN:
         >>> len(list(parents.subjects(RDF.type, CRM.E53_Place)))
         4
         """
+        self.log.debug('Getting parents for %s' % parent_uri)
+
+        if not parent_uri:
+            return Graph()
+
         parent_tgn = self.mint_tgn_uri_from_mmm(parent_uri)
-        places = Graph()
+        place_dict = self.get_place_by_uri(parent_tgn)
 
-        while parent_tgn:
-            place_dict = self.get_place_by_uri(parent_tgn)
-            parent_mmm = self.mint_mmm_tgn_uri(parent_tgn)
+        self.log.info('Found TGN parent place %s (%s).' % (parent_uri, place_dict.get('pref_label')))
 
-            place = self.place_rdf(parent_mmm, place_dict)
-            places += place
-
-            self.log.info('Found TGN parent place %s (%s).' % (parent_mmm, place_dict.get('pref_label')))
-
-            parent_tgn = self.mint_tgn_uri_from_mmm(place.value(parent_mmm, GVP.broaderPreferred))
+        places = self.place_rdf(parent_uri, place_dict)
+        places += self.get_tgn_parents(places.value(parent_uri, GVP.broaderPreferred))
 
         return places
 

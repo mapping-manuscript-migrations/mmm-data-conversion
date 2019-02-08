@@ -56,6 +56,8 @@ or
 
 ## Running tests
 
-`GEONAMES_KEY=<APIKEY> nosetests --with-doctest .`
+`cd transform/src`
+
+`GEONAMES_KEY=<APIKEY> nosetests --with-doctest`
 
 Replace `<APIKEY>` with your GeoNames APIKEY.
