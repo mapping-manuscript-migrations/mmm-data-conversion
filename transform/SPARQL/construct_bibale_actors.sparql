@@ -36,6 +36,22 @@ CONSTRUCT {
     crm:P7_took_place_at ?death_place ;
     crm:P4_has_time-span ?death_time ;
     .
+
+  ?birth_time a crm:E52_Time-Span ;
+    skos:prefLabel ?birth_time_label ;
+    crm:P82a_begin_of_the_begin ?birth_time_bb ;
+    crm:P81a_end_of_the_begin ?birth_time_eb ;
+    crm:P81b_begin_of_the_end ?birth_time_be ;
+    crm:P82b_end_of_the_end ?birth_time_ee ;
+    .
+
+  ?death_time a crm:E52_Time-Span ;
+    skos:prefLabel ?death_time_label ;
+    crm:P82a_begin_of_the_begin ?death_time_bb ;
+    crm:P81a_end_of_the_begin ?death_time_eb ;
+    crm:P81b_begin_of_the_end ?death_time_be ;
+    crm:P82b_end_of_the_end ?death_time_ee ;
+    .
 }
 WHERE
 {
@@ -65,7 +81,14 @@ WHERE
     ?bibale_actor_uri crm:P98i_was_born ?birth .
     OPTIONAL { ?bibale_actor_uri rdfs:label ?person_pref_label }
     OPTIONAL { ?birth crm:P7_took_place_at ?birth_place }
-    OPTIONAL { ?birth crm:P4_has_time-span ?birth_time }
+    OPTIONAL {
+      ?birth crm:P4_has_time-span ?birth_time ;
+        rdfs:label ?birth_time_label ;
+        OPTIONAL { ?birth_time crm:P82a_begin_of_the_begin ?birth_time_bb }
+        OPTIONAL { ?birth_time crm:P81a_end_of_the_begin ?birth_time_eb }
+        OPTIONAL { ?birth_time crm:P81b_begin_of_the_end ?birth_time_be }
+        OPTIONAL { ?birth_time crm:P82b_end_of_the_end ?birth_time_ee }
+     }
     BIND("Birth of " + COALESCE(?person_pref_label, "an actor") as ?birth_label)
     # TODO: Mint URI to combine place and time which are in separate events
   }
@@ -74,7 +97,14 @@ WHERE
     ?bibale_actor_uri crm:P100i_died_in ?death .
     OPTIONAL { ?bibale_actor_uri rdfs:label ?person_pref_label }
     OPTIONAL { ?death crm:P7_took_place_at ?death_place }
-    OPTIONAL { ?death crm:P4_has_time-span ?death_time }
+    OPTIONAL {
+      ?death crm:P4_has_time-span ?death_time
+        rdfs:label ?death_time_label ;
+        OPTIONAL { ?death_time crm:P82a_begin_of_the_begin ?death_time_bb }
+        OPTIONAL { ?death_time crm:P81a_end_of_the_begin ?death_time_eb }
+        OPTIONAL { ?death_time crm:P81b_begin_of_the_end ?death_time_be }
+        OPTIONAL { ?death_time crm:P82b_end_of_the_end ?death_time_ee }
+    }
     BIND("Death of " + COALESCE(?person_pref_label, "an actor") as ?death_label)
     # TODO: Mint URI to combine place and time which are in separate events
   }
