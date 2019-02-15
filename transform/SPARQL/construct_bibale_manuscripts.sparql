@@ -19,7 +19,7 @@ CONSTRUCT {
     skos:prefLabel ?expression_label ;
     skos:altLabel ?expression_title ;
     mmm-schema:data_provider_url ?expression ;
-  #   crm:P72_has_language ?manifestation_work_language ;
+    # crm:P72_has_language ?manifestation_work_language ;
     dct:source mmm-schema:Bibale .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
@@ -53,7 +53,7 @@ CONSTRUCT {
     mmm-schema:manuscript_work ?manifestation_work ;  # shortcut
     mmm-schema:manuscript_author ?work_conception_author ;  # shortcut
     mmm-schema:manuscript_author ?expression_author ;  # shortcut
-    # dct:source mmm-schema:Bibale .
+    dct:source mmm-schema:Bibale .
     .
 }
 WHERE
