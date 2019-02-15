@@ -53,7 +53,7 @@ CONSTRUCT {
     mmm-schema:manuscript_work ?manifestation_work ;  # shortcut
     mmm-schema:manuscript_author ?work_conception_author ;  # shortcut
     mmm-schema:manuscript_author ?expression_author ;  # shortcut
-    dct:source mmm-schema:Bibale .
+    dct:source mmm-schema:Bibale 
     .
 }
 WHERE
