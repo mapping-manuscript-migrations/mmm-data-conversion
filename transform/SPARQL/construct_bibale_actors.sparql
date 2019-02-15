@@ -98,7 +98,7 @@ WHERE
     OPTIONAL { ?bibale_actor_uri rdfs:label ?person_pref_label }
     OPTIONAL { ?death crm:P7_took_place_at ?death_place }
     OPTIONAL {
-      ?death crm:P4_has_time-span ?death_time
+      ?death crm:P4_has_time-span ?death_time ;
         rdfs:label ?death_time_label ;
         OPTIONAL { ?death_time crm:P82a_begin_of_the_begin ?death_time_bb }
         OPTIONAL { ?death_time crm:P81a_end_of_the_begin ?death_time_eb }
