@@ -13,7 +13,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 CONSTRUCT {
   ?mmm_actor_uri a ?actor_class ;
     skos:prefLabel ?name ;
-    mmm-schema:viaf_id ?viaf_id ;
+    owl:sameAs ?viaf_uri ;
     mmm-schema:person_place ?mmm_place ;  # Place/nationality
     mmm-schema:birth_date ?birth_date ;
     mmm-schema:death_date ?death_date ;
@@ -36,7 +36,8 @@ CONSTRUCT {
   OPTIONAL { ?name_id :names_subtype ?name_type_literal . }
   OPTIONAL {
     ?name_id :names_viaf_id ?viaf_id .
-    FILTER(STR(?viaf_id) != "")
+    FILTER(STR(?viaf_id) != "") .
+    BIND(URI(CONCAT("https://viaf.org/viaf/", ?viaf_id)) as ?viaf_uri)
   }
   OPTIONAL {
     ?name_id :names_startdate ?birth_date .
@@ -54,5 +55,6 @@ CONSTRUCT {
     ?place_id :places_id ?place_local_id .
   }
   BIND(IRI(CONCAT(STR(mmm:), "places/", STR(?place_local_id))) as ?mmm_place)
+  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?person_local_id))) as ?mmm_actor_uri)
   BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?person_local_id))) as ?mmm_actor_uri)
 }
