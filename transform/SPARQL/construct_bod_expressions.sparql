@@ -1,0 +1,45 @@
+PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
+
+CONSTRUCT {
+  ?expression_mmm a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+    skos:prefLabel ?expression_label ;
+    skos:altLabel ?work_title ;
+    crm:P72_has_language ?work_language_label ;
+    dct:source mmm-schema:Bodley .
+
+  ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
+    skos:prefLabel ?expression_creation_label ;
+    frbroo:R17_created ?expression_mmm ;
+    frbroo:R19_created_a_realisation_of ?work_mmm ;
+    .
+
+}
+WHERE
+{
+    ?expression a frbr:F22_Self-Contained_Expression ;
+      rdfs:label ?expression_label .
+    OPTIONAL {
+      ?expression frbr:R3i_realises ?work .
+      OPTIONAL { ?work rdfs:label ?work_title . }
+      OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_preflabel . }
+    }
+
+  BIND(REPLACE(REPLACE(STR(?expression), "^.*\\/catalog/(.+)(/expression)", "$1"), "%23", "_") as ?expression_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
+
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/expression_creation/bodley_", ?expression_local_id)) as ?expression_creation_mmm)
+
+  BIND(CONCAT("Expression creation of ", ?expression_label) as ?expression_creation_label)
+
+  BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bodley_", ?work_local_id)) as ?work_mmm)
+}

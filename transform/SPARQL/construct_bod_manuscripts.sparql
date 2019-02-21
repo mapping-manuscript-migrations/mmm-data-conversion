@@ -9,37 +9,9 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 
-# TODO:
-# - mint MMM URIs for resources
-
 CONSTRUCT {
-  ?work a frbroo:F1_Work  ;
-    skos:prefLabel ?work_preflabel ;
-    mmm-schema:data_provider_url ?work ;
-    dct:source mmm-schema:Bodley .
-
-  ?work_conception a frbroo:F27_Work_Conception ;
-    skos:prefLabel ?work_conception_pref_label ;
-    frbroo:R16_initiated ?work ;
-    mmm-schema:carried_out_by_as_author ?work_conception_author ;
-    # crm:P7_took_place_at  # TODO: author place/nationality
-    # crm:P4_has_time-span  # TODO: author life dates
-    .
-
-  ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
-    skos:prefLabel ?expression_label ;
-    skos:altLabel ?work_title ;
-    crm:P72_has_language ?work_language_label ;
-    dct:source mmm-schema:Bodley .
-
-  ?expression_creation a frbroo:F28_Expression_Creation ;
-    # skos:prefLabel # TODO
-    frbroo:R17_created ?expression ;
-    frbroo:R19_created_a_realisation_of ?work ;
-    .
-
   ?production a crm:E12_Production ;
-    crm:P108_has_produced ?manifestation_singleton ;
+    crm:P108_has_produced ?manifestation_singleton_mmm ;
     crm:P4_has_time-span ?production_timespan ;
     crm:P7_took_place_at ?production_place ;
     mmm-schema:carried_out_by_as_artist ?production_artist ;
@@ -58,13 +30,13 @@ CONSTRUCT {
     crm:P82a_begin_of_the_begin ?production_timespan_begin ;
     crm:P82b_end_of_the_end ?production_timespan_end .
 
-  ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
+  ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?manifestation_singleton_preflabel ;
-    crm:P128_carries ?expression ;
+    crm:P128_carries ?expression_mmm ;
     crm:P51_has_former_or_current_owner ?prov_agent ;
     mmm-schema:data_provider_url ?manifestation_singleton ;
     mmm-schema:manuscript_author ?work_conception_author ;  # shortcut
-    mmm-schema:manuscript_work ?work ;  # shortcut
+    mmm-schema:manuscript_work ?work_mmm ;  # shortcut
     dct:source mmm-schema:Bodley .
 
 }
@@ -77,17 +49,10 @@ WHERE
   # EXPRESSION / WORK
   OPTIONAL {
     ?manifestation_singleton frbr:R42_is_representative_manifestation_singleton_for ?expression .
-    ?expression rdfs:label ?expression_label .
     OPTIONAL {
       ?expression frbr:R3i_realises ?work .
-      ?work rdfs:label ?work_title .
-      OPTIONAL { ?work crm:P102_has_title ?work_preflabel . }
-      OPTIONAL { ?work crm:P72_has_language/rdfs:label ?work_language_label . }
-      OPTIONAL {
-        ?work frbr:R16i_was_initiated_by ?work_conception .
-        ?work_conception rdfs:label ?work_conception_pref_label .
-        ?work_conception crm:P14_carried_out_by ?work_conception_author .
-      }
+      ?work frbr:R16i_was_initiated_by ?work_conception .
+      ?work_conception crm:P14_carried_out_by ?work_conception_author .
     }
   }
 
@@ -160,4 +125,13 @@ WHERE
   BIND(SUBSTR(?production_timespan_begin, 1, 4) as ?begin_year)
   BIND(SUBSTR(?production_timespan_end, 1, 4) as ?end_year)
   BIND(STR(?begin_year) + "-" + STR(?end_year) as ?production_timespan_label)
+
+  BIND(REPLACE(REPLACE(STR(?expression), "^.*\\/catalog/(.+)(/expression)", "$1"), "%23", "_") as ?expression_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
+
+  BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bodley_", ?work_local_id)) as ?work_mmm)
+
+  BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_singleton_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bodley_", ?manifestation_singleton_local_id)) as ?manifestation_singleton_mmm)
 }
