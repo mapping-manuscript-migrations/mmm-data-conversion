@@ -17,20 +17,7 @@ ENV INPUT_BODLEY_SPARQL_ENDPOINT "http://input-bodley:3030/ds/sparql"
 ENV INPUT_BIBALE_SPARQL_ENDPOINT "http://input-bibale:3030/ds/sparql"
 ENV OUTPUT "/output"
 
-#COPY mmm-schema.ttl /app/mmm-schema.ttl
-COPY SPARQL/construct_sdbm_manuscripts.sparql /app/construct_sdbm_manuscripts.sparql
-COPY SPARQL/construct_sdbm_works.sparql /app/construct_sdbm_works.sparql
-COPY SPARQL/construct_sdbm_manuscripts_transactions.sparql /app/construct_sdbm_manuscripts_transactions.sparql
-COPY SPARQL/construct_sdbm_people.sparql /app/construct_sdbm_people.sparql
-COPY SPARQL/construct_sdbm_places.sparql /app/construct_sdbm_places.sparql
-COPY SPARQL/construct_sdbm_sources.sparql /app/construct_sdbm_sources.sparql
-COPY SPARQL/construct_bod_manuscripts.sparql /app/construct_bod_manuscripts.sparql
-COPY SPARQL/construct_bod_people.sparql /app/construct_bod_people.sparql
-COPY SPARQL/construct_bod_places.sparql /app/construct_bod_places.sparql
-COPY SPARQL/construct_bibale_actors.sparql /app/construct_bibale_actors.sparql
-COPY SPARQL/construct_bibale_manuscripts.sparql /app/construct_bibale_manuscripts.sparql
-COPY SPARQL/construct_bibale_places.sparql /app/construct_bibale_places.sparql
-COPY SPARQL/construct_bibale_works.sparql /app/construct_bibale_works.sparql
+COPY SPARQL/*.sparql /app/
 
 COPY src/* /app/
 
