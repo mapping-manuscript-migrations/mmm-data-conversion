@@ -9,6 +9,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 CONSTRUCT {
   ?mmm_actor_uri a ?actor_class ;
@@ -55,6 +56,5 @@ CONSTRUCT {
     ?place_id :places_id ?place_local_id .
   }
   BIND(IRI(CONCAT(STR(mmm:), "places/", STR(?place_local_id))) as ?mmm_place)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?person_local_id))) as ?mmm_actor_uri)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?person_local_id))) as ?mmm_actor_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?person_local_id))) as ?mmm_actor_uri)
 }
