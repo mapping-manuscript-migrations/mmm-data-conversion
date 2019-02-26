@@ -102,7 +102,7 @@ WHERE
     }
   }
   OPTIONAL {
-    BIND(mmm-schema:Manuscript_Observation as ?event_type)
+    BIND(mmm-schema:ManuscriptObservation as ?event_type)
     BIND(mmm-schema:observed_manuscript as ?event_property)
     BIND(mmm-schema:observed_location as ?event_place_property)
     BIND(mmm-schema:observed_time-span as ?event_timespan_property)

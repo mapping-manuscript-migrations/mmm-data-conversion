@@ -41,7 +41,7 @@
   rdfs:subClassOf crm:E54_Dimension ;
   skos:prefLabel "Miniature count"@en .
 
-:Manuscript_Observation a rdfs:Class ;
+:ManuscriptObservation a rdfs:Class ;
   rdfs:subClassOf crm:E5_Event ;
   skos:prefLabel "Direct or indirect observation of a manuscript"@en .
 
@@ -49,9 +49,16 @@
   rdfs:subPropertyOf crm:P12_occured_in_the_presence_of ;
   skos:prefLabel "Observed manuscript"@en .
 
-:place_literal a rdf:Property;
+:observed_location a rdf:Property;
   rdfs:subPropertyOf crm:P7_took_place_at ;
-  skos:prefLabel "Observed manuscript"@en .
+  skos:prefLabel "Observed manuscript location"@en .
+
+:observed_time-span a rdf:Property;
+  rdfs:subPropertyOf crm:P4_has_time-span ;
+  skos:prefLabel "Manuscript observation time-span"@en .
+
+:observed_owner a rdf:Property;
+  skos:prefLabel "Observed manuscript owner"@en .
 
 :data_provider a rdfs:Property ;
   skos:prefLabel "The data provider database"@en ;
