@@ -2,6 +2,9 @@
 
 set -eo pipefail
 
+rm -f $OUTPUT/_sdbm*
+rm -f $OUTPUT/sdbm_cidoc.ttl
+
 # run the SPARQL construct query
 
 printf '\nConstructing SDBM manuscripts transactions\n\n'

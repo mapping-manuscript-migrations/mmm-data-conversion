@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eo pipefail
 
 mkdir -p $OUTPUT/logs
 
@@ -13,6 +14,7 @@ case "$1" in
     ./convert_sdbm.sh
   ;;
   *)
+    rm -f $OUTPUT/*
     ./convert_bibale.sh
     ./convert_bodley.sh
     ./convert_sdbm.sh
@@ -20,4 +22,3 @@ case "$1" in
 esac
 
 chmod a+r $OUTPUT/*
-

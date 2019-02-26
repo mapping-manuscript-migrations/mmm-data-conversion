@@ -2,6 +2,9 @@
 
 set -eo pipefail
 
+rm -f $OUTPUT/_bibale*
+rm -f $OUTPUT/bibale_cidoc.ttl
+
 # run the SPARQL construct query
 printf '\nConstructing Bibale manuscripts\n\n'
 curl -f --data-urlencode "query=$(cat /app/construct_bibale_manuscripts.sparql)" $INPUT_BIBALE_SPARQL_ENDPOINT -v > $OUTPUT/_bibale_manuscripts.ttl
