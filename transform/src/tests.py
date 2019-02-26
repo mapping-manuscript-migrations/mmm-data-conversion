@@ -37,7 +37,7 @@ class TestLinkerSDBM(unittest.TestCase):
         dct:source             mmm-schema:SDBM ;
         crm:P108_has_produced  <http://ldf.fi/mmm/manifestation_singleton/orphan_61316> ;
         crm:P4_has_time-span   <http://ldf.fi/mmm/timespan/59403> ;
-        crm:P7_took_place_at   <http://ldf.fi/mmm/places/2121> .
+        crm:P7_took_place_at   <http://ldf.fi/mmm/places/1012> .
 
     <http://ldf.fi/mmm/places/2121>
             a                             crm:E53_Place ;
@@ -58,6 +58,16 @@ class TestLinkerSDBM(unittest.TestCase):
             wgs:lat                       "23"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
             wgs:long                      "-102"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
             skos:prefLabel                "Mexico" .
+
+    <http://ldf.fi/mmm/places/847>
+            a                             crm:E53_Place ;
+            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/places/847> ;
+            dct:source                    mmm-schema:SDBM ;
+            crm:P89_falls_within          <http://ldf.fi/mmm/places/2398> ;
+            owl:sameAs                    <http://vocab.getty.edu/tgn/7024079> ;
+            wgs:lat                       "32"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
+            wgs:long                      "56"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
+            skos:prefLabel                "Persia" .    
     """
 
     def test_handle_tgn_places_sdbm(self):
@@ -79,13 +89,13 @@ class TestLinkerSDBM(unittest.TestCase):
 
         pprint.pprint(sorted(places))
 
-        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 9)
-        self.assertEquals(len(list(places.triples((None, OWL.sameAs, None)))), 9)
+        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 11)
+        self.assertEquals(len(list(places.triples((None, OWL.sameAs, None)))), 11)
 
         self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
         self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 1)
         self.assertEquals(
-            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_1005755'))))), 1)
+            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7005560'))))), 1)
 
         # Test all parents have labels
 
@@ -247,4 +257,119 @@ class TestLinkerBibale(unittest.TestCase):
         for parent in places.objects(None, GVP.broaderPreferred):
             print(parent)
             self.assertIsNotNone(places.value(parent, SKOS.prefLabel))
+
+
+class TestLinkerTGN(unittest.TestCase):
+    test_bodley_data_extra = """
+        <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_7875/production>
+            a                      crm:E12_Production ;
+            crm:P108_has_produced  <http://ldf.fi/mmm/manifestation_singleton/bodley_manuscript_7875> ;
+            crm:P4_has_time-span   <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_7875/production-time-span> ;
+            crm:P7_took_place_at   <https://medieval.bodleian.ox.ac.uk/catalog/place_7415093> , 
+                <https://medieval.bodleian.ox.ac.uk/catalog/place_7005560> .
+
+        <https://medieval.bodleian.ox.ac.uk/catalog/place_21>
+            a                             crm:E53_Place ;
+            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_21> ;
+            dct:source                    mmm-schema:Bodley ;
+            owl:sameAs                    <http://placenames.org.uk/id/placename/24/005479> ;
+            wgs:lat                       "51.89493" ;
+            wgs:long                      "-1.52538" ;
+            skos:altLabel                 "Catsham Lane and Bridge [in Chadlington], Oxfordshire" ;
+            skos:prefLabel                "Catsham Lane and Bridge [in Chadlington], Oxfordshire" .
+
+        <https://medieval.bodleian.ox.ac.uk/catalog/place_7291891>
+            a                             crm:E53_Place ;
+            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_7291891> ;
+            dct:source                    mmm-schema:Bodley ;
+            owl:sameAs                    <http://www.geonames.org/7291891> , <http://www.visionofbritain.org.uk/place/7116> ;
+            wgs:lat                       "52.14707" ;
+            wgs:long                      " 1.31332" ;
+            skos:altLabel                 "Dallinghoo" , "Dallinghoe, Suffolk" ;
+            skos:prefLabel                "Dallinghoe, Suffolk" .
+
+        <https://medieval.bodleian.ox.ac.uk/catalog/place_7005560>
+            a                             crm:E53_Place ;
+            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_7005560> ;
+            dct:source                    mmm-schema:Bodley ;
+            owl:sameAs                    <http://vocab.getty.edu/tgn/7005560> ;
+            wgs:lat                       "23.0" ;
+            wgs:long                      "-102.0" ;
+            skos:altLabel                 "United Mexican States" , "Mexiko" , "المىس مَ" , "Mexico"@en , "Mexico" , 
+                    "Мексиканские Соединенные Штаты" , "MX00" , "México" , "República Méjico" , 
+                    "Mexicanos, Estados Unidos" , "ا وًلايات المخحدة المىس ىَ ةِ" , "Estados Unidos Mexicanos" , 
+                    "Mejicana, República" , "MEX" , "República Mejicana" , "États-Unis du Mexique" , 
+                    "Méjico, República" , "Mèssico" , "Mexican Republic" , "Messco" , 
+                    "Mexicana, Republica" , "Мексика" , "ISO484" , "Mexique" , "Mexican" , "Mexican"@en , 
+                    "墨西哥合众国" , "Republica Mexicana" , "墨西哥" , "Méjico" ;
+            skos:prefLabel                "Mexico" .
+    """
+
+    test_sdbm_extra = """
+        <http://ldf.fi/mmm/places/5>
+            a                             crm:E53_Place ;
+            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/places/5> ;
+            dct:source                    mmm-schema:SDBM ;
+            crm:P89_falls_within          <http://ldf.fi/mmm/places/2351> ;
+            owl:sameAs                    <http://vocab.getty.edu/tgn/7002445> ;
+            wgs:lat                       53.0 ;
+            wgs:long                      -2.0 ;
+            skos:prefLabel                "England" .
+    """
+
+    test_sdbm_data = TestLinkerSDBM.test_sdbm_data + test_sdbm_extra
+
+    test_bodley_data = TestLinkerBodley.test_bodley_data + test_bodley_data_extra
+
+    def test_handle_tgn_places_sdbm_bod(self):
+        g = Graph()
+        g2 = Graph()
+
+        g.parse(data=self.test_bodley_data, format='turtle')
+        g2.parse(data=self.test_sdbm_data, format='turtle')
+
+        places = Graph()
+
+        GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
+        linker = PlaceLinker(GEONAMES_APIKEYS, places)
+
+        g = linker.handle_tgn_places(g, 'bodley_', MMMS.Bodley)
+        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 11)
+
+        # Add SDBM places
+        g2 = linker.handle_tgn_places(g2, 'sdbm_', MMMS.SDBM)
+        self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 16)
+
+        # Check corrected references
+        self.assertEquals(
+            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7005560'))))), 1)
+        self.assertEquals(
+            len(list(g2.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7005560'))))), 1)
+
+        pprint.pprint(sorted(places.subjects(RDF.type, CRM.E53_Place)))
+
+        pprint.pprint(sorted(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7029392'))))
+
+        # Check place annotations
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/bodley_place_21')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/bodley_place_7002445')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/bodley_place_7291891')))) >= 8)
+
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_1005755')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7005560')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7011931')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7018917')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7024079')))) >= 8)
+
+        # Parent places
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_1000001')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_1000003')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_1000004')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7002445')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7008136')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7008168')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7008591')))) >= 8)
+
+        # World
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7029392')))) >= 5)
 

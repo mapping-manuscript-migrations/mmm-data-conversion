@@ -37,7 +37,7 @@ def group_places(graph: Graph):
         place_country = str(graph.value(place, MMMS.bibale_country, default=''))
         place_region = str(graph.value(place, MMMS.bibale_region, default=''))
         place_settlement = str(graph.value(place, MMMS.bibale_settlement, default=''))
-        place_authority_uri = graph.value(place, OWL.sameAs)
+        place_authority_uri = graph.value(place, OWL.sameAs, any=False)
 
         if place_country == '?':
             place_country = ''
@@ -207,11 +207,18 @@ class PlaceLinker:
 
         for place in list(data.subjects(RDF.type, CRM.E53_Place)):
 
-            place_authority_uri = data.value(place, OWL.sameAs)
+            place_authority_uris = list(data.objects(place, OWL.sameAs))
 
             # Get place information from TGN
 
-            mmm_uri, place_graph = self._handle_tgn_linked_place(place, place_authority_uri, data, source_uri)
+            mmm_uri, place_graph = None, Graph()
+
+            for place_authority_uri in place_authority_uris:
+                mmm_uri, place_graph = self._handle_tgn_linked_place(place, place_authority_uri, data, source_uri)
+                if mmm_uri:
+                    break
+
+            log.info('%s - %s - %s' % (mmm_uri, len(place_graph), bool(place_graph)))
 
             if not place_graph:
 
@@ -232,7 +239,7 @@ class PlaceLinker:
 
             data = redirect_refs(data, [place], mmm_uri)
 
-            log.debug('Added %s (%s) TGN annotations to place ontology.' % (mmm_uri, data.value(place, SKOS.prefLabel)))
+            log.debug('Redirected references %s  -->  %s' % (place, mmm_uri))
 
             parent = self.places.value(mmm_uri, GVP.broaderPreferred)
 

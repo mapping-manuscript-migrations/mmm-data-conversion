@@ -33,6 +33,7 @@ class GeoNames:
 
         while (not hasattr(g, 'status')) or ('Read timed out' in g.status) or ('hourly limit' in g.status):
             g = geocoder.geonames(q, **kwargs, key=self.get_apikey())
+            self.log.debug('Got GeoNames reply %s' % g)
             if 'hourly limit' in g.status:
                 self.change_apikey()
                 if self.apikey_index == 0:
@@ -141,10 +142,16 @@ class GeoNames:
         Search for a place from GeoNames API and return place data
 
         >>> geo = GeoNames([os.environ['GEONAMES_KEY']])
-        >>> geo.search_place('Royaume Uni / Angleterre',  'Dorset', 'Abbotsbury').get('wikipedia')
+        >>> place = geo.search_place('Royaume Uni / Angleterre',  'Dorset', 'Abbotsbury')
+        >>> place.get('uri')
+        'http://sws.geonames.org/2657869'
+        >>> place.get('wikipedia')
         'https://en.wikipedia.org/wiki/Abbotsbury'
 
-        >>> geo.search_place('France',  'Languedoc-Roussillon', 'Toulouse').get('wikipedia')
+        >>> place = geo.search_place('France',  'Languedoc-Roussillon', 'Toulouse')
+        >>> place.get('uri')
+        'http://sws.geonames.org/2972315'
+        >>> place.get('wikipedia')
         'https://en.wikipedia.org/wiki/Toulouse'
         """
         country_mapping = {
