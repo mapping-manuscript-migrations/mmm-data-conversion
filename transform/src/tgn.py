@@ -192,6 +192,7 @@ class TGN:
         if len(res):
             res = res[0]
         else:
+            self.log.warning('No information received for TGN place %s' % uri)
             return {}
 
         tgn = {'uri': uri,
@@ -201,6 +202,8 @@ class TGN:
                'place_type': res.get('place_type_en', {}).get('value'),
                'parent': res.get('parent_uri', {}).get('value'),
                }
+
+        self.log.debug('Information received for TGN place %s' % uri)
 
         return tgn
 
@@ -218,6 +221,7 @@ class TGN:
         g = Graph()
 
         if not tgn:
+            self.log.info('Trying to map empty dict into RDF with URI %s' % uri)
             return g
 
         g.add((uri, RDF.type, CRM.E53_Place))
@@ -244,7 +248,7 @@ class TGN:
         Get all TGN parent places as a graph.
 
         :param parent_uri: The MMM namespace URI of the parent who are retrieving with all parents+
-        :return:
+        :return: graph of ancestor places
 
         >>> tgn = TGN()
         >>> parents = tgn.get_tgn_parents(tgn.mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820'))

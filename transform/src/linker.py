@@ -150,8 +150,9 @@ class PlaceLinker:
         Handle a place instance that might have an owl:sameAs link to a TGN place
 
         :param data_uri: place instance URI in data graph
+        :param tgn_uri: TGN URI to use in linking
         :param data: data graph
-        :param localname_prefix: prefix to use for local name, e.g. 'sdbm_'
+        :param source_uri: data source URI
         """
         place_graph = Graph()
 
@@ -220,14 +221,18 @@ class PlaceLinker:
                 for triple in data.triples((place, None, None)):
                     place_graph.add((mmm_uri, triple[1], triple[2]))
 
-                log.info('Added unlinked %s (%s) to place ontology.' % (mmm_uri, data.value(place, SKOS.prefLabel)))
+                log.info('Added unlinked %s (%s) input data annotations to place ontology.'
+                         % (mmm_uri, data.value(place, SKOS.prefLabel)))
 
-            if not len(place_graph):
+            if not place_graph:
+                log.warning('No data present for %s, skipping it completely.' % mmm_uri)
                 continue
 
             self.places += place_graph
 
             data = redirect_refs(data, [place], mmm_uri)
+
+            log.debug('Added %s (%s) TGN annotations to place ontology.' % (mmm_uri, data.value(place, SKOS.prefLabel)))
 
             parent = self.places.value(mmm_uri, GVP.broaderPreferred)
 
