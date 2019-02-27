@@ -14,7 +14,6 @@ case "$1" in
     ./convert_sdbm.sh
   ;;
   *)
-    rm -f $OUTPUT/*
     ./convert_bibale.sh
     ./convert_bodley.sh
     ./convert_sdbm.sh
