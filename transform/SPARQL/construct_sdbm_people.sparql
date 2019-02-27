@@ -38,7 +38,7 @@ CONSTRUCT {
   OPTIONAL {
     ?name_id :names_viaf_id ?viaf_id .
     FILTER(STR(?viaf_id) != "") .
-    BIND(URI(CONCAT("https://viaf.org/viaf/", ?viaf_id)) as ?viaf_uri)
+    BIND(URI(CONCAT("https://viaf.org/viaf/", REPLACE(?viaf_id, " ", ""))) as ?viaf_uri)
   }
   OPTIONAL {
     ?name_id :names_startdate ?birth_date .
