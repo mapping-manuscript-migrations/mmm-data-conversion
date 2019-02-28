@@ -10,25 +10,23 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bibale: <http://bibale.irht.cnrs.fr/>
-# TODO:
-# - mint MMM URIs for resources
 
 CONSTRUCT {
-  ?work a frbroo:F1_Work ;
+  ?work_mmm a frbroo:F1_Work ;
     skos:prefLabel ?work_pref_label ;
     skos:altLabel ?work_alt_label ;
     mmm-schema:data_provider_url ?work ;
     dct:source mmm-schema:Bibale .
 
-  ?work_conception a frbroo:F27_Work_Conception ;
+  ?work_conception_mmm a frbroo:F27_Work_Conception ;
     skos:prefLabel ?work_conception_pref_label ;
-    frbroo:R16_initiated ?work ;
+    frbroo:R16_initiated ?work_mmm ;
     mmm-schema:carried_out_by_as_author ?work_conception_author ;
     mmm-schema:carried_out_by_as_translator ?work_conception_translator ;
     mmm-schema:carried_out_by_as_editor ?work_conception_editor ;
     mmm-schema:carried_out_by_as_commissioner ?work_conception_commissioner ;
     mmm-schema:carried_out_by_as_recipient ?work_conception_recipient ;
-    crm:P7_took_place_at ?work_place ;
+    crm:P7_took_place_at ?place_mmm ;
     .
 }
 WHERE
@@ -78,4 +76,12 @@ WHERE
       ] ;
     }
   }
+  BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bibale_", ?work_local_id)) as ?work_mmm)
+
+  BIND(REPLACE(STR(?work_conception), "^.*\\/(.+)", "$1") as ?work_conception_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/work_conception/bibale_", ?work_conception_local_id)) as ?work_conception_mmm)
+
+  BIND(REPLACE(STR(?work_place), "^.*\\/(.+)", "$1") as ?place_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
 }

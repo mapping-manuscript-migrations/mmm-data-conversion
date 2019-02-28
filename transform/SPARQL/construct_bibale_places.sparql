@@ -11,18 +11,15 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-# TODO:
-# - mint MMM URIs for resources
-
 CONSTRUCT {
-  ?bibale_place_uri a crm:E53_Place ;
+  ?place_mmm a crm:E53_Place ;
     skos:prefLabel ?pref_label ;
     skos:altLabel ?combined_label ;
     owl:sameAs ?authority_uri ;
     # wgs:lat ?lat ;
     # wgs:long ?long ;
     # mmm-schema:data_provider_url ?bod_place_uri ;
-    mmm-schema:place_type ?place_type ;
+    mmm-schema:place_type ?place_type_mmm ;
     mmm-schema:bibale_settlement ?settlement_label ;
     mmm-schema:bibale_region ?region_label ;
     mmm-schema:bibale_country ?country_label ;
@@ -64,4 +61,10 @@ WHERE
   BIND(COALESCE(?place_type_settlement, ?place_type_region, ?place_type_country) as ?place_type)
   BIND(COALESCE(?settlement_label, ?region_label, ?country_label) as ?pref_label)
   BIND(CONCAT(COALESCE(CONCAT(?country_label, ", "), ""), COALESCE(CONCAT(?region_label, ", "), ""), COALESCE(CONCAT(?settlement_label), "")) as ?combined_label)
+
+  BIND(REPLACE(STR(?bibale_place_uri), "^.*\\/(.+)", "$1") as ?place_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
+
+  BIND(REPLACE(STR(?place_type), "^.*\\/(.+)", "$1") as ?place_type_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/schema/bibale_", REPLACE(?place_type_local_id, ":", "_"))) as ?place_type_mmm)
 }
