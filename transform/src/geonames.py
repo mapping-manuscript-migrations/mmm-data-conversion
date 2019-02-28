@@ -59,13 +59,21 @@ class GeoNames:
         if not geonames_id:
             return {}
 
-        self.log.info('Fetching data for GeoNames id %s' % geonames_id)
-        g = self._query(geonames_id, method='details')
+        wikipedia = None
+        retries = 3
 
-        if (not g) or g.status != 'OK':
-            return {}
+        # At least Wikipedia links seem to be randomly missing from the responses, so retry for them
+        
+        while not wikipedia and retries:
+            self.log.info('Fetching data for GeoNames id %s' % geonames_id)
+            g = self._query(geonames_id, method='details')
 
-        wikipedia = ('https://' + g.wikipedia) if hasattr(g, 'wikipedia') and g.wikipedia else None
+            if (not g) or g.status != 'OK':
+                return {}
+
+            wikipedia = ('https://' + g.wikipedia) if hasattr(g, 'wikipedia') and g.wikipedia else None
+
+            retries -= 1
 
         return {'lat': g.lat,
                 'lon': g.lng,
