@@ -48,24 +48,24 @@ CONSTRUCT {
     crm:P82a_begin_of_the_begin ?production_date_start ;
     crm:P82b_end_of_the_end ?production_date_end .
 
-  ?width_uri a mmm-schema:Width ;
+  ?width_uri a ?width_class ;
     crm:P90_has_value ?width_value ;
     crm:P91_has_unit "mm"@en .
 
-  ?height_uri a mmm-schema:Height ;
+  ?height_uri a ?height_class ;
     crm:P90_has_value ?height_value ;
     crm:P91_has_unit "mm"@en .
 
-  ?folios_uri a mmm-schema:Folios ;
+  ?folios_uri a ?folios_class ;
     crm:P90_has_value ?folios_value .
 
-  ?lines_uri a mmm-schema:Lines ;
+  ?lines_uri a ?lines_class ;
     crm:P90_has_value ?lines_value .
 
-  ?columns_uri a mmm-schema:Columns ;
+  ?columns_uri a ?columns_class ;
     crm:P90_has_value ?columns_value .
 
-  ?miniatures_uri a mmm-schema:Miniatures ;
+  ?miniatures_uri a ?miniatures_class ;
     crm:P90_has_value ?miniatures_value .
 
   # provenance reification
@@ -256,6 +256,7 @@ WHERE {
     ?provenance_entry :provenance_entry_id ?entry ;
                       :provenance_provenance_agent_id/:names_id ?prov_agent_id ;
                                                      :provenance_order ?prov_order .
+    FILTER(STR(?prov_order) != "")
     OPTIONAL { ?provenance_entry :provenance_comment ?prov_comment . }
   }
 
@@ -320,50 +321,68 @@ WHERE {
   # folios
   OPTIONAL {
     ?entry :entries_folios ?folios_value .
+    FILTER(STR(?folios_value) != "")
+    BIND(mmm-schema:Folios as ?folios_class)
   }
 
   # lines
   OPTIONAL {
     ?entry :entries_num_lines ?lines_value .
+    FILTER(STR(?lines_value) != "")
+    BIND(mmm-schema:Lines as ?lines_class)
   }
 
   # columns
   OPTIONAL {
     ?entry :entries_num_columns ?columns_value .
+    FILTER(STR(?columns_value) != "")
+    BIND(mmm-schema:Columns as ?columns_class)
   }
 
   # width
   OPTIONAL {
     ?entry :entries_width ?width_value .
+    FILTER(STR(?width_value) != "")
+    BIND(mmm-schema:Width as ?width_class)
   }
 
   # height
   OPTIONAL {
     ?entry :entries_height ?height_value .
+    FILTER(STR(?height_value) != "")
+    BIND(mmm-schema:Height as ?height_class)
   }
 
   # alternate size
 
   # full-page miniatures
   OPTIONAL {
-    ?entry :entries_miniatures_fullpage ?miniatures_fullpage_value .
-  }
+    OPTIONAL {
+      ?entry :entries_miniatures_fullpage ?miniatures_fullpage_value .
+      FILTER(STR(?miniatures_fullpage_value) != "")
+    }
 
-  # large miniatures
-  OPTIONAL {
-    ?entry :entries_miniatures_large ?miniatures_large_value .
-  }
+    # large miniatures
+    OPTIONAL {
+      ?entry :entries_miniatures_large ?miniatures_large_value .
+      FILTER(STR(?miniatures_large_value) != "")
+    }
 
-  # small miniatures
-  OPTIONAL {
-    ?entry :entries_miniatures_small ?miniatures_small_value .
-  }
+    # small miniatures
+    OPTIONAL {
+      ?entry :entries_miniatures_small ?miniatures_small_value .
+      FILTER(STR(?miniatures_small_value) != "")
+    }
 
-  # unspec. sized miniatures
-  OPTIONAL {
-    ?entry :entries_miniatures_unspec_size ?miniatures_unspec_value .
+    # unspec. sized miniatures
+    OPTIONAL {
+      ?entry :entries_miniatures_unspec_size ?miniatures_unspec_value .
+      FILTER(STR(?miniatures_unspec_value) != "")
+    }
+    BIND(?miniatures_large_value + ?miniatures_small_value + ?miniatures_fullpage_value + ?miniatures_unspec_value as ?miniatures_value)
+    FILTER(?miniatures_value > 0)
+    BIND(mmm-schema:Miniatures as ?miniatures_class)
   }
-
 
   # historiated initials
 
@@ -418,11 +437,11 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?author_id))) as ?author)
-  #BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?seller_id))) as ?seller)
-  #BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?buyer_id))) as ?buyer)
-  #BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?selling_agent_id))) as ?selling_agent)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?prov_agent_id))) as ?prov_agent)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?author_id))) as ?author)
+  #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?seller_id))) as ?seller)
+  #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?buyer_id))) as ?buyer)
+  #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?selling_agent_id))) as ?selling_agent)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?prov_agent_id))) as ?prov_agent)
   BIND(IRI(CONCAT(STR(mmm:), "places/", STR(?production_place_id))) as ?production_place)
   BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?production_date_id))) as ?production_timespan)
   #BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
@@ -434,7 +453,6 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "miniatures/", ?entry_id)) as ?miniatures_uri)
   #BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
 
-  BIND(?miniatures_large_value + ?miniatures_small_value + ?miniatures_fullpage_value + ?miniatures_unspec_value as ?miniatures_value)
   BIND(CONCAT(STR(?production_date_start),"-",STR(?production_date_end)) as ?production_date_label)
   BIND("SDBM_MS_" + STR(?manuscript_id) as ?manuscript_preflabel)
 
