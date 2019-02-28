@@ -55,6 +55,6 @@ CONSTRUCT {
                    a :name_places .
     ?place_id :places_id ?place_local_id .
   }
-  BIND(IRI(CONCAT(STR(mmm:), "places/", STR(?place_local_id))) as ?mmm_place)
+  BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?mmm_place)
   BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?person_local_id))) as ?mmm_actor_uri)
 }

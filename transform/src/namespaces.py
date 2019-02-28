@@ -13,7 +13,7 @@ SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
 WGS84 = Namespace('http://www.w3.org/2003/01/geo/wgs84_pos#')
 
 MMMS = Namespace('http://ldf.fi/mmm/schema/')
-MMMP = Namespace('http://ldf.fi/mmm/places/')
+MMMP = Namespace('http://ldf.fi/mmm/place/')
 
 
 def bind_namespaces(graph: Graph):

@@ -26,7 +26,7 @@ class TGN:
     def mint_mmm_uri(localname):
         """
         >>> TGN.mint_mmm_uri('sdbm_7003820')
-        rdflib.term.URIRef('http://ldf.fi/mmm/places/sdbm_7003820')
+        rdflib.term.URIRef('http://ldf.fi/mmm/place/sdbm_7003820')
         """
         return MMMP[localname]
 
@@ -36,7 +36,7 @@ class TGN:
         Create new MMM place uri with tgn_ prefixed localname
 
         >>> TGN.mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820')
-        rdflib.term.URIRef('http://ldf.fi/mmm/places/tgn_7003820')
+        rdflib.term.URIRef('http://ldf.fi/mmm/place/tgn_7003820')
         """
 
         tgn_id = tgn_uri.split('/')[-1]
@@ -49,7 +49,7 @@ class TGN:
         """
         MMM URI -> TGN URI
 
-        >>> TGN.mint_tgn_uri_from_mmm(URIRef('http://ldf.fi/mmm/places/tgn_8711850'))
+        >>> TGN.mint_tgn_uri_from_mmm(URIRef('http://ldf.fi/mmm/place/tgn_8711850'))
         rdflib.term.URIRef('http://vocab.getty.edu/tgn/8711850')
         """
 

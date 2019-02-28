@@ -37,33 +37,33 @@ class TestLinkerSDBM(unittest.TestCase):
         dct:source             mmm-schema:SDBM ;
         crm:P108_has_produced  <http://ldf.fi/mmm/manifestation_singleton/orphan_61316> ;
         crm:P4_has_time-span   <http://ldf.fi/mmm/timespan/59403> ;
-        crm:P7_took_place_at   <http://ldf.fi/mmm/places/1012> .
+        crm:P7_took_place_at   <http://ldf.fi/mmm/place/1012> .
 
-    <http://ldf.fi/mmm/places/2121>
+    <http://ldf.fi/mmm/place/2121>
             a                             crm:E53_Place ;
-            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/places/2121> ;
+            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/place/2121> ;
             dct:source                    mmm-schema:SDBM ;
-            crm:P89_falls_within          <http://ldf.fi/mmm/places/214> ;
+            crm:P89_falls_within          <http://ldf.fi/mmm/place/214> ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/1005755> ;
             wgs:lat                       51.5833 ;
             wgs:long                      -0.0833 ;
             skos:prefLabel                "Tottenham" .
 
-    <http://ldf.fi/mmm/places/1012>
+    <http://ldf.fi/mmm/place/1012>
             a                             crm:E53_Place ;
-            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/places/1012> ;
+            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/place/1012> ;
             dct:source                    mmm-schema:SDBM ;
-            crm:P89_falls_within          <http://ldf.fi/mmm/places/3991> ;
+            crm:P89_falls_within          <http://ldf.fi/mmm/place/3991> ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/7005560> ;
             wgs:lat                       "23"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
             wgs:long                      "-102"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
             skos:prefLabel                "Mexico" .
 
-    <http://ldf.fi/mmm/places/847>
+    <http://ldf.fi/mmm/place/847>
             a                             crm:E53_Place ;
-            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/places/847> ;
+            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/place/847> ;
             dct:source                    mmm-schema:SDBM ;
-            crm:P89_falls_within          <http://ldf.fi/mmm/places/2398> ;
+            crm:P89_falls_within          <http://ldf.fi/mmm/place/2398> ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/7024079> ;
             wgs:lat                       "32"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
             wgs:long                      "56"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
@@ -71,7 +71,7 @@ class TestLinkerSDBM(unittest.TestCase):
     """
 
     def test_handle_tgn_places_sdbm(self):
-        place1 = URIRef('http://ldf.fi/mmm/places/2121')
+        place1 = URIRef('http://ldf.fi/mmm/place/2121')
 
         g = Graph()
         g.parse(data=self.test_sdbm_data, format='turtle')
@@ -95,7 +95,7 @@ class TestLinkerSDBM(unittest.TestCase):
         self.assertEquals(len(list(g.triples((None, RDF.type, CRM.E53_Place)))), 0)
         self.assertEquals(len(list(g.triples((None, CRM.P7_took_place_at, None)))), 1)
         self.assertEquals(
-            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7005560'))))), 1)
+            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/place/tgn_7005560'))))), 1)
 
         # Test all parents have labels
 
@@ -189,7 +189,7 @@ class TestLinkerBodley(unittest.TestCase):
         pprint.pprint(list(g.triples((None, CRM.P7_took_place_at, None))))
 
         self.assertEquals(
-            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7011931'))))), 1)
+            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/place/tgn_7011931'))))), 1)
 
         # Test all parents have labels
 
@@ -306,11 +306,11 @@ class TestLinkerTGN(unittest.TestCase):
     """
 
     test_sdbm_extra = """
-        <http://ldf.fi/mmm/places/5>
+        <http://ldf.fi/mmm/place/5>
             a                             crm:E53_Place ;
-            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/places/5> ;
+            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/place/5> ;
             dct:source                    mmm-schema:SDBM ;
-            crm:P89_falls_within          <http://ldf.fi/mmm/places/2351> ;
+            crm:P89_falls_within          <http://ldf.fi/mmm/place/2351> ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/7002445> ;
             wgs:lat                       53.0 ;
             wgs:long                      -2.0 ;
@@ -342,34 +342,34 @@ class TestLinkerTGN(unittest.TestCase):
 
         # Check corrected references
         self.assertEquals(
-            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7005560'))))), 1)
+            len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/place/tgn_7005560'))))), 1)
         self.assertEquals(
-            len(list(g2.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/places/tgn_7005560'))))), 1)
+            len(list(g2.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/place/tgn_7005560'))))), 1)
 
         pprint.pprint(sorted(places.subjects(RDF.type, CRM.E53_Place)))
 
-        pprint.pprint(sorted(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7029392'))))
+        pprint.pprint(sorted(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7029392'))))
 
         # Check place annotations
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/bodley_place_21')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/bodley_place_7002445')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/bodley_place_7291891')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/bodley_place_21')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/bodley_place_7002445')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/bodley_place_7291891')))) >= 8)
 
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_1005755')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7005560')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7011931')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7018917')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7024079')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_1005755')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7005560')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7011931')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7018917')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7024079')))) >= 8)
 
         # Parent places
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_1000001')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_1000003')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_1000004')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7002445')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7008136')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7008168')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7008591')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_1000001')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_1000003')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_1000004')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7002445')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7008136')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7008168')))) >= 8)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7008591')))) >= 8)
 
         # World
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/places/tgn_7029392')))) >= 5)
+        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7029392')))) >= 5)
 

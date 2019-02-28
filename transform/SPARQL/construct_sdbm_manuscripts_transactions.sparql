@@ -98,7 +98,7 @@ WHERE
       ?selling_agent_agent :sale_agents_agent_id ?selling_agent_name .
       ?selling_agent_name :names_id ?selling_agent_id .
       # ?selling_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?place_local_id .
-      # BIND(IRI(CONCAT(STR(mmm:), "places/", STR(?place_local_id))) as ?selling_agent_location)
+      # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?selling_agent_location)
     }
   }
   OPTIONAL {
@@ -127,7 +127,7 @@ WHERE
       ?source_agent :source_agents_source_id ?entry_source .
       ?source_agent :source_agents_agent_id ?source_agent_name .
       ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
-      BIND(IRI(CONCAT(STR(mmm:), "places/", STR(?source_place_local_id))) as ?source_agent_location)
+      BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?source_place_local_id))) as ?source_agent_location)
     }
   }
 
@@ -145,9 +145,9 @@ WHERE
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?author_id))) as ?author)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?seller_id))) as ?seller)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?buyer_id))) as ?buyer)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?author_id))) as ?author)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?seller_id))) as ?seller)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?buyer_id))) as ?buyer)
   BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
 }

@@ -259,7 +259,7 @@ def main():
     argparser.add_argument("output", help="Output RDF file")
     argparser.add_argument("--place_ontology", help="Place ontology RDF file",
                            default="/output/mmm_places.ttl")
-    argparser.add_argument("--loglevel", default='INFO', help="Logging level",
+    argparser.add_argument("--loglevel", default='DEBUG', help="Logging level",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
 

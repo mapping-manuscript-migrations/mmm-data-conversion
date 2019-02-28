@@ -31,9 +31,10 @@ class GeoNames:
         """Query GeoNames, change API key if hourly limit reached for current key, """
         g = None
 
-        while (not hasattr(g, 'status')) or ('Read timed out' in g.status) or ('hourly limit' in g.status):
+        while (not hasattr(g, 'status')) or \
+                ('timeout' in g.status) or ('Read timed out' in g.status) or ('hourly limit' in g.status):
             g = geocoder.geonames(q, **kwargs, key=self.get_apikey())
-            self.log.debug('Got GeoNames reply %s' % g)
+            self.log.info('Got GeoNames reply %s' % g)
             if 'hourly limit' in g.status:
                 self.change_apikey()
                 if self.apikey_index == 0:

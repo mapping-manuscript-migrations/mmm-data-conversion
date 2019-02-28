@@ -73,7 +73,7 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "work_conception/", STR(?title_id))) as ?work_conception)
   BIND(IRI(CONCAT(STR(mmm:), "expression/", STR(?title_id))) as ?expression)
   BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
-  BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?author_id))) as ?author)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?author_id))) as ?author)
 
   BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
 }

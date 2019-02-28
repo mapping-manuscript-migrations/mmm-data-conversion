@@ -63,5 +63,5 @@ WHERE
   }
 
   # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?mmm_place)
-  # BIND(IRI(CONCAT(STR(mmm:), "actors/", STR(?person_local_id))) as ?mmm_actor_uri)
+  # BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?person_local_id))) as ?mmm_actor_uri)
 }
