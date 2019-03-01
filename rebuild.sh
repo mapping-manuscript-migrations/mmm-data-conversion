@@ -3,6 +3,8 @@ set -eo pipefail
 
 docker-compose build
 
+# TODO: Keep crm running until deploy
+
 docker-compose down -v
 docker-compose run --rm input-bibale ./load_data.sh
 docker-compose run --rm input-bodley ./load_data.sh

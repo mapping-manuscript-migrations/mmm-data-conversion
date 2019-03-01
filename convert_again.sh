@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+# TODO: Keep crm running until deploy
+
 case "$1" in
   "bibale")
     docker-compose up -d crm

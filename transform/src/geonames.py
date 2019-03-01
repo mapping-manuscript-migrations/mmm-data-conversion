@@ -63,7 +63,7 @@ class GeoNames:
         retries = 3
 
         # At least Wikipedia links seem to be randomly missing from the responses, so retry for them
-        
+
         while not wikipedia and retries:
             self.log.info('Fetching data for GeoNames id %s' % geonames_id)
             g = self._query(geonames_id, method='details')

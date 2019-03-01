@@ -24,6 +24,7 @@ CONSTRUCT {
     frbroo:R18_created ?manifestation_singleton_mmm ;
     frbroo:R19_created_a_realisation_of ?expression_work_mmm ;
     mmm-schema:carried_out_by_as_author ?expression_author_mmm ;
+    mmm-schema:carried_out_by_as_scribe ?expression_scribe_mmm ;
     crm:P7_took_place_at ?expression_place_mmm ;
     # dct:source mmm-schema:Bibale .
     .
@@ -32,9 +33,14 @@ CONSTRUCT {
     crm:P108_has_produced ?manifestation_singleton_mmm ;
     crm:P4_has_time-span ?production_timespan_mmm ;
     crm:P7_took_place_at ?production_place_mmm ;
+    mmm-schema:carried_out_by_as_author ?production_author_mmm ;
+    mmm-schema:carried_out_by_as_binder ?production_binder_mmm ;
+    mmm-schema:carried_out_by_as_commissioner ?production_commissioner_mmm ;
+    mmm-schema:carried_out_by_as_creator ?production_creator_mmm ;
+    mmm-schema:carried_out_by_as_illuminator ?production_illuminator_mmm ;
+    mmm-schema:carried_out_by_as_printer ?production_printer_mmm ;
     mmm-schema:carried_out_by_as_scribe ?production_scribe_mmm ;
-    # dct:source mmm-schema:Bibale .
-    .
+    dct:source mmm-schema:Bibale .
 
   ?production_timespan_mmm a crm:E52_Time-Span ;
     skos:prefLabel ?production_timespan_label ;
@@ -50,6 +56,7 @@ CONSTRUCT {
     mmm-schema:manuscript_work ?work_mmm ;  # shortcut
     mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
     mmm-schema:manuscript_author ?expression_author_mmm ;  # shortcut
+    mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
     dct:source mmm-schema:Bibale
     .
 }
@@ -93,6 +100,36 @@ WHERE
     }
     OPTIONAL { ?production crm:P01i_is_domain_of [
          a crm:PC14_carried_out_by ;
+         crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
+         crm:P02_has_range ?production_author ;
+     ] }
+    OPTIONAL { ?production crm:P01i_is_domain_of [
+         a crm:PC14_carried_out_by ;
+         crm:P14.1_in_the_role_of [ crm:E55_Type  "Binder" ] ;
+         crm:P02_has_range ?production_binder ;
+     ] }
+    OPTIONAL { ?production crm:P01i_is_domain_of [
+         a crm:PC14_carried_out_by ;
+         crm:P14.1_in_the_role_of [ crm:E55_Type  "Commissioner" ] ;
+         crm:P02_has_range ?production_commissioner ;
+     ] }
+    OPTIONAL { ?production crm:P01i_is_domain_of [
+         a crm:PC14_carried_out_by ;
+         crm:P14.1_in_the_role_of [ crm:E55_Type  "Creator" ] ;
+         crm:P02_has_range ?production_creator ;
+     ] }
+    OPTIONAL { ?production crm:P01i_is_domain_of [
+         a crm:PC14_carried_out_by ;
+         crm:P14.1_in_the_role_of [ crm:E55_Type  "Illuminator" ] ;
+         crm:P02_has_range ?production_illuminator ;
+     ] }
+    OPTIONAL { ?production crm:P01i_is_domain_of [
+         a crm:PC14_carried_out_by ;
+         crm:P14.1_in_the_role_of [ crm:E55_Type  "Printer" ] ;
+         crm:P02_has_range ?production_printer ;
+     ] }  # Note, also other scribe path
+    OPTIONAL { ?production crm:P01i_is_domain_of [
+         a crm:PC14_carried_out_by ;
          crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ] ;
          crm:P02_has_range ?production_scribe ;
      ] }  # Note, also other scribe path
@@ -122,6 +159,12 @@ WHERE
            crm:P02_has_range ?expression_author ;
            ]
       }
+      OPTIONAL { ?expression_creation crm:P01i_is_domain_of [
+           a crm:PC14_carried_out_by ;
+           crm:P14.1_in_the_role_of  [ crm:E55_Type  "Scribe" ] ;
+           crm:P02_has_range ?expression_scribe ;
+           ]
+      }
     }
   }
 
@@ -147,11 +190,24 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?manifestation_local_id)) as ?manifestation_singleton_mmm)
 
   BIND(REPLACE(STR(?production), "^.*\\/(.+)", "$1") as ?production_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/production/bibale_", REPLACE(?production_local_id, ":", "_"))) as ?production_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/production/bibale_", ?manifestation_local_id, "_production")) as ?production_mmm)
   BIND(REPLACE(STR(?production_timespan), "^.*\\/(.+)", "$1") as ?production_timespan_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/timespan/bibale_", ?production_timespan_local_id)) as ?production_timespan_mmm)
   BIND(REPLACE(STR(?production_place), "^.*\\/(.+)", "$1") as ?production_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?production_local_id, ":", "_"))) as ?production_place_mmm)
+
+  BIND(REPLACE(STR(?production_author), "^.*\\/(.+)", "$1") as ?production_author_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_author_local_id)) as ?production_author_mmm)
+  BIND(REPLACE(STR(?production_binder), "^.*\\/(.+)", "$1") as ?production_binder_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_binder_local_id)) as ?production_binder_mmm)
+  BIND(REPLACE(STR(?production_commissioner), "^.*\\/(.+)", "$1") as ?production_commissioner_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_commissioner_local_id)) as ?production_commissioner_mmm)
+  BIND(REPLACE(STR(?production_creator), "^.*\\/(.+)", "$1") as ?production_creator_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_creator_local_id)) as ?production_creator_mmm)
+  BIND(REPLACE(STR(?production_illuminator), "^.*\\/(.+)", "$1") as ?production_illuminator_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_illuminator_local_id)) as ?production_illuminator_mmm)
+  BIND(REPLACE(STR(?production_printer), "^.*\\/(.+)", "$1") as ?production_printer_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_printer_local_id)) as ?production_printer_mmm)
   BIND(REPLACE(STR(?production_scribe), "^.*\\/(.+)", "$1") as ?production_scribe_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_scribe_local_id)) as ?production_scribe_mmm)
 
@@ -163,8 +219,11 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?expression_place_local_id, ":", "_"))) as ?expression_place_mmm)
   BIND(REPLACE(STR(?expression_work), "^.*\\/(.+)", "$1") as ?expression_work_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bibale_", ?expression_work_local_id)) as ?expression_work_mmm)
+
   BIND(REPLACE(STR(?expression_author), "^.*\\/(.+)", "$1") as ?expression_author_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?expression_author_local_id)) as ?expression_author_mmm)
+  BIND(REPLACE(STR(?expression_scribe), "^.*\\/(.+)", "$1") as ?expression_scribe_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?expression_scribe_local_id)) as ?expression_scribe_mmm)
 
   BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bibale_", ?work_local_id)) as ?work_mmm)

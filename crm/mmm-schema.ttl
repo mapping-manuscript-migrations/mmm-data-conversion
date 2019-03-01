@@ -102,6 +102,10 @@
   rdfs:subPropertyOf crm:P14_carried_out_by ;
   skos:prefLabel "Carried out by commissioner"@en .
 
+:carried_out_by_as_creator a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by creator"@en .
+
 :carried_out_by_as_dedicatee a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
   skos:prefLabel "Carried out by dedicatee"@en .
@@ -110,9 +114,17 @@
   rdfs:subPropertyOf crm:P14_carried_out_by ;
   skos:prefLabel "Carried out by former owner"@en .
 
+:carried_out_by_as_illuminator a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by illuminator"@en .
+
 :carried_out_by_as_patron a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
   skos:prefLabel "Carried out by patron"@en .
+
+:carried_out_by_as_printer a rdf:Property ;
+  rdfs:subPropertyOf crm:P14_carried_out_by ;
+  skos:prefLabel "Carried out by printer"@en .
 
 :carried_out_by_as_scribe a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
