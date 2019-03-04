@@ -88,7 +88,7 @@ class GeoNames:
                 'uri': 'http://sws.geonames.org/%s' % g.geonames_id
                 }
 
-    def get_place_rdf(self, uri, geo: dict):
+    def get_place_rdf(self, uri, geo: dict, coords=True):
         """
         Transform place data dict to RDF
         """
@@ -98,8 +98,6 @@ class GeoNames:
             return g
 
         g.add((uri, SKOS.prefLabel, Literal(geo['name'])))
-        g.add((uri, WGS84.lat, Literal(Decimal(geo['lat']))))
-        g.add((uri, WGS84.long, Literal(Decimal(geo['lon']))))
         if geo.get('wikipedia'):
             g.add((uri, GEO.wikipediaArticle, URIRef(geo['wikipedia'])))
         g.add((uri, GEO.name, Literal(geo['address'])))
@@ -108,6 +106,10 @@ class GeoNames:
         g.add((uri, MMMS.geonames_uri, URIRef(geo['uri'])))
         g.add((uri, MMMS.geonames_class_description, Literal(geo['class_description'])))
         g.add((uri, DCT.source, URIRef('http://www.geonames.org')))
+
+        if coords:
+            g.add((uri, WGS84.lat, Literal(Decimal(geo['lat']))))
+            g.add((uri, WGS84.long, Literal(Decimal(geo['lon']))))
 
         return g
 

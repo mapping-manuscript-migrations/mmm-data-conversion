@@ -97,6 +97,9 @@ class TestLinkerSDBM(unittest.TestCase):
         self.assertEquals(
             len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/place/tgn_7005560'))))), 1)
 
+        self.assertEquals(len(list(places.triples((None, WGS84.lat, None)))), 10)  # All except World
+        self.assertEquals(len(list(places.triples((None, WGS84.long, None)))), 10)
+
         # Test all parents have labels
 
         for parent in places.objects(None, GVP.broaderPreferred):
@@ -191,6 +194,9 @@ class TestLinkerBodley(unittest.TestCase):
         self.assertEquals(
             len(list(g.triples((None, CRM.P7_took_place_at, URIRef('http://ldf.fi/mmm/place/tgn_7011931'))))), 1)
 
+        self.assertEquals(len(list(places.triples((None, WGS84.lat, None)))), 6)
+        self.assertEquals(len(list(places.triples((None, WGS84.long, None)))), 6)
+
         # Test all parents have labels
 
         for parent in places.objects(None, GVP.broaderPreferred):
@@ -251,6 +257,9 @@ class TestLinkerBibale(unittest.TestCase):
 
         self.assertEquals(len(list(places.triples((None, RDF.type, CRM.E53_Place)))), 8)
         self.assertEquals(len(list(places.triples((None, GVP.broaderPreferred, None)))), 7)
+
+        self.assertEquals(len(list(places.triples((None, WGS84.lat, None)))), 7)
+        self.assertEquals(len(list(places.triples((None, WGS84.long, None)))), 7)
 
         # Test all parents have labels
 

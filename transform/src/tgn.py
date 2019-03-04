@@ -61,12 +61,12 @@ class TGN:
 
         return uri
 
-    def query_tgn(self, query, retries=5):
+    def query_tgn(self, query, retries=3):
         results = None
         while not results and retries:
             results = requests.post(self.endpoint,
                                     {'query': query},
-                                    timeout=31).json()
+                                    timeout=55).json()
             retries -= 1
 
         return results['results']['bindings']
@@ -255,15 +255,15 @@ class TGN:
         >>> len(list(parents.subjects(RDF.type, CRM.E53_Place)))
         4
         """
-        self.log.debug('Getting parents for %s' % parent_uri)
-
         if not parent_uri:
             return Graph()
 
         parent_tgn = self.mint_tgn_uri_from_mmm(parent_uri)
+        self.log.debug('Getting parents for %s' % parent_tgn)
         place_dict = self.get_place_by_uri(parent_tgn)
 
-        self.log.info('Found TGN parent place %s (%s).' % (parent_uri, place_dict.get('pref_label')))
+        if place_dict:
+            self.log.info('Found TGN parent place %s (%s).' % (parent_tgn, place_dict.get('pref_label')))
 
         places = self.place_rdf(parent_uri, place_dict)
         places += self.get_tgn_parents(places.value(parent_uri, GVP.broaderPreferred))

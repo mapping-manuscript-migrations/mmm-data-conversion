@@ -136,10 +136,14 @@ class PlaceLinker:
 
             if tgn_match:
                 self.places += self.tgn.place_rdf(uri, tgn_match)
-                self.places += self.tgn.get_tgn_parents(self.places.value(uri, GVP.broaderPreferred))
                 self.places.add((uri, MMMS.geonames_uri, URIRef(geonames_uri)))
+
+                parent = self.places.value(uri, GVP.broaderPreferred)
+                if not (parent, RDF.type, CRM.E53_Place) in self.places:  # Skip if parent already known
+                    self.places += self.tgn.get_tgn_parents(parent)
+
             if geo_match:
-                self.places += self.geonames.get_place_rdf(uri, geo_match)
+                self.places += self.geonames.get_place_rdf(uri, geo_match, coords=False if tgn_match else True)
 
         log.info('Bibale place linking finished.')
 
