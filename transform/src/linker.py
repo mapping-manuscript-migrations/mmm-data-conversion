@@ -140,7 +140,9 @@ class PlaceLinker:
 
                 parent = self.places.value(uri, GVP.broaderPreferred)
                 if not (parent, RDF.type, CRM.E53_Place) in self.places:  # Skip if parent already known
-                    self.places += self.tgn.get_tgn_parents(parent)
+                    for parent_uri, parent_rdf in self.tgn.get_tgn_parents(parent):
+                        if not (parent_uri, RDF.type, CRM.E53_Place) in self.places:
+                            self.places += parent_rdf
 
             if geo_match:
                 self.places += self.geonames.get_place_rdf(uri, geo_match, coords=False if tgn_match else True)
@@ -248,7 +250,9 @@ class PlaceLinker:
             parent = self.places.value(mmm_uri, GVP.broaderPreferred)
 
             if not (parent, RDF.type, CRM.E53_Place) in self.places:  # Skip if parent already known
-                self.places += self.tgn.get_tgn_parents(parent)
+                for parent_uri, parent_rdf in self.tgn.get_tgn_parents(parent):
+                    if not (parent_uri, RDF.type, CRM.E53_Place) in self.places:
+                        self.places += parent_rdf
 
         log.info('TGN place linking finished with prefix "%s".' % localname_prefix)
 

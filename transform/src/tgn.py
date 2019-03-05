@@ -252,11 +252,11 @@ class TGN:
 
         >>> tgn = TGN()
         >>> parents = tgn.get_tgn_parents(tgn.mint_mmm_tgn_uri('http://vocab.getty.edu/tgn/7003820'))
-        >>> len(list(parents.subjects(RDF.type, CRM.E53_Place)))
+        >>> len(list(parents))
         4
         """
         if not parent_uri:
-            return Graph()
+            return []
 
         parent_tgn = self.mint_tgn_uri_from_mmm(parent_uri)
         self.log.debug('Getting parents for %s' % parent_tgn)
@@ -265,8 +265,8 @@ class TGN:
         if place_dict:
             self.log.info('Found TGN parent place %s (%s).' % (parent_tgn, place_dict.get('pref_label')))
 
-        places = self.place_rdf(parent_uri, place_dict)
-        places += self.get_tgn_parents(places.value(parent_uri, GVP.broaderPreferred))
+        places = [(parent_uri, self.place_rdf(parent_uri, place_dict))]
+        places += self.get_tgn_parents(places[0][1].value(parent_uri, GVP.broaderPreferred))
 
         return places
 
