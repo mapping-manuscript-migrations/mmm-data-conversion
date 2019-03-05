@@ -60,7 +60,7 @@ class GeoNames:
             return {}
 
         wikipedia = None
-        retries = 3
+        retries = 5
 
         # At least Wikipedia links seem to be randomly missing from the responses, so retry for them
 

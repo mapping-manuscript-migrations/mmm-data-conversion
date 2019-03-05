@@ -11,9 +11,11 @@ GEO = Namespace('http://www.geonames.org/ontology#')
 GVP = Namespace('http://vocab.getty.edu/ontology#')
 SKOS = Namespace('http://www.w3.org/2004/02/skos/core#')
 WGS84 = Namespace('http://www.w3.org/2003/01/geo/wgs84_pos#')
+FRBR = Namespace('http://erlangen-crm.org/efrbroo/')
 
 MMMS = Namespace('http://ldf.fi/mmm/schema/')
 MMMP = Namespace('http://ldf.fi/mmm/place/')
+MMMM = Namespace('http://ldf.fi/mmm/manifestation_singleton/')
 
 
 def bind_namespaces(graph: Graph):

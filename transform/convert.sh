@@ -20,4 +20,7 @@ case "$1" in
   ;;
 esac
 
+printf '\nAdding manual manuscript links\n\n'
+python manuscripts.py manual_links output/bibale_cidoc.ttl output/bodley_cidoc.ttl output/sdbm_cidoc.ttl --input_csv /data/manuscript_links.csv --logfile $OUTPUT/logs/manuscript_linking.log
+
 chmod a+r $OUTPUT/*

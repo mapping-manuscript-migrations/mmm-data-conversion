@@ -49,6 +49,7 @@ services:
             - GEONAMES_KEY6
         volumes:
             - ./output:/output
+            - ./data/additional:/data
     crm:
         build:
             context: .

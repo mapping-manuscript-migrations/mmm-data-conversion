@@ -6,6 +6,7 @@ Currently the pipeline includes the following steps:
     * Schoenberg Database of Manuscripts (sdbm): https://sdbm.library.upenn.edu/downloads (you have to be logged in)
     * Medieval Manuscripts in Oxford Libraries (bodley): https://github.com/oerc-music/BodleianMedievalMSS-RDF
     * Bibale Database (bibale): http://bibale.irht.cnrs.fr/export/rdf/get
+    * CSV of manual manuscript links to `data/additional/manuscript_links.csv`
 
 2. Set up input databases (automated)
     * Load `data/sdbm/input.ttl` to `http://localhost:3051/ds/sparql`

@@ -59,7 +59,7 @@ def redirect_refs(graph: Graph, old_uris: list, new_uri: URIRef):
     log.debug('Redirecting %s to %s' % (old_uris, new_uri))
 
     for uri in old_uris:
-        for s, p in graph.subject_predicates(uri):
+        for s, p in list(graph.subject_predicates(uri)):
             graph.add((s, p, new_uri))
 
         graph.remove((None, None, uri))

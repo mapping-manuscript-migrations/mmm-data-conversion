@@ -10,10 +10,12 @@ dependent on these APIs, hence they get also tested to work as expected with the
 import os
 import pprint
 import unittest
+from io import StringIO
 
 from rdflib import URIRef, RDF, OWL
 
 from linker import PlaceLinker
+from manuscripts import read_manual_links
 from namespaces import *
 
 
@@ -382,3 +384,59 @@ class TestLinkerTGN(unittest.TestCase):
         # World
         self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7029392')))) >= 5)
 
+
+class TestManuscriptLinking(unittest.TestCase):
+    test_csv = """Bibale URL,Bodley URL,SDBM MS Record URL,SDBM Entry URL,Notes
+bibale.irht.cnrs.fr/29147,https://medieval.bodleian.ox.ac.uk/catalog/manuscript_4560,,https://sdbm.library.upenn.edu/entries/99694,
+http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/18044,,PHILLIPPS"""
+
+    test_sdbm = """
+        @base <http://ldf.fi/mmm/> .
+        @prefix :      <https://sdbm.library.upenn.edu/> .
+        @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+        @prefix mmm-schema: <http://ldf.fi/mmm/schema/> .
+        @prefix dct:   <http://purl.org/dc/terms/> .
+        @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+        @prefix owl:   <http://www.w3.org/2002/07/owl#> .
+        @prefix afn:   <http://jena.hpl.hp.com/ARQ/function#> .
+        @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+        @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+        @prefix mmm:   <http://ldf.fi/mmm/> .
+        @prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
+        @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
+
+        <manifestation_singleton/18044>
+            mmm-schema:data_provider_url <https://sdbm.library.upenn.edu/manuscripts/18044> ;
+            mmm-schema:entry <https://sdbm.library.upenn.edu/entries/194739>, <https://sdbm.library.upenn.edu/entries/79641> ;
+            mmm-schema:manuscript_author <actor/599> ;
+            mmm-schema:manuscript_record <https://sdbm.library.upenn.edu/manuscripts/18044> ;
+            mmm-schema:manuscript_work <work/100826>, <work/298734> ;
+            dct:source mmm-schema:SDBM ;
+            crm:P128_carries <expression/100826>, <expression/298734> ;
+            a frbroo:F4_Manifestation_Singleton ;
+            skos:prefLabel "SDBM_MS_18044" .
+
+        <manifestation_singleton/orphan_99694>
+            mmm-schema:data_provider_url <https://sdbm.library.upenn.edu/entries/99694> ;
+            mmm-schema:entry <https://sdbm.library.upenn.edu/entries/99694> ;
+            mmm-schema:manuscript_author <actor/661> ;
+            mmm-schema:manuscript_work <work/125620> ;
+            dct:source mmm-schema:SDBM ;
+            crm:P128_carries <expression/125620> ;
+            a frbroo:F4_Manifestation_Singleton ;
+            skos:prefLabel "SDBM_MS_orphan_99694" .
+        """
+
+    def test_read_manual_links(self):
+        bib = Graph()
+        bod = Graph()
+        sdbm = Graph()
+
+        sdbm.parse(data=self.test_sdbm, format='turtle')
+
+        bib, bod, sdbm = read_manual_links(bib, bod, sdbm, StringIO(self.test_csv))
+
+        # pprint.pprint(sorted(sdbm))
+
+        self.assertEquals(len(list(sdbm.triples((MMMM.manually_linked_1, RDF.type, FRBR.F4_Manifestation_Singleton)))), 1)
+        self.assertEquals(len(list(sdbm.triples((MMMM.manually_linked_2, RDF.type, FRBR.F4_Manifestation_Singleton)))), 1)
