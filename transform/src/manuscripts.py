@@ -60,12 +60,15 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
         if old_bib:
             bibale = change_resource_uri(bibale, [old_bib], new_uri)
             bibale.add((new_uri, SKOS.prefLabel, new_pref_label))
+            bibale.remove((new_uri, SKOS.altLabel, new_pref_label))
         if old_bod:
             bodley = change_resource_uri(bodley, [old_bod], new_uri)
             bodley.add((new_uri, SKOS.prefLabel, new_pref_label))
+            bodley.remove((new_uri, SKOS.altLabel, new_pref_label))
         if old_sdbm:
             sdbm = change_resource_uri(sdbm, [old_sdbm], new_uri)
             sdbm.add((new_uri, SKOS.prefLabel, new_pref_label))
+            sdbm.remove((new_uri, SKOS.altLabel, new_pref_label))
 
     return bibale, bodley, sdbm
 
