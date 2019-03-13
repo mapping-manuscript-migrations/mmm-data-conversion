@@ -21,14 +21,14 @@ from tgn import TGN
 log = logging.getLogger(__name__)
 
 
-def change_resource_uri(graph: Graph, old_uris: list, new_uri: URIRef, skos_labels=True):
+def change_resource_uri(graph: Graph, old_uris: list, new_uri: URIRef, handle_skos_labels=True):
     """Change the URI of a resource, point everything to new URI"""
 
     log.debug('Redirecting %s to %s' % (old_uris, new_uri))
 
     for uri in old_uris:
         for p, o in list(graph.predicate_objects(uri)):
-            if skos_labels and p == SKOS.prefLabel:
+            if handle_skos_labels and p == SKOS.prefLabel:
                 p = SKOS.altLabel
             graph.add((new_uri, p, o))
 
@@ -48,9 +48,17 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
 
         old_sdbm = None
         if row.sdbm_record:
-            old_sdbm = sdbm.value(None, MMMS.data_provider_url, URIRef(row.sdbm_record))
+            resources = sdbm.subjects(MMMS.data_provider_url, URIRef(row.sdbm_record))
+            resources = [res for res in resources if sdbm.value(res, RDF.type) == FRBR.F4_Manifestation_Singleton]
+            if len(resources) != 1:
+                log.error('Got multiple resources for SDBM manuscript record: %s' % resources)
+            old_sdbm = resources[0]
         if row.sdbm_entry:
-            old_sdbm = sdbm.value(None, MMMS.data_provider_url, URIRef(row.sdbm_entry))
+            resources = sdbm.subjects(MMMS.data_provider_url, URIRef(row.sdbm_entry))
+            resources = [res for res in resources if sdbm.value(res, RDF.type) == FRBR.F4_Manifestation_Singleton]
+            if len(resources) != 1:
+                log.error('Got multiple resources for SDBM entry record: %s' % resources)
+            old_sdbm = resources[0]
 
         new_pref_label = bodley.value(old_bod, SKOS.prefLabel) or bibale.value(old_bib, SKOS.prefLabel) or \
             sdbm.value(old_sdbm, SKOS.prefLabel) or Literal('Harmonized manifestation singleton #%s' % (row.Index + 1))
