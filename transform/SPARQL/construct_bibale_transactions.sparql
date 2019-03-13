@@ -13,7 +13,7 @@ PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 # TODO: Try to get approximate time-span
-
+# TODO: Mint MMM URI for ?transfer
 
 CONSTRUCT {
   ?transfer a crm:E10_Transfer_of_custody ;

@@ -34,6 +34,7 @@ CONSTRUCT {
     crm:P4_has_time-span ?manuscript_timespan_mmm ;
     crm:P4_has_time-span ?production_timespan_mmm ;
     crm:P7_took_place_at ?production_place_mmm ;
+    crm:P7_took_place_at ?manuscript_place_mmm ;
     mmm-schema:carried_out_by_as_author ?production_author_mmm ;
     mmm-schema:carried_out_by_as_binder ?production_binder_mmm ;
     mmm-schema:carried_out_by_as_commissioner ?production_commissioner_mmm ;
@@ -99,6 +100,11 @@ WHERE
     OPTIONAL { ?manuscript_timespan crm:P81b_begin_of_the_end ?manuscript_timespan_be }
     OPTIONAL { ?manuscript_timespan crm:P82b_end_of_the_end ?manuscript_timespan_ee }
     OPTIONAL { ?manuscript_timespan rdfs:label ?manuscript_timespan_label }
+  }
+
+  # PRODUCTION PLACE
+  OPTIONAL {
+    ?manifestation_singleton crm:P53_has_former_or_current_location ?manuscript_place .
   }
 
   # PRODUCTION
@@ -209,13 +215,14 @@ WHERE
 
   BIND(REPLACE(STR(?manuscript_timespan), "^.*\\/(.+)", "$1") as ?manuscript_timespan_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?manuscript_timespan_local_id, ":", "_"))) as ?manuscript_timespan_mmm)
+  BIND(REPLACE(STR(?manuscript_place), "^.*\\/(.+)", "$1") as ?manuscript_place_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?manuscript_place_local_id, ":", "_"))) as ?manuscript_place_mmm)
 
-  BIND(REPLACE(STR(?production), "^.*\\/(.+)", "$1") as ?production_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/production/bibale_", ?manifestation_local_id, "_production")) as ?production_mmm)
   BIND(REPLACE(STR(?production_timespan), "^.*\\/(.+)", "$1") as ?production_timespan_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", ?production_timespan_local_id)) as ?production_timespan_mmm)
   BIND(REPLACE(STR(?production_place), "^.*\\/(.+)", "$1") as ?production_place_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?production_local_id, ":", "_"))) as ?production_place_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?production_place_local_id, ":", "_"))) as ?production_place_mmm)
 
   BIND(REPLACE(STR(?production_author), "^.*\\/(.+)", "$1") as ?production_author_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_author_local_id)) as ?production_author_mmm)
