@@ -117,7 +117,7 @@ class PlaceLinker:
             if tgn_match:
                 uri = self.tgn.mint_mmm_tgn_uri(tgn_match['uri'])
             else:
-                uri = self.tgn.mint_mmm_uri('bibale_' + str(sorted(old_uris)[0]).split(':')[-1])
+                uri = self.tgn.mint_mmm_uri(str(sorted(old_uris)[0]).split('/')[-1])
 
             # Modify graph
 

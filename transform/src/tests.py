@@ -33,12 +33,12 @@ class TestLinkerSDBM(unittest.TestCase):
     @prefix mmm:   <http://ldf.fi/mmm/> .
     @prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
     @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
-    
+
     <http://ldf.fi/mmm/production/orphan_61316>
         a                      crm:E12_Production ;
         dct:source             mmm-schema:SDBM ;
         crm:P108_has_produced  <http://ldf.fi/mmm/manifestation_singleton/orphan_61316> ;
-        crm:P4_has_time-span   <http://ldf.fi/mmm/timespan/59403> ;
+        crm:P4_has_time-span   <http://ldf.fi/mmm/time/59403> ;
         crm:P7_took_place_at   <http://ldf.fi/mmm/place/1012> .
 
     <http://ldf.fi/mmm/place/2121>
@@ -69,7 +69,7 @@ class TestLinkerSDBM(unittest.TestCase):
             owl:sameAs                    <http://vocab.getty.edu/tgn/7024079> ;
             wgs:lat                       "32"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
             wgs:long                      "56"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
-            skos:prefLabel                "Persia" .    
+            skos:prefLabel                "Persia" .
     """
 
     def test_handle_tgn_places_sdbm(self):
@@ -124,7 +124,7 @@ class TestLinkerBodley(unittest.TestCase):
     @prefix mmm:   <http://ldf.fi/mmm/> .
     @prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
     @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
-    
+
     <https://medieval.bodleian.ox.ac.uk/catalog/place_1029598>
             a                             crm:E53_Place ;
             mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_1029598> ;
@@ -150,7 +150,7 @@ class TestLinkerBodley(unittest.TestCase):
             dct:source             mmm-schema:Bodley ;
             crm:P108_has_produced  <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947> ;
             crm:P4_has_time-span   <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947/production-time-span> ;
-            crm:P7_took_place_at   <https://medieval.bodleian.ox.ac.uk/catalog/place_1029598> , 
+            crm:P7_took_place_at   <https://medieval.bodleian.ox.ac.uk/catalog/place_1029598> ,
                                    <https://medieval.bodleian.ox.ac.uk/catalog/place_7002445> .
 
     <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947>
@@ -221,7 +221,7 @@ class TestLinkerBibale(unittest.TestCase):
     @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
     @prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
     @prefix bibale: <http://bibale.irht.cnrs.fr/> .
-    
+
     bibale:element:876437
             a                             crm:E53_Place ;
             mmm-schema:bibale_country     "France" ;
@@ -232,7 +232,7 @@ class TestLinkerBibale(unittest.TestCase):
             owl:sameAs                    <http://www.geonames.org/3020035> ;
             skos:altLabel                 "France, Grand Est, Épinal" ;
             skos:prefLabel                "Épinal" .
-    
+
     bibale:element:57644-272
             a                             crm:E53_Place ;
             mmm-schema:bibale_country     "Allemagne" ;
@@ -241,7 +241,7 @@ class TestLinkerBibale(unittest.TestCase):
             mmm-schema:place_type         bibale:type:settlement ;
             dct:source                    mmm-schema:Bibale ;
             skos:altLabel                 "Allemagne, Rheinland-Pfalz (Rhénanie-Palatinat), Trier (Trèves)" ;
-            skos:prefLabel                "Trier (Trèves)" .    
+            skos:prefLabel                "Trier (Trèves)" .
     """
 
     def test_bibale_places(self):
@@ -276,7 +276,7 @@ class TestLinkerTGN(unittest.TestCase):
             a                      crm:E12_Production ;
             crm:P108_has_produced  <http://ldf.fi/mmm/manifestation_singleton/bodley_manuscript_7875> ;
             crm:P4_has_time-span   <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_7875/production-time-span> ;
-            crm:P7_took_place_at   <https://medieval.bodleian.ox.ac.uk/catalog/place_7415093> , 
+            crm:P7_took_place_at   <https://medieval.bodleian.ox.ac.uk/catalog/place_7415093> ,
                 <https://medieval.bodleian.ox.ac.uk/catalog/place_7005560> .
 
         <https://medieval.bodleian.ox.ac.uk/catalog/place_21>
@@ -306,12 +306,12 @@ class TestLinkerTGN(unittest.TestCase):
             owl:sameAs                    <http://vocab.getty.edu/tgn/7005560> ;
             wgs:lat                       "23.0" ;
             wgs:long                      "-102.0" ;
-            skos:altLabel                 "United Mexican States" , "Mexiko" , "المىس مَ" , "Mexico"@en , "Mexico" , 
-                    "Мексиканские Соединенные Штаты" , "MX00" , "México" , "República Méjico" , 
-                    "Mexicanos, Estados Unidos" , "ا وًلايات المخحدة المىس ىَ ةِ" , "Estados Unidos Mexicanos" , 
-                    "Mejicana, República" , "MEX" , "República Mejicana" , "États-Unis du Mexique" , 
-                    "Méjico, República" , "Mèssico" , "Mexican Republic" , "Messco" , 
-                    "Mexicana, Republica" , "Мексика" , "ISO484" , "Mexique" , "Mexican" , "Mexican"@en , 
+            skos:altLabel                 "United Mexican States" , "Mexiko" , "المىس مَ" , "Mexico"@en , "Mexico" ,
+                    "Мексиканские Соединенные Штаты" , "MX00" , "México" , "República Méjico" ,
+                    "Mexicanos, Estados Unidos" , "ا وًلايات المخحدة المىس ىَ ةِ" , "Estados Unidos Mexicanos" ,
+                    "Mejicana, República" , "MEX" , "República Mejicana" , "États-Unis du Mexique" ,
+                    "Méjico, República" , "Mèssico" , "Mexican Republic" , "Messco" ,
+                    "Mexicana, Republica" , "Мексика" , "ISO484" , "Mexique" , "Mexican" , "Mexican"@en ,
                     "墨西哥合众国" , "Republica Mexicana" , "墨西哥" , "Méjico" ;
             skos:prefLabel                "Mexico" .
     """
