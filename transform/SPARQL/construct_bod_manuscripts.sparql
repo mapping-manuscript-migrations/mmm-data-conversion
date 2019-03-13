@@ -48,7 +48,7 @@ WHERE
 
   # EXPRESSION / WORK
   OPTIONAL {
-    ?manifestation_singleton frbr:R42_is_representative_manifestation_singleton_for ?expression .
+    ?manifestation_singleton frbr:R42_is_representative_manifestation_singleton_for/frbr:R5_has_component? ?expression .
     OPTIONAL {
       ?expression frbr:R3i_realises ?work .
       ?work frbr:R16i_was_initiated_by ?work_conception .

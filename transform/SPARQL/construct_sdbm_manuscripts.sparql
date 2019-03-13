@@ -9,6 +9,9 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 
+# TODO: Folio count URIs etc. to be based on the count to avoid duplicates
+# TODO: Material URIs etc. to be based on the material to avoid duplicates
+
 CONSTRUCT {
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;

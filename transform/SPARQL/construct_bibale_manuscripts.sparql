@@ -192,7 +192,7 @@ WHERE
   BIND(REPLACE(STR(?production), "^.*\\/(.+)", "$1") as ?production_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/production/bibale_", ?manifestation_local_id, "_production")) as ?production_mmm)
   BIND(REPLACE(STR(?production_timespan), "^.*\\/(.+)", "$1") as ?production_timespan_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/timespan/bibale_", ?production_timespan_local_id)) as ?production_timespan_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", ?production_timespan_local_id)) as ?production_timespan_mmm)
   BIND(REPLACE(STR(?production_place), "^.*\\/(.+)", "$1") as ?production_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?production_local_id, ":", "_"))) as ?production_place_mmm)
 
