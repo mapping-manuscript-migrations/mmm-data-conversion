@@ -9,8 +9,10 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 
+# TODO: Separate collection catalogs by class (https://sdbm.library.upenn.edu/source_types/2)
+
 CONSTRUCT {
-  ?mmm_source a mmm-schema:Source ;
+  ?mmm_source a mmm-schema:Source , ?collection_class ;
     skos:prefLabel ?source_preflabel ;
     mmm-schema:location_literal ?cat_location_literal ;
     mmm-schema:institution_literal ?cat_institution ;
@@ -39,6 +41,15 @@ WHERE {
     FILTER(STR(?cat_location_literal) != "")
   }
   OPTIONAL {
+    # Collection catalogs
+    ?source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
+    BIND(mmm-schema:Collection as ?collection_class)
+    BIND(CONCAT(STR(mmm:), "collection/") as ?source_namespace)
+  }
+  OPTIONAL {
+    BIND(CONCAT(STR(mmm:), "source/") as ?source_namespace)
+  }
+  OPTIONAL {
     ?source :sources_source_type_id ?source_type .
     ?source_type :source_types_name ?source_type_local_name .
     ?source_type :source_types_display_name ?source_type_label
@@ -65,7 +76,8 @@ WHERE {
   OPTIONAL { ?source :sources_author ?source_author . }
 
   BIND(IRI(CONCAT(STR(mmm-schema:), "source_types/", STR(?source_type_local_name))) as ?mmm_source_type)
-  BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?mmm_source)
+  BIND(IRI(CONCAT(?source_namespace, STR(?source_id))) as ?mmm_source)
+
   BIND(COALESCE(?source_title, "SDBM source " + STR(?source_id)) as ?source_preflabel)
 
   BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
