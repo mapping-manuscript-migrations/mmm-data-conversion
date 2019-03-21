@@ -22,7 +22,7 @@ CONSTRUCT
     # mmm-schema:place_literal ?cat_location_literal ;
     ?event_timespan_property ?cat_date ;
     crm:P179_had_sales_price ?monetary_amount_uri ;
-    crm:P70i_is_documented_in ?source .
+    crm:P70i_is_documented_in ?source_mmm .
     # dct:source mmm-schema:SDBM .
 
   ?monetary_amount_uri a crm:E97_Monetary_Amount ;
@@ -113,6 +113,18 @@ WHERE
   OPTIONAL {
     ?entry :entries_source_id ?entry_source .
     OPTIONAL{ ?entry_source :sources_id ?source_id }
+
+    OPTIONAL {
+      # Collection catalogs
+      ?entry_source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
+      BIND(CONCAT(STR(mmm:), "collection/") as ?source_namespace)
+      BIND(crm:P46i_forms_part_of as ?property_to_collection)
+
+    }
+    OPTIONAL {
+      BIND(CONCAT(STR(mmm:), "source/") as ?source_namespace)
+    }
+
     # TODO: if source has no title, generate one for acquisition/observation prefLabel
     OPTIONAL{
       ?entry_source :sources_title ?cat_title
@@ -144,7 +156,7 @@ WHERE
   BIND(COALESCE(?manuscript_id_, "part_" + STR(?entry_partial_id), "orphan_" + STR(?entry_id)) AS ?manuscript_id)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
-  BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
+  BIND(IRI(CONCAT(?source_namespace, STR(?source_id))) as ?source_mmm)
   BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?author_id))) as ?author)
   BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?seller_id))) as ?seller)
   BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?buyer_id))) as ?buyer)

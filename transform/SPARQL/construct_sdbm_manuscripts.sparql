@@ -33,12 +33,14 @@ CONSTRUCT {
     mmm-schema:manuscript_author ?author ;  # shortcut
     mmm-schema:manuscript_work ?work ;  # shortcut
     # mmm-schema:language ?language ; # shortcut
+    ?property_to_collection ?source_mmm ;
+    crm:P70i_is_documented_in ?source_mmm ;
     dct:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton
     a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?parent_preflabel ;
-    crm:P46i_is_composed_of ?manifestation_singleton .
+    crm:P46_is_composed_of ?manifestation_singleton .
 
   ?production a crm:E12_Production ;
     # skos:prefLabel # TODO
@@ -408,6 +410,18 @@ WHERE {
   OPTIONAL {
     ?entry :entries_source_id ?entry_source .
     ?entry_source :sources_id ?source_id .
+
+    OPTIONAL {
+      # Collection catalogs
+      ?entry_source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
+      BIND(CONCAT(STR(mmm:), "collection/") as ?source_namespace)
+      BIND(crm:P46i_forms_part_of as ?property_to_collection)
+      # TODO: Get last known location from collection
+    }
+    OPTIONAL {
+      BIND(CONCAT(STR(mmm:), "source/") as ?source_namespace)
+    }
+
     # # TODO: if source has no title, generate one for acquisition/observation prefLabel
     # OPTIONAL{
     #   ?entry_source :sources_title ?cat_title
@@ -444,7 +458,7 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", ?manuscript_id)) as ?manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
-  BIND(IRI(CONCAT(STR(mmm:), "source/", STR(?source_id))) as ?source)
+  BIND(IRI(CONCAT(?source_namespace, STR(?source_id))) as ?source_mmm)
   BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?author_id))) as ?author)
   #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?seller_id))) as ?seller)
   #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?buyer_id))) as ?buyer)

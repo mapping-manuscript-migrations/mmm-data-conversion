@@ -9,8 +9,6 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 
-# TODO: Separate collection catalogs by class (https://sdbm.library.upenn.edu/source_types/2)
-
 CONSTRUCT {
   ?mmm_source a mmm-schema:Source , ?collection_class ;
     skos:prefLabel ?source_preflabel ;
