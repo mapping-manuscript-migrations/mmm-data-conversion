@@ -20,6 +20,7 @@ CONSTRUCT {
     mmm-schema:data_provider_url ?source ;
     mmm-schema:source_agent ?mmm_source_actor ;
     mmm-schema:source_type ?mmm_source_type ;
+    ?location_property ?source_agent_location ;
     # dct:source mmm-schema:SDBM .
     .
 
@@ -43,6 +44,7 @@ WHERE {
     ?source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
     BIND(mmm-schema:Collection as ?collection_class)
     BIND(CONCAT(STR(mmm:), "collection/") as ?source_namespace)
+    BIND(mmm-schema:collection_location as ?location_property)
   }
   OPTIONAL {
     BIND(CONCAT(STR(mmm:), "source/") as ?source_namespace)

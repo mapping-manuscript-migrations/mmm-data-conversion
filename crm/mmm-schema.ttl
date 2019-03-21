@@ -4,6 +4,7 @@
 @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix mmmp: <http://ldf.fi/mmm/place/> .
 
 :entry a rdf:Property;
   skos:prefLabel "Source entry in SDBM"@en .
@@ -157,3 +158,10 @@
 :manuscript_author a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Author related to a physical manuscript" .
+
+:Bodleian_collection a crm:E78_Collection ;
+  :collection_location mmmp:tgn_7011931 ;
+  skos:prefLabel "Bodleian Library collections in Oxford" .
+
+:collection_location a rdfs:Property ;
+  skos:prefLabel "Location of a manuscript collection at some point during its existence" .

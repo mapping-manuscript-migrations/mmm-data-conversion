@@ -37,6 +37,7 @@ CONSTRUCT {
     mmm-schema:data_provider_url ?manifestation_singleton ;
     mmm-schema:manuscript_author ?work_conception_author ;  # shortcut
     mmm-schema:manuscript_work ?work_mmm ;  # shortcut
+    crm:P46i_forms_part_of mmm-schema:Bodleian_collection ;
     dct:source mmm-schema:Bodley .
 
 }
