@@ -67,6 +67,7 @@ CONSTRUCT {
     mmm-schema:manuscript_author ?expression_author_mmm ;  # shortcut
     mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
     crm:P46i_forms_part_of ?collection_mmm ;
+    crm:P3_has_note ?note ;
     dct:source mmm-schema:Bibale
     .
 }
@@ -76,6 +77,8 @@ WHERE
                            rdfs:label ?preflabel .
 
   OPTIONAL { ?manifestation_singleton crm:P46i_forms_part_of ?collection }
+
+  OPTIONAL { ?manifestation_singleton crm:P131_is_identified_by ?note }
 
   # OPTIONAL {
   #   ?manifestation_singleton bibale:type:attested_or_curated/rdfs:label? "Volume conservé"
