@@ -35,6 +35,8 @@ CONSTRUCT {
     # mmm-schema:language ?language ; # shortcut
     ?property_to_collection ?source_mmm ;
     crm:P70i_is_documented_in ?source_mmm ;
+    mmm-schema:catalog_or_lot_number ?cat_lot_number ;
+    skos:note ?other_info ;
     dct:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton
@@ -438,6 +440,14 @@ WHERE {
     #   ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
     #   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?source_place_local_id))) as ?source_agent_location)
     # }
+  }
+
+  OPTIONAL {
+    ?entry :entries_catalog_or_lot_number ?cat_lot_number
+  }
+
+  OPTIONAL {
+    ?entry :entries_other_info ?other_info
   }
 
   BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)

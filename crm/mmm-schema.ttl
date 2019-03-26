@@ -174,3 +174,7 @@
 
 :Organization rdfs:subClassOf :Actor ;
   skos:prefLabel "Organization" .
+
+:catalog_or_lot_number a rdfs:Property ;
+  skos:prefLabel "Catalog or lot number" .
+  
