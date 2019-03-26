@@ -16,8 +16,10 @@ printf '\nConstructing Bodley people\n\n'
 curl -f --data-urlencode "query=$(cat /app/construct_bod_people.sparql)" $INPUT_BODLEY_SPARQL_ENDPOINT -v > $OUTPUT/_bodley_people.ttl
 printf '\nConstructing Bodley places\n\n'
 curl -f --data-urlencode "query=$(cat /app/construct_bod_places.sparql)" $INPUT_BODLEY_SPARQL_ENDPOINT -v > $OUTPUT/_bodley_places.ttl
+printf '\nConstructing Bodley observations\n\n'
+curl -f --data-urlencode "query=$(cat /app/construct_bod_observations.sparql)" $INPUT_BODLEY_SPARQL_ENDPOINT -v > $OUTPUT/_bodley_observations.ttl
 
-cat $OUTPUT/_bodley_manuscripts.ttl $OUTPUT/_bodley_works.ttl $OUTPUT/_bodley_expressions.ttl $OUTPUT/_bodley_people.ttl $OUTPUT/_bodley_places.ttl > $OUTPUT/_bodley_combined.ttl
+cat $OUTPUT/_bodley_manuscripts.ttl $OUTPUT/_bodley_works.ttl $OUTPUT/_bodley_expressions.ttl $OUTPUT/_bodley_people.ttl $OUTPUT/_bodley_places.ttl $OUTPUT/_bodley_observations.ttl > $OUTPUT/_bodley_combined.ttl
 
 printf '\nLinking Bodley places\n\n'
 
