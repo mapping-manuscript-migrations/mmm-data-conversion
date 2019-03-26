@@ -34,6 +34,8 @@ CONSTRUCT {
     ?name_id :names_subtype "Corporate" .
     BIND(IRI(mmm-schema:Organization) as ?actor_class)
   }
+  OPTIONAL { BIND(IRI(mmm-schema:Actor) as ?actor_class)}
+
   OPTIONAL { ?name_id :names_subtype ?name_type_literal . }
   OPTIONAL {
     ?name_id :names_viaf_id ?viaf_id .

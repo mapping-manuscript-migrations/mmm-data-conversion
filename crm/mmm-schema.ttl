@@ -165,3 +165,12 @@
 
 :collection_location a rdfs:Property ;
   skos:prefLabel "Location of a manuscript collection at some point during its existence" .
+
+:Actor a rdfs:Class ;
+  skos:prefLabel "Actor" .
+
+:Person rdfs:subClassOf :Actor ;
+  skos:prefLabel "Person" .
+
+:Organization rdfs:subClassOf :Actor ;
+  skos:prefLabel "Organization" .
