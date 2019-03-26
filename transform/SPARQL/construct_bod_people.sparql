@@ -26,6 +26,27 @@ CONSTRUCT {
     owl:sameAs ?external_uri ;
     mmm-schema:data_provider_url ?bod_person_uri ;
     dct:source mmm-schema:Bodley .
+
+  ?birth_event a crm:E67_Birth ;
+    crm:P4_has_time-span ?birth_timespan ;
+    skos:prefLabel ?birth_label ;
+    .
+
+  ?birth_timespan a crm:E52_Time-Span ;
+    skos:prefLabel ?birth_timespan_label ;
+    crm:P82a_begin_of_the_begin ?birth_timespan_begin_begin ;
+    crm:P82b_end_of_the_end ?birth_timespan_end_end .
+
+  ?death_event a crm:E69_Death ;
+    crm:P4_has_time-span ?death_timespan ;
+    skos:prefLabel ?death_label ;
+    .
+
+  ?death_timespan a crm:E52_Time-Span ;
+    skos:prefLabel ?death_timespan_label ;
+    crm:P82a_begin_of_the_begin ?death_timespan_begin_begin ;
+    crm:P82b_end_of_the_end ?death_timespan_end_end .
+
 }
 WHERE
 {

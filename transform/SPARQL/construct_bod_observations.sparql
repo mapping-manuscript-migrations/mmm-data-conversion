@@ -22,6 +22,7 @@ CONSTRUCT
     crm:P3_has_note ?note ;
     crm:P7_took_place_at ?place ;
     crm:P4_has_time-span ?timespan ;
+    dct:source mmm-schema:Bodley ;
     .
 
   ?timespan crm:P82a_begin_of_the_begin ?timespan_bb ;
