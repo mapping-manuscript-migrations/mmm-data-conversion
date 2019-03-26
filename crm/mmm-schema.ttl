@@ -59,6 +59,7 @@
   skos:prefLabel "Manuscript observation time-span"@en .
 
 :observed_owner a rdf:Property;
+  rdfs:subPropertyOf crm:P11_had_participant ;
   skos:prefLabel "Observed manuscript owner"@en .
 
 :data_provider a rdfs:Property ;
@@ -177,4 +178,3 @@
 
 :catalog_or_lot_number a rdfs:Property ;
   skos:prefLabel "Catalog or lot number" .
-  

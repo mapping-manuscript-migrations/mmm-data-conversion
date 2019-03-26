@@ -75,7 +75,8 @@ WHERE
   ?manifestation_singleton a bibale:type:livre ;
                            rdfs:label ?preflabel .
 
-  OPTIONAL {?manifestation_singleton crm:P46i_forms_part_of ?collection}
+  OPTIONAL { ?manifestation_singleton crm:P46i_forms_part_of ?collection }
+
   # OPTIONAL {
   #   ?manifestation_singleton bibale:type:attested_or_curated/rdfs:label? "Volume conservé"
   # }

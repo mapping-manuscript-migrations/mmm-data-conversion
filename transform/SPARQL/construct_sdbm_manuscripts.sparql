@@ -36,7 +36,7 @@ CONSTRUCT {
     ?property_to_collection ?source_mmm ;
     crm:P70i_is_documented_in ?source_mmm ;
     mmm-schema:catalog_or_lot_number ?cat_lot_number ;
-    skos:note ?other_info ;
+    crm:P3_has_note ?other_info ;
     dct:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton

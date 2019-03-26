@@ -14,6 +14,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 # TODO:
 # - mint MMM URIs for resources
+# - ADD MISSING EVENTS AND TIME-SPANS
 
 CONSTRUCT {
   ?bod_person_uri a ?actor_class ;
