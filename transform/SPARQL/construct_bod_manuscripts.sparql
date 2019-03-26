@@ -9,6 +9,10 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 
+# TODO: Handle composite manuscripts
+
+# TODO: Mint MMM URIs for resources
+
 CONSTRUCT {
   ?production a crm:E12_Production ;
     crm:P108_has_produced ?manifestation_singleton_mmm ;

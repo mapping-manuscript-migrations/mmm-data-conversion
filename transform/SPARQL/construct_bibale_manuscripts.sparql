@@ -66,6 +66,7 @@ CONSTRUCT {
     mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
     mmm-schema:manuscript_author ?expression_author_mmm ;  # shortcut
     mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
+    crm:P46i_forms_part_of ?collection_mmm ;
     dct:source mmm-schema:Bibale
     .
 }
@@ -74,6 +75,7 @@ WHERE
   ?manifestation_singleton a bibale:type:livre ;
                            rdfs:label ?preflabel .
 
+  OPTIONAL {?manifestation_singleton crm:P46i_forms_part_of ?collection}
   # OPTIONAL {
   #   ?manifestation_singleton bibale:type:attested_or_curated/rdfs:label? "Volume conservé"
   # }
@@ -192,6 +194,7 @@ WHERE
     }
   }
 
+  # WORK CONCEPTION AUTHOR
   OPTIONAL {
     { ?work crm:P128i_is_carried_by ?manifestation_singleton }
     UNION
@@ -212,6 +215,9 @@ WHERE
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?manifestation_local_id)) as ?manifestation_singleton_mmm)
+
+  BIND(REPLACE(STR(?collection), "^.*\\/(.+)", "$1") as ?collection_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/collection/bibale_", ?collection_local_id)) as ?collection_mmm)
 
   BIND(REPLACE(STR(?manuscript_timespan), "^.*\\/(.+)", "$1") as ?manuscript_timespan_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?manuscript_timespan_local_id, ":", "_"))) as ?manuscript_timespan_mmm)
