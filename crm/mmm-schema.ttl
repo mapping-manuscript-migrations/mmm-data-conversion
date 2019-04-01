@@ -178,3 +178,7 @@
 
 :catalog_or_lot_number a rdfs:Property ;
   skos:prefLabel "Catalog or lot number" .
+
+:phillipps_number a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Phillipps number" .
