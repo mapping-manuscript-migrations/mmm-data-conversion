@@ -139,7 +139,7 @@ WHERE
       ?source_agent :source_agents_source_id ?entry_source .
       ?source_agent :source_agents_agent_id ?source_agent_name .
       ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
-      BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?source_place_local_id))) as ?source_agent_location)
+      BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?source_place_local_id))) as ?source_agent_location)
     }
   }
 
@@ -154,12 +154,12 @@ WHERE
   # generate IRIs in LDF.fi namespace
   BIND(STR(?manuscript_id_int) AS ?manuscript_id_)
   BIND(COALESCE(?manuscript_id_, "part_" + STR(?entry_partial_id), "orphan_" + STR(?entry_id)) AS ?manuscript_id)
-  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", ?manuscript_id)) as ?manifestation_singleton)
-  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", ?manuscript_id)) as ?manifestation_singleton)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(?source_namespace, STR(?source_id))) as ?source_mmm)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?author_id))) as ?author)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?seller_id))) as ?seller)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?buyer_id))) as ?buyer)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?seller_id))) as ?seller)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?buyer_id))) as ?buyer)
   BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
 }
