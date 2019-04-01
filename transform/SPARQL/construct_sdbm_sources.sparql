@@ -21,7 +21,8 @@ CONSTRUCT {
     mmm-schema:source_agent ?mmm_source_actor ;
     mmm-schema:source_type ?mmm_source_type ;
     ?location_property ?source_agent_location ;
-    # dct:source mmm-schema:SDBM .
+    crm:P51_has_former_or_current_owner ?mmm_source_owner ;
+    dct:source mmm-schema:SDBM ;
     .
 
   ?mmm_source_type a mmm-schema:Source_Type ;
@@ -31,14 +32,17 @@ WHERE {
   ?source a :sources .
   FILTER(NOT EXISTS { ?source :sources_deleted true })
   ?source :sources_id ?source_id .
+
   OPTIONAL{
     ?source :sources_title ?source_title
     FILTER(STR(?source_title) != "")
   }
+
   OPTIONAL{
     ?source :sources_location ?cat_location_literal
     FILTER(STR(?cat_location_literal) != "")
   }
+
   OPTIONAL {
     # Collection catalogs
     ?source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
@@ -46,23 +50,29 @@ WHERE {
     BIND(CONCAT(STR(mmm:), "collection/") as ?source_namespace)
     BIND(mmm-schema:collection_location as ?location_property)
   }
+
   OPTIONAL {
     BIND(CONCAT(STR(mmm:), "source/") as ?source_namespace)
   }
+
   OPTIONAL {
     ?source :sources_source_type_id ?source_type .
     ?source_type :source_types_name ?source_type_local_name .
     ?source_type :source_types_display_name ?source_type_label
   }
+
   OPTIONAL{
     ?source :sources_date ?cat_date_raw
     FILTER(STR(?cat_date_raw) != "")
   }
+
   OPTIONAL{
     ?source :sources_location_institution ?cat_institution
     FILTER(STR(?cat_institution) != "")
   }
+
   OPTIONAL{ ?source :sources_link ?cat_link }
+
   OPTIONAL{
     ?source_agent :source_agents_source_id ?source .
     ?source_agent :source_agents_agent_id ?source_agent_name .
@@ -71,9 +81,18 @@ WHERE {
 
     BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?source_place_local_id))) as ?source_agent_location)
     BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_id))) as ?mmm_source_actor)
+
+    OPTIONAL {
+      ?source_agent :source_agents_role "institution" .
+      ?source_agent :source_agents_agent_id/:names_id ?source_agent_id .
+      BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_id))) as ?mmm_source_owner)
+    }
   }
+
   OPTIONAL { ?source :sources_medium ?medium . }
+
   OPTIONAL { ?source :other_info ?other_info . }
+
   OPTIONAL { ?source :sources_author ?source_author . }
 
   BIND(IRI(CONCAT(STR(mmm-schema:), "source_types/", STR(?source_type_local_name))) as ?mmm_source_type)
