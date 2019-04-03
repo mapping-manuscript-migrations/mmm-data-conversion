@@ -69,6 +69,9 @@
 :data_provider_url a rdfs:Property ;
   skos:prefLabel "URL link to find more information from"@en .
 
+:external_url a rdfs:Property ;
+  skos:prefLabel "External URL link to find more information from"@en .
+
 :Database a rdfs:Class ;
   skos:prefLabel "A database containing source information"@en .
 

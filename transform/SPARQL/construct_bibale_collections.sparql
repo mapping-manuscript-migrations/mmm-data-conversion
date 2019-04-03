@@ -13,6 +13,8 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
+# TODO: prefLabel for creation and dispersion events
+
 CONSTRUCT {
   ?collection_mmm a crm:E78_Collection ;
     skos:prefLabel ?label ;

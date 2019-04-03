@@ -15,8 +15,7 @@ CONSTRUCT {
     mmm-schema:location_literal ?cat_location_literal ;
     mmm-schema:institution_literal ?cat_institution ;
     mmm-schema:source_date ?source_date ;
-    mmm-schema:link ?cat_link ;
-    mmm-schema:data_provider mmm-schema:SDBM ;
+    mmm-schema:external_url ?cat_link ;
     mmm-schema:data_provider_url ?source ;
     mmm-schema:source_agent ?mmm_source_actor ;
     mmm-schema:source_type ?mmm_source_type ;
@@ -71,7 +70,11 @@ WHERE {
     FILTER(STR(?cat_institution) != "")
   }
 
-  OPTIONAL{ ?source :sources_link ?cat_link }
+  OPTIONAL{
+    ?source :sources_link ?cat_link_str
+    FILTER(STR(?cat_link_str) != "")
+    BIND(IF(STRSTARTS(?cat_link_str, "http://"), IRI(?cat_link_str), ?cat_link_str) as ?cat_link)
+  }
 
   OPTIONAL{
     ?source_agent :source_agents_source_id ?source .
@@ -80,12 +83,16 @@ WHERE {
     ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
 
     BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?source_place_local_id))) as ?source_agent_location)
-    BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_id))) as ?mmm_source_actor)
 
     OPTIONAL {
       ?source_agent :source_agents_role "institution" .
       ?source_agent :source_agents_agent_id/:names_id ?source_agent_id .
       BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_id))) as ?mmm_source_owner)
+    }
+    OPTIONAL {
+      FILTER NOT EXISTS { ?source_agent :source_agents_role "institution" }
+      ?source_agent :source_agents_agent_id/:names_id ?source_agent_id .
+      BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_id))) as ?mmm_source_actor)
     }
   }
 
