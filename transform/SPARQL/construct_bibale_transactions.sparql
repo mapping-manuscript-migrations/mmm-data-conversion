@@ -12,27 +12,46 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-# TODO: Try to get approximate time-span
+# TODO: Get approximate time-span from associated persons life times?
 # TODO: Mint MMM URI for ?transfer
-
-# TODO: Verify collection/manuscript MMM URI
 
 CONSTRUCT {
   ?transfer a crm:E10_Transfer_of_custody ;
-    crm:P30_transferred_custody_of ?collection_mmm ;
+    crm:P30_transferred_custody_of ?manuscript_or_collection_mmm ;
     crm:P29_custody_received_by ?actor_mmm ;
     crm:P7_took_place_at ?place_mmm ;
     .
+
+    # TODO: timespan
+
+    # TODO: Add ownership helper resources to manuscript/collection
+
 }
 WHERE
 {
-  ?transfer a crm:E10_Transfer_of_custody ;
-    crm:P30_transferred_custody_of ?collection ;
-    crm:P29_custody_received_by ?actor ;
-    crm:P7_took_place_at ?place .
+  ?transfer a crm:E10_Transfer_of_custody .
 
-  BIND(REPLACE(STR(?collection), "^.*\\/(.+)", "$1") as ?collection_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?collection_local_id)) as ?collection_mmm)
+  OPTIONAL { ?transfer crm:P30_transferred_custody_of ?manuscript_or_collection }
+  OPTIONAL { ?transfer crm:P29_custody_received_by ?actor }
+  OPTIONAL { ?transfer crm:P4_has_time-span ?timespan }
+  OPTIONAL { ?transfer crm:P7_took_place_at ?place }
+
+  # TODO: timespan
+
+  OPTIONAL {
+    FILTER EXISTS { ?manuscript_or_collection a bibale:type:livre }
+    # TODO: Bind URI to modify it later
+  }
+
+  OPTIONAL {
+    FILTER EXISTS { ?manuscript_or_collection a crm:E78_Collection }
+    # TODO: Bind URI to modify it later
+  }
+
+  # TODO: Other properties
+
+  BIND(REPLACE(STR(?manuscript_or_collection), "^.*\\/(.+)", "$1") as ?manuscript_or_collection_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?manuscript_or_collection_local_id)) as ?manuscript_or_collection_mmm)
 
   BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?actor_local_id)) as ?actor_mmm)

@@ -19,8 +19,11 @@ CONSTRUCT {
     mmm-schema:birth_date ?birth_date ;
     mmm-schema:death_date ?death_date ;
     mmm-schema:data_provider_url ?name_id ;
-    dct:source mmm-schema:SDBM .
-} WHERE {
+    dct:source mmm-schema:SDBM ;
+    .
+}
+WHERE
+{
   ?name_id a :names ;
            :names_name ?name ;
            :names_id ?person_local_id .
