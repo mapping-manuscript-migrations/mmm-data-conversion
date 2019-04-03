@@ -21,6 +21,7 @@ CONSTRUCT {
     crm:P93i_was_taken_out_of_existence_by ?dispersion_event ;
     mmm-schema:collection_type ?collection_type_literal ;
     mmm-schema:collection_location ?collection_place_mmm ;
+    dct:source mmm-schema:Bibale ;
     .
 
   ?creation_event a crm:E63_Beginning_of_Existence ;

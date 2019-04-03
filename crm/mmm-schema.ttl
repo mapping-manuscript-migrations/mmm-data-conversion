@@ -160,7 +160,7 @@
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Author related to a physical manuscript" .
 
-:Bodleian_collection a crm:E78_Collection ;
+:Bodleian_collection a crm:E78_Collection ;  # TODO: Move to additional data ttl file (fix references)
   :collection_location mmmp:tgn_7011931 ;
   skos:prefLabel "Bodleian Library collections in Oxford" .
 

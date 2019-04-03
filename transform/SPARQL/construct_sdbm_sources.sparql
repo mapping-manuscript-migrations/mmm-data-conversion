@@ -47,12 +47,12 @@ WHERE {
     # Collection catalogs
     ?source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
     BIND(crm:E78_Collection as ?collection_class)
-    BIND(CONCAT(STR(mmm:), "collection/") as ?source_namespace)
+    BIND(CONCAT(STR(mmm:), "collection/sdbm_") as ?source_namespace)
     BIND(mmm-schema:collection_location as ?location_property)
   }
 
   OPTIONAL {
-    BIND(CONCAT(STR(mmm:), "source/") as ?source_namespace)
+    BIND(CONCAT(STR(mmm:), "source/sdbm_") as ?source_namespace)
   }
 
   OPTIONAL {

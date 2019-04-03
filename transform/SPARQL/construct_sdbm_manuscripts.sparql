@@ -416,12 +416,12 @@ WHERE {
     OPTIONAL {
       # Collection catalogs
       ?entry_source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
-      BIND(CONCAT(STR(mmm:), "collection/") as ?source_namespace)
+      BIND(CONCAT(STR(mmm:), "collection/sdbm_") as ?source_namespace)
       BIND(crm:P46i_forms_part_of as ?property_to_collection)
       # TODO: Get last known location from collection
     }
     OPTIONAL {
-      BIND(CONCAT(STR(mmm:), "source/") as ?source_namespace)
+      BIND(CONCAT(STR(mmm:), "source/sdbm_") as ?source_namespace)
     }
 
     # # TODO: if source has no title, generate one for acquisition/observation prefLabel
