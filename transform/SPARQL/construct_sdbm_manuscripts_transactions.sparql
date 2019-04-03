@@ -15,7 +15,7 @@ CONSTRUCT
     skos:prefLabel ?cat_title ;
     ?event_property ?manifestation_singleton ;
     ?event_seller_or_holder_property ?seller ;
-    crm:P22_transferred_title_to ?buyer ;
+    crm:P29_custody_received_by ?buyer ;
     mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
     mmm-schema:data_provider_url ?entry ;
     ?event_place_property ?source_agent_location ;
@@ -72,10 +72,10 @@ WHERE
     OPTIONAL {
       ?sales_entry :sales_sold "Yes"
       BIND(crm:E10_Transfer_of_Custody as ?event_type)
-      BIND(crm:P24_transferred_title_of as ?event_property)
+      BIND(crm:P30_transferred_custody_of as ?event_property)
       BIND(crm:P7_took_place_at as ?event_place_property)
       BIND(crm:P4_has_time-span as ?event_timespan_property)
-      BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
+      BIND(crm:P28_custody_surrendered_by as ?event_seller_or_holder_property)
     }
     OPTIONAL {
       ?seller_agent :sale_agents_sale_id ?sales_entry .
@@ -87,10 +87,10 @@ WHERE
       ?buyer_agent :sale_agents_role "buyer" .
       ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
       BIND(crm:E10_Transfer_of_Custody as ?event_type)
-      BIND(crm:P24_transferred_title_of as ?event_property)
+      BIND(crm:P30_transferred_custody_of as ?event_property)
       BIND(crm:P7_took_place_at as ?event_place_property)
       BIND(crm:P4_has_time-span as ?event_timespan_property)
-      BIND(crm:P23_transferred_title_from as ?event_seller_or_holder_property)
+      BIND(crm:P28_custody_surrendered_by as ?event_seller_or_holder_property)
     }
     OPTIONAL {
       ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
@@ -160,6 +160,6 @@ WHERE
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?seller_id))) as ?seller)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?buyer_id))) as ?buyer)
-  BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
-  BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_", ?entry_id)) as ?acquisition_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/sdbm_", ?sales_id)) as ?monetary_amount_uri)
 }
