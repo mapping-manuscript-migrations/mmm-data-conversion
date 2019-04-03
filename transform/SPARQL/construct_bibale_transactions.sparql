@@ -13,18 +13,25 @@ PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 # TODO: Get approximate time-span from associated persons life times?
-# TODO: Mint MMM URI for ?transfer
+# TODO: Add ownership helper resources to manuscript (and collection)
+
 
 CONSTRUCT {
-  ?transfer a crm:E10_Transfer_of_custody ;
+  ?transfer_mmm a crm:E10_Transfer_of_custody ;
     crm:P30_transferred_custody_of ?manuscript_or_collection_mmm ;
-    crm:P29_custody_received_by ?actor_mmm ;
+    crm:P28_custody_surrendered_by ?old_owner ;
+    crm:P29_custody_received_by ?new_owner_mmm ;
     crm:P7_took_place_at ?place_mmm ;
+    crm:P4_has_time-span ?timespan_mmm ;
     .
 
-    # TODO: timespan
-
-    # TODO: Add ownership helper resources to manuscript/collection
+  ?timespan_mmm a crm:E52_Time-Span ;
+    skos:prefLabel ?timespan_label ;
+    crm:P82a_begin_of_the_begin ?timespan_bb ;
+    crm:P81a_end_of_the_begin ?timespan_eb ;
+    crm:P81b_begin_of_the_end ?timespan_be ;
+    crm:P82b_end_of_the_end ?timespan_ee ;
+    .
 
 }
 WHERE
@@ -32,30 +39,47 @@ WHERE
   ?transfer a crm:E10_Transfer_of_custody .
 
   OPTIONAL { ?transfer crm:P30_transferred_custody_of ?manuscript_or_collection }
-  OPTIONAL { ?transfer crm:P29_custody_received_by ?actor }
-  OPTIONAL { ?transfer crm:P4_has_time-span ?timespan }
+  OPTIONAL { ?transfer crm:P28_custody_surrended_by ?old_owner }  # "surrended" in the data
+  OPTIONAL { ?transfer crm:P29_custody_received_by ?new_owner }
   OPTIONAL { ?transfer crm:P7_took_place_at ?place }
+  OPTIONAL {
+    ?transfer crm:P4_has_time-span ?timespan .
 
-  # TODO: timespan
+    ?timespan rdfs:label ?timespan_label ;
+      OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?timespan_bb }
+      OPTIONAL { ?timespan crm:P81a_end_of_the_begin ?timespan_eb }
+      OPTIONAL { ?timespan crm:P81b_begin_of_the_end ?timespan_be }
+      OPTIONAL { ?timespan crm:P82b_end_of_the_end ?timespan_ee }
+   }
 
   OPTIONAL {
     FILTER EXISTS { ?manuscript_or_collection a bibale:type:livre }
-    # TODO: Bind URI to modify it later
+    BIND("http://ldf.fi/mmm/manifestation_singleton/bibale_" as ?manuscript_or_collection_prefix)
   }
 
   OPTIONAL {
     FILTER EXISTS { ?manuscript_or_collection a crm:E78_Collection }
-    # TODO: Bind URI to modify it later
+    BIND("http://ldf.fi/mmm/collection/bibale_" as ?manuscript_or_collection_prefix)
   }
 
-  # TODO: Other properties
+  # There are also other types of resources in the transfer of custody events,
+  # which are now left out (provenance, source, binding)
+
+  BIND(REPLACE(STR(?transfer), "^.*\\/(.+)", "$1") as ?transfer_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "observation/", ?transfer_local_id)) as ?transfer_mmm)
 
   BIND(REPLACE(STR(?manuscript_or_collection), "^.*\\/(.+)", "$1") as ?manuscript_or_collection_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?manuscript_or_collection_local_id)) as ?manuscript_or_collection_mmm)
+  BIND(IRI(CONCAT(?manuscript_or_collection_prefix, ?manuscript_or_collection_local_id)) as ?manuscript_or_collection_mmm)
 
-  BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?actor_local_id)) as ?actor_mmm)
+  BIND(REPLACE(STR(?old_owner), "^.*\\/(.+)", "$1") as ?old_owner_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?old_owner_local_id)) as ?old_owner_mmm)
+  BIND(REPLACE(STR(?new_owner), "^.*\\/(.+)", "$1") as ?new_owner_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?new_owner_local_id)) as ?new_owner_mmm)
 
   BIND(REPLACE(STR(?place), "^.*\\/(.+)", "$1") as ?place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
+
+  BIND(REPLACE(STR(?timespan), "^.*\\/(.+)", "$1") as ?timespan_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?timespan_local_id, ":", "_"))) as ?timespan_mmm)
+
 }
