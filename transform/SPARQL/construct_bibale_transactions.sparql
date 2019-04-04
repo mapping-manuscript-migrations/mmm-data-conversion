@@ -17,7 +17,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 
 CONSTRUCT {
-  ?transfer_mmm a crm:E10_Transfer_of_custody ;
+  ?transfer_mmm a crm:E10_Transfer_of_Custody ;
     crm:P30_transferred_custody_of ?manuscript_or_collection_mmm ;
     crm:P28_custody_surrendered_by ?old_owner ;
     crm:P29_custody_received_by ?new_owner_mmm ;

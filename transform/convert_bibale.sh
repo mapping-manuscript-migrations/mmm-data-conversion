@@ -19,8 +19,10 @@ printf '\nConstructing Bibale actors\n\n'
 curl -f --data-urlencode "query=$(cat /app/construct_bibale_actors.sparql)" $INPUT_BIBALE_SPARQL_ENDPOINT -v > /output/_bibale_actors.ttl
 printf '\nConstructing Bibale collections\n\n'
 curl -f --data-urlencode "query=$(cat /app/construct_bibale_collections.sparql)" $INPUT_BIBALE_SPARQL_ENDPOINT -v > /output/_bibale_collections.ttl
+printf '\nConstructing Bibale transactions\n\n'
+curl -f --data-urlencode "query=$(cat /app/construct_bibale_transactions.sparql)" $INPUT_BIBALE_SPARQL_ENDPOINT -v > /output/_bibale_transactions.ttl
 
-cat /output/_bibale_phillipps.ttl /output/_bibale_manuscripts.ttl /output/_bibale_works.ttl /output/_bibale_places.ttl /output/_bibale_actors.ttl /output/_bibale_collections.ttl > /output/_bibale_combined.ttl
+cat /output/_bibale_phillipps.ttl /output/_bibale_manuscripts.ttl /output/_bibale_works.ttl /output/_bibale_places.ttl /output/_bibale_actors.ttl /output/_bibale_collections.ttl /output/_bibale_transactions.ttl > /output/_bibale_combined.ttl
 
 printf '\nLinking Bibale places\n\n'
 python linker.py bibale_places /output/_bibale_combined.ttl /output/_bibale_linked.ttl --logfile /output/logs/bibale_linking.log
