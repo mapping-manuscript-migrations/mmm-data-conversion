@@ -154,8 +154,8 @@ class GeoNames:
 
         >>> geo = GeoNames([os.environ['GEONAMES_KEY']])
         >>> place = geo.search_place('Royaume Uni / Angleterre',  'Dorset', 'Abbotsbury')
-        >>> place.get('uri')
-        'http://sws.geonames.org/2657869'
+        >>> place.get('uri') in ['http://sws.geonames.org/2657869', 'http://sws.geonames.org/7291270']
+        True
         >>> place.get('wikipedia')
         'https://en.wikipedia.org/wiki/Abbotsbury'
 

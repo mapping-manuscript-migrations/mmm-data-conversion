@@ -21,44 +21,58 @@ from tgn import TGN
 log = logging.getLogger(__name__)
 
 
-def change_resource_uri(graph: Graph, old_uris: list, new_uri: URIRef, handle_skos_labels=True):
+def change_resource_uri(graph: Graph, old_uri: URIRef, new_uri: URIRef, handle_skos_labels=True):
     """Change the URI of a resource, point everything to new URI"""
 
-    log.debug('Redirecting %s to %s' % (old_uris, new_uri))
+    log.debug('Redirecting %s to %s' % (old_uri, new_uri))
 
-    for uri in old_uris:
-        for p, o in list(graph.predicate_objects(uri)):
-            if handle_skos_labels and p == SKOS.prefLabel:
-                p = SKOS.altLabel
-            graph.add((new_uri, p, o))
+    for p, o in list(graph.predicate_objects(old_uri)):
+        if handle_skos_labels and p == SKOS.prefLabel:
+            p = SKOS.altLabel
+        graph.add((new_uri, p, o))
 
-    graph = redirect_refs(graph, old_uris, new_uri)  # Redirect and remove old resource
+    graph = redirect_refs(graph, [old_uri], new_uri)  # Redirect and remove old resource
+
+    return graph
+
+
+def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label):
+    """
+    Change manuscript URI, redirect links and add new prefLabel
+    """
+    graph = change_resource_uri(graph, old_uri, new_uri)
+
+    graph.add((new_uri, SKOS.prefLabel, new_pref_label))
+    graph.remove((new_uri, SKOS.altLabel, new_pref_label))
 
     return graph
 
 
 def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
+    """
+    Read manuscript links from a CSV file and mash the manuscripts together
+    """
     csv_data = pd.read_csv(csv, header=0, keep_default_na=False,
                            names=["bibale", "bodley", "sdbm_record", "sdbm_entry", "notes"])
 
     for row in csv_data.itertuples(index=True):
         new_uri = MMMM['manually_linked_' + str(row.Index + 1)]
-        old_bib = MMMM['bibale_' + row.bibale.split('/')[-1]] if row.bibale else None
-        old_bod = MMMM['bodley_' + row.bodley.split('/')[-1]] if row.bodley else None
+        old_bib = MMMM['bibale_' + row.bibale.rstrip('/').split('/')[-1]] if row.bibale else None
+        old_bod = MMMM['bodley_' + row.bodley.rstrip('/').split('/')[-1]] if row.bodley else None
 
         old_sdbm = None
         if row.sdbm_record:
-            resources = sdbm.subjects(MMMS.data_provider_url, URIRef(row.sdbm_record))
+            resources = sdbm.subjects(MMMS.data_provider_url, URIRef(row.sdbm_record.rstrip('/')))
             resources = [res for res in resources if sdbm.value(res, RDF.type) == FRBR.F4_Manifestation_Singleton]
             if len(resources) != 1:
-                log.error('Ambiguous SDBM manuscript record: %s (%s)' % (row.sdbm_record, len(resources)))
+                log.error('Ambiguous or unknown SDBM manuscript record: %s (%s)' % (row.sdbm_record, len(resources)))
             if resources:
                 old_sdbm = resources[0]
         elif row.sdbm_entry:
-            resources = sdbm.subjects(MMMS.data_provider_url, URIRef(row.sdbm_entry))
+            resources = sdbm.subjects(MMMS.data_provider_url, URIRef(row.sdbm_entry.rstrip('/')))
             resources = [res for res in resources if sdbm.value(res, RDF.type) == FRBR.F4_Manifestation_Singleton]
             if len(resources) != 1:
-                log.error('Ambiguous SDBM entry record: %s (%s)' % (row.sdbm_record, len(resources)))
+                log.error('Ambiguous or unknown SDBM entry record: %s (%s)' % (row.sdbm_entry, len(resources)))
             if resources:
                 old_sdbm = resources[0]
 
@@ -68,17 +82,13 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
         log.info('Linking manuscripts %s , %s , %s --> %s (%s)' % (old_bib, old_bod, old_sdbm, new_uri, new_pref_label))
 
         if old_bib:
-            bibale = change_resource_uri(bibale, [old_bib], new_uri)
-            bibale.add((new_uri, SKOS.prefLabel, new_pref_label))
-            bibale.remove((new_uri, SKOS.altLabel, new_pref_label))
+            change_manuscript_uri(bibale, old_bib, new_uri, new_pref_label)
+
         if old_bod:
-            bodley = change_resource_uri(bodley, [old_bod], new_uri)
-            bodley.add((new_uri, SKOS.prefLabel, new_pref_label))
-            bodley.remove((new_uri, SKOS.altLabel, new_pref_label))
+            change_manuscript_uri(bodley, old_bod, new_uri, new_pref_label)
+
         if old_sdbm:
-            sdbm = change_resource_uri(sdbm, [old_sdbm], new_uri)
-            sdbm.add((new_uri, SKOS.prefLabel, new_pref_label))
-            sdbm.remove((new_uri, SKOS.altLabel, new_pref_label))
+            change_manuscript_uri(sdbm, old_sdbm, new_uri, new_pref_label)
 
     return bibale, bodley, sdbm
 
