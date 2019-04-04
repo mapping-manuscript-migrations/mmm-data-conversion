@@ -35,8 +35,9 @@ CONSTRUCT {
     # mmm-schema:language ?language ; # shortcut
     ?property_to_collection ?source_mmm ;
     crm:P70i_is_documented_in ?source_mmm ;
-    mmm-schema:catalog_or_lot_number ?cat_lot_number ;
+    ?cat_lot_property ?cat_lot_number ;
     crm:P3_has_note ?other_info ;
+    mmm-schema:phillipps_number ?phillipps;
     dct:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton
@@ -226,7 +227,7 @@ CONSTRUCT {
   # # other Info reification
 
 }
-#SELECT *
+#SELECT ?entry ?entry_manuscript ?title ?common_title ?cat_lot_number ?phillipps ?cat_lot_property ?other_info
 WHERE {
 
   ?entry a :entries .
@@ -424,6 +425,12 @@ WHERE {
       BIND(CONCAT(STR(mmm:), "source/sdbm_") as ?source_namespace)
     }
 
+    OPTIONAL {
+      # Get Phillipps number from cat_lot_number if source https://sdbm.library.upenn.edu/sources/12495
+      FILTER (?entry_source = <https://sdbm.library.upenn.edu/sources/12495>)
+      BIND(mmm-schema:phillipps_number as ?cat_lot_property)
+    }
+
     # # TODO: if source has no title, generate one for acquisition/observation prefLabel
     # OPTIONAL{
     #   ?entry_source :sources_title ?cat_title
@@ -443,11 +450,23 @@ WHERE {
   }
 
   OPTIONAL {
-    ?entry :entries_catalog_or_lot_number ?cat_lot_number
+    ?entry :entries_catalog_or_lot_number ?cat_lot_number .
+    FILTER(STR(?cat_lot_number) != "")
+    OPTIONAL {
+      BIND(mmm-schema:catalog_or_lot_number as ?cat_lot_property)
+    }
   }
 
   OPTIONAL {
     ?entry :entries_other_info ?other_info
+    FILTER(STR(?other_info) != "")
+    OPTIONAL {
+      # Get Phillipps number
+      ?entry :entries_other_info ?other_info
+      FILTER CONTAINS(?other_info, "Phillipps")
+      BIND(REPLACE(?other_info, "^(.*)Phillipps *(\\d+)(.*)$", "$2") as ?phillipps)
+      FILTER(?phillipps != ?other_info)
+    }
   }
 
   BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
