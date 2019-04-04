@@ -29,6 +29,8 @@ CONSTRUCT
     # TODO: prefLabel
     .
 
+  ?manifestation_singleton_mmm mmm-schema:phillipps_number ?phillipps ;
+    .
 }
 WHERE
 {
@@ -37,7 +39,16 @@ WHERE
 
   OPTIONAL { ?provenance_event rdfs:label ?label }
   OPTIONAL { ?provenance_event crm:P11_had_participant ?actor }
-  OPTIONAL { ?provenance_event crm:P3_has_note ?note }
+  OPTIONAL {
+    ?provenance_event crm:P3_has_note ?note .
+    OPTIONAL {
+      ?provenance_event crm:P3_has_note ?note .
+      FILTER CONTAINS(?note, "Phillipps")
+      BIND(REPLACE(STR(?note), "^.*Phillipps.+MS[\\.\\| ]+(\\d{3,5}).*$", "$1", "s") as ?phillipps)
+      FILTER(?phillipps != STR(?note))
+    }
+  }
+
   OPTIONAL { ?provenance_event crm:P7_took_place_at ?place }
   OPTIONAL {
     ?provenance_event crm:P4_has_time-span ?timespan .
