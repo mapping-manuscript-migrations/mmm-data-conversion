@@ -12,20 +12,21 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-# TODO: Mint MMM URIs
+# TODO: Mint MMM URIs for places and actors in all transformations
 
 CONSTRUCT
 {
-  ?sub a mmm-schema:ManuscriptObservation ;
+  ?provenance_event_mmm a mmm-schema:ManuscriptObservation ;
     skos:prefLabel ?label ;
+    mmm-schema:observed_manuscript ?manifestation_singleton_mmm ;
     mmm-schema:observed_owner ?actor ;
     crm:P3_has_note ?note ;
     crm:P7_took_place_at ?place ;
-    crm:P4_has_time-span ?timespan ;
+    crm:P4_has_time-span ?timespan_mmm ;
     dct:source mmm-schema:Bodley ;
     .
 
-  ?timespan crm:P82a_begin_of_the_begin ?timespan_bb ;
+  ?timespan_mmm crm:P82a_begin_of_the_begin ?timespan_bb ;
     crm:P82b_end_of_the_end ?timespan_ee ;
     # TODO: prefLabel
     .
@@ -33,14 +34,26 @@ CONSTRUCT
 }
 WHERE
 {
-  ?sub a crm:E5_Event . # PROVENANCE EVENT
-  OPTIONAL { ?sub rdfs:label ?label }
-  OPTIONAL { ?sub crm:P11_had_participant ?actor }
-  OPTIONAL { ?sub crm:P3_has_note ?note }
+  ?provenance_event a crm:E5_Event .
+  ?manifestation_singleton crm:P12i_was_present_at ?provenance_event .
+
+  OPTIONAL { ?provenance_event rdfs:label ?label }
+  OPTIONAL { ?provenance_event crm:P11_had_participant ?actor }
+  OPTIONAL { ?provenance_event crm:P3_has_note ?note }
   OPTIONAL {
-    ?sub crm:P4_has_time-span ?timespan .
+    ?provenance_event crm:P4_has_time-span ?timespan .
     OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?timespan_bb }
     OPTIONAL { ?timespan crm:P82b_end_of_the_end ?timespan_ee }
   }
-  OPTIONAL { ?sub crm:P7_took_place_at ?place }
+  OPTIONAL { ?provenance_event crm:P7_took_place_at ?place }
+
+  BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_singleton_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bodley_", ?manifestation_singleton_local_id)) as ?manifestation_singleton_mmm)
+
+  BIND(REPLACE(STR(?timespan), "^.*\\/(.+)", "$1") as ?timespan_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?timespan_local_id, ":", "_"))) as ?timespan_mmm)
+
+  BIND(REPLACE(STR(?provenance_event), "^.*\\/(.+)", "$1") as ?provenance_event_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "observation/bodley_", ?provenance_event_local_id)) as ?provenance_event_mmm)
+
 }
