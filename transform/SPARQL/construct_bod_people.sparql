@@ -12,52 +12,64 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-# TODO:
-# - mint MMM URIs for resources
-# - ADD MISSING EVENTS AND TIME-SPANS
-
 CONSTRUCT {
-  ?bod_person_uri a ?actor_class ;
+  ?actor_mmm a ?actor_class ;
     skos:prefLabel ?preflabel ;
-    skos:altLabel ?person_label ;
+    skos:altLabel ?actor_label ;
     skos:altLabel ?altlabel ;
-    crm:P98i_was_born ?birth_event ;
-    crm:P100i_died_in ?death_event ;
+    crm:P98i_was_born ?birth_mmm ;
+    crm:P100i_died_in ?death_mmm ;
     owl:sameAs ?external_uri ;
-    mmm-schema:data_provider_url ?bod_person_uri ;
-    dct:source mmm-schema:Bodley .
+    mmm-schema:data_provider_url ?actor ;
+    dct:source mmm-schema:Bodley ;
+    .
 
-  ?birth_event a crm:E67_Birth ;
-    crm:P4_has_time-span ?birth_timespan ;
+  ?birth_mmm a crm:E67_Birth ;
+    crm:P4_has_time-span ?birth_timespan_mmm ;
     skos:prefLabel ?birth_label ;
     .
 
-  ?birth_timespan a crm:E52_Time-Span ;
+  ?birth_timespan_mmm a crm:E52_Time-Span ;
     skos:prefLabel ?birth_timespan_label ;
     crm:P82a_begin_of_the_begin ?birth_timespan_begin_begin ;
-    crm:P82b_end_of_the_end ?birth_timespan_end_end .
+    crm:P82b_end_of_the_end ?birth_timespan_end_end ;
+    .
 
-  ?death_event a crm:E69_Death ;
-    crm:P4_has_time-span ?death_timespan ;
+  ?death_mmm a crm:E69_Death ;
+    crm:P4_has_time-span ?death_timespan_mmm ;
     skos:prefLabel ?death_label ;
     .
 
-  ?death_timespan a crm:E52_Time-Span ;
+  ?death_timespan_mmm a crm:E52_Time-Span ;
     skos:prefLabel ?death_timespan_label ;
     crm:P82a_begin_of_the_begin ?death_timespan_begin_begin ;
-    crm:P82b_end_of_the_end ?death_timespan_end_end .
-
+    crm:P82b_end_of_the_end ?death_timespan_end_end ;
+    .
 }
 WHERE
 {
-  ?bod_person_uri a crm:E21_Person .
-  BIND(IRI(mmm-schema:Person) as ?actor_class)
-  OPTIONAL {
-    ?bod_person_uri rdfs:label ?person_label .
+  {
+    ?actor a crm:E21_Person .
+    BIND(IRI(mmm-schema:Person) as ?actor_class)
   }
+  UNION
+  {
+    ?actor a crm:E74_Group .
+    BIND(IRI(mmm-schema:Organization) as ?actor_class)
+  }
+  UNION
+  {
+    ?actor a frbr:F44_Bibliographic_Agency .
+    BIND(IRI(mmm-schema:Organization) as ?actor_class)
+  }
+
   OPTIONAL {
-    ?bod_person_uri crm:P98i_was_born ?birth_event .
-    ?birth_event rdfs:label ?birth_label ;
+    ?actor rdfs:label ?actor_label .
+  }
+
+  OPTIONAL {
+    ?actor crm:P98i_was_born ?birth_event .
+    ?birth_event rdfs:label ?birth_label .
     OPTIONAL {
       ?birth_event crm:P4_has_time-span ?birth_timespan .
       ?birth_timespan rdfs:label ?birth_timespan_label .
@@ -65,8 +77,9 @@ WHERE
       OPTIONAL { ?birth_timespan crm:P82b_end_of_the_end ?birth_timespan_end_end }
     }
   }
+
   OPTIONAL {
-    ?bod_person_uri crm:P100i_died_in ?death_event .
+    ?actor crm:P100i_died_in ?death_event .
     ?death_event rdfs:label ?death_label .
     OPTIONAL {
       ?death_event crm:P4_has_time-span ?death_timespan .
@@ -75,15 +88,24 @@ WHERE
       OPTIONAL { ?death_timespan crm:P82b_end_of_the_end ?death_timespan_end_end }
     }
   }
+
   OPTIONAL {
-    ?bod_person_uri crm:P1_is_identified_by ?appellation .
+    ?actor crm:P1_is_identified_by ?appellation .
     ?appellation rdfs:label ?preflabel .
     OPTIONAL { ?appellation crm:P139_has_alternative_form/rdfs:label ?altlabel  }
   }
+
   OPTIONAL {
-    ?bod_person_uri owl:sameAs ?external_uri .
+    ?actor owl:sameAs ?external_uri .
   }
 
-  # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?mmm_place)
-  # BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?person_local_id))) as ?mmm_actor_uri)
+  BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id)) as ?actor_mmm)
+
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id, "_birth")) as ?birth_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id, "_death")) as ?death_mmm)
+
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", ?actor_local_id, "_birth_timespan")) as ?birth_timespan_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", ?actor_local_id, "_death_timespan")) as ?death_timespan_mmm)
+
 }

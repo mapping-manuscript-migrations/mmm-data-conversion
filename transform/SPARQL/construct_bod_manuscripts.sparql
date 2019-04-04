@@ -9,47 +9,45 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 
-# TODO: Handle composite manuscripts
-
-# TODO: Mint MMM URIs for resources
-
 CONSTRUCT {
-  ?production a crm:E12_Production ;
+  ?production_mmm a crm:E12_Production ;
     crm:P108_has_produced ?manifestation_singleton_mmm ;
-    crm:P4_has_time-span ?production_timespan ;
-    crm:P7_took_place_at ?production_place ;
-    mmm-schema:carried_out_by_as_artist ?production_artist ;
-    mmm-schema:carried_out_by_as_author ?production_author ;
-    mmm-schema:carried_out_by_as_binder ?production_binder ;
-    mmm-schema:carried_out_by_as_commissioner ?production_commissioner ;
-    mmm-schema:carried_out_by_as_dedicatee ?production_dedicatee ;
-    mmm-schema:carried_out_by_as_formerOwner ?production_formerOwner ;
-    mmm-schema:carried_out_by_as_patron ?production_patron ;
-    mmm-schema:carried_out_by_as_scribe ?production_scribe ;
-    mmm-schema:carried_out_by_as_signer ?production_signer ;
+    crm:P4_has_time-span ?production_timespan_mmm ;
+    crm:P7_took_place_at ?production_place_mmm ;
+    mmm-schema:carried_out_by_as_artist ?production_artist_mmm ;
+    mmm-schema:carried_out_by_as_author ?production_author_mmm ;
+    mmm-schema:carried_out_by_as_binder ?production_binder_mmm ;
+    mmm-schema:carried_out_by_as_commissioner ?production_commissioner_mmm ;
+    mmm-schema:carried_out_by_as_dedicatee ?production_dedicatee_mmm ;
+    mmm-schema:carried_out_by_as_formerOwner ?production_formerOwner_mmm ;
+    mmm-schema:carried_out_by_as_patron ?production_patron_mmm ;
+    mmm-schema:carried_out_by_as_scribe ?production_scribe_mmm ;
+    mmm-schema:carried_out_by_as_signer ?production_signer_mmm ;
     .
 
-  ?production_timespan a crm:E52_Time-Span ;
+  ?production_timespan_mmm a crm:E52_Time-Span ;
     skos:prefLabel ?production_timespan_label ;
     crm:P82a_begin_of_the_begin ?production_timespan_begin ;
-    crm:P82b_end_of_the_end ?production_timespan_end .
+    crm:P82b_end_of_the_end ?production_timespan_end ;
+    .
 
   ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?manifestation_singleton_preflabel ;
     crm:P128_carries ?expression_mmm ;
-    crm:P51_has_former_or_current_owner ?prov_agent ;
+    crm:P52_has_current_owner ?prov_agent_mmm ;
     mmm-schema:data_provider_url ?manifestation_singleton ;
-    mmm-schema:manuscript_author ?work_conception_author ;  # shortcut
+    mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
     mmm-schema:manuscript_work ?work_mmm ;  # shortcut
     crm:P46i_forms_part_of mmm-schema:Bodleian_collection ;
-    dct:source mmm-schema:Bodley .
+    dct:source mmm-schema:Bodley ;
+    .
 
 }
 WHERE
 {
   ?manifestation_singleton a frbr:F4_Manifestation_Singleton ;
     rdfs:label ?manifestation_singleton_preflabel .
-  OPTIONAL { ?manifestation_singleton crm:P51_has_former_or_current_owner ?prov_agent }
+  OPTIONAL { ?manifestation_singleton crm:P52_has_current_owner ?prov_agent }
 
   # EXPRESSION / WORK
   OPTIONAL {
@@ -127,11 +125,7 @@ WHERE
     }
   }
 
-  BIND(SUBSTR(?production_timespan_begin, 1, 4) as ?begin_year)
-  BIND(SUBSTR(?production_timespan_end, 1, 4) as ?end_year)
-  BIND(STR(?begin_year) + "-" + STR(?end_year) as ?production_timespan_label)
-
-  BIND(REPLACE(REPLACE(STR(?expression), "^.*\\/catalog/(.+)(/expression)", "$1"), "%23", "_") as ?expression_local_id)
+  BIND(REPLACE(STR(?expression), "^.*\\/(.+)", "$1") as ?expression_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
 
   BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)
@@ -139,4 +133,47 @@ WHERE
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_singleton_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bodley_", ?manifestation_singleton_local_id)) as ?manifestation_singleton_mmm)
+
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/production/bodley_", ?manifestation_singleton_local_id, "_production")) as ?production_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", ?manifestation_singleton_local_id, "_production_timespan")) as ?production_timespan_mmm)
+
+  BIND(SUBSTR(?production_timespan_begin, 1, 4) as ?begin_year)
+  BIND(SUBSTR(?production_timespan_end, 1, 4) as ?end_year)
+  BIND(STR(?begin_year) + "-" + STR(?end_year) as ?production_timespan_label)
+
+  BIND(REPLACE(STR(?production_place), "^.*\\/(.+)", "$1") as ?production_place_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bodley_", REPLACE(?production_place_local_id, ":", "_"))) as ?production_place_mmm)
+
+  BIND(REPLACE(STR(?prov_agent), "^.*\\/(.+)", "$1") as ?prov_agent_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?prov_agent_local_id)) as ?prov_agent_mmm)
+
+  BIND(REPLACE(STR(?work_conception_author), "^.*\\/(.+)", "$1") as ?work_conception_author_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?work_conception_author_local_id)) as ?work_conception_author_mmm)
+
+  BIND(REPLACE(STR(?production_artist), "^.*\\/(.+)", "$1") as ?production_artist_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_artist_local_id)) as ?production_artist_mmm)
+
+  BIND(REPLACE(STR(?production_author), "^.*\\/(.+)", "$1") as ?production_author_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_author_local_id)) as ?production_author_mmm)
+
+  BIND(REPLACE(STR(?production_binder), "^.*\\/(.+)", "$1") as ?production_binder_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_binder_local_id)) as ?production_binder_mmm)
+
+  BIND(REPLACE(STR(?production_commissioner), "^.*\\/(.+)", "$1") as ?production_commissioner_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_commissioner_local_id)) as ?production_commissioner_mmm)
+
+  BIND(REPLACE(STR(?production_dedicatee), "^.*\\/(.+)", "$1") as ?production_dedicatee_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_dedicatee_local_id)) as ?production_dedicatee_mmm)
+
+  BIND(REPLACE(STR(?production_formerOwner), "^.*\\/(.+)", "$1") as ?production_formerOwner_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_formerOwner_local_id)) as ?production_formerOwner_mmm)
+
+  BIND(REPLACE(STR(?production_patron), "^.*\\/(.+)", "$1") as ?production_patron_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_patron_local_id)) as ?production_patron_mmm)
+
+  BIND(REPLACE(STR(?production_scribe), "^.*\\/(.+)", "$1") as ?production_scribe_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_scribe_local_id)) as ?production_scribe_mmm)
+
+  BIND(REPLACE(STR(?production_signer), "^.*\\/(.+)", "$1") as ?production_signer_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_signer_local_id)) as ?production_signer_mmm)
 }

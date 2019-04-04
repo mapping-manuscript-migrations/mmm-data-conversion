@@ -14,11 +14,11 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 
 CONSTRUCT {
-  ?bod_place_uri a crm:E53_Place ;
+  ?place_mmm a crm:E53_Place ;
     skos:prefLabel ?pref_label ;
     skos:altLabel ?place_label ;
     skos:altLabel ?alt_label ;
-    crm:P89_falls_within ?parent_place ;
+    crm:P89_falls_within ?parent_place_mmm ;
     owl:sameAs  ?authority_uri ;
     wgs:lat ?lat ;
     wgs:long ?long ;
@@ -43,4 +43,11 @@ WHERE
   }
   OPTIONAL { ?bod_place_uri owl:sameAs ?authority_uri }
   FILTER(!STRENDS(STR(?bod_place_uri), "place-centroid"))
+
+  BIND(REPLACE(STR(?bod_place_uri), "^.*\\/(.+)", "$1") as ?place_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bodley_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
+
+  # Fix malformed URIs in parent references
+  BIND(REPLACE(REPLACE(STR(?parent_place), "^.*\\/(.+)", "$1"), "place_place_", "place_") as ?parent_place_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bodley_", REPLACE(?parent_place_local_id, ":", "_"))) as ?parent_place_mmm)
 }

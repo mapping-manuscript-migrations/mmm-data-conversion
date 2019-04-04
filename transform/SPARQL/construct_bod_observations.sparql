@@ -12,16 +12,14 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-# TODO: Mint MMM URIs for places and actors in all transformations
-
 CONSTRUCT
 {
   ?provenance_event_mmm a mmm-schema:ManuscriptObservation ;
     skos:prefLabel ?label ;
     mmm-schema:observed_manuscript ?manifestation_singleton_mmm ;
-    mmm-schema:observed_owner ?actor ;
+    mmm-schema:observed_owner ?actor_mmm ;
     crm:P3_has_note ?note ;
-    crm:P7_took_place_at ?place ;
+    crm:P7_took_place_at ?place_mmm ;
     crm:P4_has_time-span ?timespan_mmm ;
     dct:source mmm-schema:Bodley ;
     .
@@ -40,18 +38,24 @@ WHERE
   OPTIONAL { ?provenance_event rdfs:label ?label }
   OPTIONAL { ?provenance_event crm:P11_had_participant ?actor }
   OPTIONAL { ?provenance_event crm:P3_has_note ?note }
+  OPTIONAL { ?provenance_event crm:P7_took_place_at ?place }
   OPTIONAL {
     ?provenance_event crm:P4_has_time-span ?timespan .
     OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?timespan_bb }
     OPTIONAL { ?timespan crm:P82b_end_of_the_end ?timespan_ee }
   }
-  OPTIONAL { ?provenance_event crm:P7_took_place_at ?place }
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_singleton_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bodley_", ?manifestation_singleton_local_id)) as ?manifestation_singleton_mmm)
 
+  BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id)) as ?actor_mmm)
+
+  BIND(REPLACE(STR(?place), "^.*\\/(.+)", "$1") as ?place_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bodley_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
+
   BIND(REPLACE(STR(?timespan), "^.*\\/(.+)", "$1") as ?timespan_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?timespan_local_id, ":", "_"))) as ?timespan_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(?timespan_local_id, ":", "_"))) as ?timespan_mmm)
 
   BIND(REPLACE(STR(?provenance_event), "^.*\\/(.+)", "$1") as ?provenance_event_local_id)
   BIND(IRI(CONCAT(STR(mmm:), "observation/bodley_", ?provenance_event_local_id)) as ?provenance_event_mmm)
