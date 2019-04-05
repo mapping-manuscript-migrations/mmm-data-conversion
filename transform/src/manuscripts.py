@@ -21,7 +21,7 @@ from tgn import TGN
 log = logging.getLogger(__name__)
 
 
-def change_resource_uri(graph: Graph, old_uri: URIRef, new_uri: URIRef, handle_skos_labels=True):
+def redirect_resource(graph: Graph, old_uri: URIRef, new_uri: URIRef, handle_skos_labels=True):
     """Change the URI of a resource, point everything to new URI"""
 
     log.debug('Redirecting %s to %s' % (old_uri, new_uri))
@@ -40,7 +40,7 @@ def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label):
     """
     Change manuscript URI, redirect links and add new prefLabel
     """
-    graph = change_resource_uri(graph, old_uri, new_uri)
+    graph = redirect_resource(graph, old_uri, new_uri)
 
     graph.add((new_uri, SKOS.prefLabel, new_pref_label))
     graph.remove((new_uri, SKOS.altLabel, new_pref_label))
@@ -77,7 +77,8 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
                 old_sdbm = resources[0]
 
         new_pref_label = bodley.value(old_bod, SKOS.prefLabel) or bibale.value(old_bib, SKOS.prefLabel) or \
-            sdbm.value(old_sdbm, SKOS.prefLabel) or Literal('Harmonized manifestation singleton #%s' % (row.Index + 1))
+                         sdbm.value(old_sdbm, SKOS.prefLabel) or Literal(
+            'Harmonized manifestation singleton #%s' % (row.Index + 1))
 
         log.info('Linking manuscripts %s , %s , %s --> %s (%s)' % (old_bib, old_bod, old_sdbm, new_uri, new_pref_label))
 
@@ -93,10 +94,59 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
     return bibale, bodley, sdbm
 
 
+def link_phillipps(bibale: Graph, bodley: Graph, sdbm: Graph):
+    """
+    Link manuscripts by Phillipps numbers
+    """
+    phillips_manuscripts_bib = {phillips: uri for uri, phillips in bibale[:MMMS.phillipps_number:]}
+    phillips_manuscripts_bod = {phillips: uri for uri, phillips in bodley[:MMMS.phillipps_number:]}
+    phillips_manuscripts_sdbm = {phillips: uri for uri, phillips in sdbm[:MMMS.phillipps_number:]}
+
+    phillipps_numbers = phillips_manuscripts_bib.keys() | \
+                        phillips_manuscripts_bod.keys() | \
+                        phillips_manuscripts_sdbm.keys()
+
+    log.info('Got %s Phillipps numbers from Bibale' % len(phillips_manuscripts_bib))
+    log.info('Got %s Phillipps numbers from Bodley' % len(phillips_manuscripts_bod))
+    log.info('Got %s Phillipps numbers from SDBM' % len(phillips_manuscripts_sdbm))
+    log.info('List of known Phillipps numbers: %s' % sorted(phillipps_numbers))
+
+    for number in sorted(phillipps_numbers):
+        bib_hit = phillips_manuscripts_bib.get(number)
+        bod_hit = phillips_manuscripts_bod.get(number)
+        sdbm_hit = phillips_manuscripts_sdbm.get(number)
+
+        if bool(bib_hit) + bool(bod_hit) + bool(sdbm_hit) < 2:
+            log.debug('Not enough matches to harmonize manuscripts for Phillipps number %s' % number)
+            continue
+
+        new_uri = MMMM['phillipps_' + str(number)]
+
+        new_pref_label = (bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None) or \
+                         (bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None) or \
+                         (sdbm.value(sdbm_hit, SKOS.prefLabel) if sdbm_hit else None) or \
+                         Literal('Phillipps manuscript #%s' % number)
+
+        log.info(
+            'Harmonizing Phillipps manuscript %s: %s , %s , %s --> %s (%s)' %
+            (number, bib_hit, bod_hit, sdbm_hit, new_uri, new_pref_label))
+
+        if bib_hit:
+            change_manuscript_uri(bibale, bib_hit, new_uri, new_pref_label)
+
+        if bod_hit:
+            change_manuscript_uri(bodley, bod_hit, new_uri, new_pref_label)
+
+        if sdbm_hit:
+            change_manuscript_uri(sdbm, sdbm_hit, new_uri, new_pref_label)
+
+    return bibale, bodley, sdbm
+
+
 def main():
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
-    argparser.add_argument("task", help="Task to perform", choices=['manual_links'])
+    argparser.add_argument("task", help="Task to perform", choices=['manual_links', 'link_phillipps'])
     argparser.add_argument("input_bibale", help="Input Bibale RDF file")
     argparser.add_argument("input_bodley", help="Input Bodley RDF file")
     argparser.add_argument("input_sdbm", help="Input SDBM RDF file")
@@ -124,6 +174,8 @@ def main():
 
     if args.task == 'manual_links':
         bib, bod, sdbm = read_manual_links(input_bibale, input_bodley, input_sdbm, args.input_csv)
+    elif args.task == 'link_phillipps':
+        bib, bod, sdbm = link_phillipps(input_bibale, input_bodley, input_sdbm)
     else:
         log.error('No valid task given.')
         return
