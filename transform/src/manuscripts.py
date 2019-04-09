@@ -103,43 +103,42 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
     return bibale, bodley, sdbm
 
 
-def link_phillipps(bibale: Graph, bodley: Graph, sdbm: Graph):
+def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, prefix: Namespace, name: str):
     """
-    Link manuscripts by Phillipps numbers
+    Link manuscripts by shelfmark numbers
     """
-    phillips_manuscripts_bib = {phillips: uri for uri, phillips in bibale[:MMMS.phillipps_number:]}
-    phillips_manuscripts_bod = {phillips: uri for uri, phillips in bodley[:MMMS.phillipps_number:]}
-    phillips_manuscripts_sdbm = {phillips: uri for uri, phillips in sdbm[:MMMS.phillipps_number:]}
+    manuscripts_bib = {shelfmark: uri for uri, shelfmark in bibale[:prop:]}
+    manuscripts_bod = {shelfmark: uri for uri, shelfmark in bodley[:prop:]}
+    manuscripts_sdbm = {shelfmark: uri for uri, shelfmark in sdbm[:prop:]}
 
-    phillipps_numbers = phillips_manuscripts_bib.keys() | \
-                        phillips_manuscripts_bod.keys() | \
-                        phillips_manuscripts_sdbm.keys()
+    shelfmark_numbers = manuscripts_bib.keys() | \
+                        manuscripts_bod.keys() | \
+                        manuscripts_sdbm.keys()
 
-    log.info('Got %s Phillipps numbers from Bibale' % len(phillips_manuscripts_bib))
-    log.info('Got %s Phillipps numbers from Bodley' % len(phillips_manuscripts_bod))
-    log.info('Got %s Phillipps numbers from SDBM' % len(phillips_manuscripts_sdbm))
-    log.info('List of known Phillipps numbers: %s' % sorted(phillipps_numbers))
+    log.info('Got {num} {name} numbers from Bibale'.format(name=name, num=len(manuscripts_bib)))
+    log.info('Got {num} {name} numbers from Bodley'.format(name=name, num=len(manuscripts_bod)))
+    log.info('Got {num} {name} numbers from SDBM'.format(name=name, num=len(manuscripts_sdbm)))
 
-    for number in sorted(phillipps_numbers):
-        bib_hit = phillips_manuscripts_bib.get(number)
-        bod_hit = phillips_manuscripts_bod.get(number)
-        sdbm_hit = phillips_manuscripts_sdbm.get(number)
+    for number in sorted(shelfmark_numbers):
+        bib_hit = manuscripts_bib.get(number)
+        bod_hit = manuscripts_bod.get(number)
+        sdbm_hit = manuscripts_sdbm.get(number)
 
         if bool(bib_hit) + bool(bod_hit) + bool(sdbm_hit) < 2:
-            log.debug('Not enough matches to harmonize manuscripts for Phillipps number %s' % number)
+            log.debug('Not enough matches to harmonize for {name} number {num}'.format(name=name, num=number))
             continue
 
-        new_uri = MMMM['phillipps_' + str(number)]
+        new_uri = prefix[str(number)]
 
         labels = (bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None,
                   bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None,
                   sdbm.value(sdbm_hit, SKOS.prefLabel) if sdbm_hit else None)
 
-        new_pref_label = form_preflabel(labels, 'Phillipps manuscript #%s' % number)
+        new_pref_label = form_preflabel(labels, '{name} manuscript #{num}'.format(name=name, num=number))
 
         log.info(
-            'Harmonizing Phillipps manuscript %s: %s , %s , %s --> %s (%s)' %
-            (number, bib_hit, bod_hit, sdbm_hit, new_uri, new_pref_label))
+            'Harmonizing {name} manuscript {num}: {bib} , {bod} , {sdbm} --> {new_uri}'.
+                format(name=name, num=number, bib=bib_hit, bod=bod_hit, sdbm=sdbm_hit, new_uri=new_uri))
 
         if bib_hit:
             change_manuscript_uri(bibale, bib_hit, new_uri, new_pref_label)
@@ -156,7 +155,7 @@ def link_phillipps(bibale: Graph, bodley: Graph, sdbm: Graph):
 def main():
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
-    argparser.add_argument("task", help="Task to perform", choices=['manual_links', 'link_phillipps'])
+    argparser.add_argument("task", help="Task to perform", choices=['manual_links', 'link_shelfmark', 'all'])
     argparser.add_argument("input_bibale", help="Input Bibale RDF file")
     argparser.add_argument("input_bodley", help="Input Bodley RDF file")
     argparser.add_argument("input_sdbm", help="Input SDBM RDF file")
@@ -175,25 +174,30 @@ def main():
 
     log.info('Reading input graphs.')
 
-    input_bibale = Graph()
-    input_bibale.parse(args.input_bibale, format=guess_format(args.input_bibale))
-    input_bodley = Graph()
-    input_bodley.parse(args.input_bodley, format=guess_format(args.input_bodley))
-    input_sdbm = Graph()
-    input_sdbm.parse(args.input_sdbm, format=guess_format(args.input_sdbm))
+    bibale = Graph()
+    bibale.parse(args.input_bibale, format=guess_format(args.input_bibale))
+    bodley = Graph()
+    bodley.parse(args.input_bodley, format=guess_format(args.input_bodley))
+    sdbm = Graph()
+    sdbm.parse(args.input_sdbm, format=guess_format(args.input_sdbm))
 
-    if args.task == 'manual_links':
-        bib, bod, sdbm = read_manual_links(input_bibale, input_bodley, input_sdbm, args.input_csv)
-    elif args.task == 'link_phillipps':
-        bib, bod, sdbm = link_phillipps(input_bibale, input_bodley, input_sdbm)
-    else:
-        log.error('No valid task given.')
-        return
+    if args.task in ['manual_links', 'all']:
+        log.info('Adding manual manuscript links')
+        bibale, bodley, sdbm = read_manual_links(bibale, bodley, sdbm, args.input_csv)
+
+    if args.task in ['link_shelfmark', 'all']:
+        log.info('Linking manuscripts by Phillipps shelfmarks')
+        bibale, bodley, sdbm = link_by_shelfmark(bibale, bodley, sdbm,
+                                           MMMS.phillipps_number, MMMM['phillipps_'], "Phillipps")
+
+        log.info('Linking manuscripts by BNF latin')
+        bibale, bodley, sdbm = link_by_shelfmark(bibale, bodley, sdbm,
+                                           MMMS.bnf_latin_number, MMMM['bnf_latin_'], "BNF Latin")
 
     log.info('Serializing output files...')
 
-    bind_namespaces(bib).serialize(args.input_bibale, format=guess_format(args.input_bibale))
-    bind_namespaces(bod).serialize(args.input_bodley, format=guess_format(args.input_bodley))
+    bind_namespaces(bibale).serialize(args.input_bibale, format=guess_format(args.input_bibale))
+    bind_namespaces(bodley).serialize(args.input_bodley, format=guess_format(args.input_bodley))
     bind_namespaces(sdbm).serialize(args.input_sdbm, format=guess_format(args.input_sdbm))
 
     log.info('Task finished.')
