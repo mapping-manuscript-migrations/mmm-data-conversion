@@ -37,7 +37,8 @@ CONSTRUCT {
     crm:P70i_is_documented_in ?source_mmm ;
     ?cat_lot_property ?cat_lot_number ;
     crm:P3_has_note ?other_info ;
-    mmm-schema:phillipps_number ?phillipps;
+    mmm-schema:phillipps_number ?phillipps ;
+    mmm-schema:bnf_latin_number ?bnf_latin ;
     dct:source mmm-schema:SDBM .
 
   ?parent_manifestation_singleton
@@ -454,6 +455,13 @@ WHERE {
     FILTER(STR(?cat_lot_number) != "")
     OPTIONAL {
       BIND(mmm-schema:catalog_or_lot_number as ?cat_lot_property)
+    }
+    OPTIONAL {
+      # Get NBF Latin number
+      ?entry :entries_catalog_or_lot_number ?cat_lot_number
+      FILTER CONTAINS(?cat_lot_number, "Latin")
+      BIND(REPLACE(?cat_lot_number, "^(.*)Latin *(\\d.+)$", "$2") as ?bnf_latin)
+      FILTER(?bnf_latin != ?cat_lot_number)
     }
   }
 

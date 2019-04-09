@@ -68,6 +68,7 @@ CONSTRUCT {
     mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
     crm:P46i_forms_part_of ?collection_mmm ;
     crm:P3_has_note ?note ;
+    mmm-schema:bnf_latin_number ?bnf_latin ;
     dct:source mmm-schema:Bibale
     .
 }
@@ -97,6 +98,16 @@ WHERE
   # ?rep rdfs:label ?rep_label .
   # ?set rdfs:label ?settlement_label .
   # ?mark rdfs:label ?shelfmark_label .
+
+  OPTIONAL {
+    # Get NBF Latin number
+    ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
+    ?manifestation_singleton rdfs:label ?preflabel .
+      FILTER REGEX(?preflabel, "paris", "i")
+      FILTER CONTAINS(?shelfmark, "lat. ")
+      BIND(REPLACE(?shelfmark, "^lat. *(\\d.+)$", "$1") as ?bnf_latin)
+      FILTER(?bnf_latin != ?shelfmark)
+  }
 
   # PRODUCTION DATE
   OPTIONAL {
