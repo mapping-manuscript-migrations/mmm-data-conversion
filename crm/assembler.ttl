@@ -11,6 +11,7 @@
 @prefix spatial: <http://jena.apache.org/spatial#> .
 @prefix schema:  <http://schema.org/> .
 @prefix :        <#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
 
 <#mmm-cidoc>  rdf:type fuseki:Service ;
     fuseki:name              "ds" ;   # http://host:port/ds
@@ -73,5 +74,6 @@
          [ text:field "text" ; text:predicate skos:altLabel ]
          [ text:field "text" ; text:predicate skos:hiddenLabel ]
          [ text:field "text" ; text:predicate rdfs:label ]
+         [ text:field "text" ; text:predicate crm:P3_has_note ]
          )
     .
