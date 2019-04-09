@@ -4,19 +4,14 @@
 
 import argparse
 import logging
-import os
-from collections import defaultdict
-from decimal import Decimal
-from itertools import chain
 
 import pandas as pd
-from rdflib import URIRef, Literal, RDF, OWL
+from rdflib import URIRef, Literal, RDF
 from rdflib.util import guess_format
+from typing import Iterable
 
-from geonames import GeoNames
 from linker import redirect_refs
 from namespaces import *
-from tgn import TGN
 
 log = logging.getLogger(__name__)
 
@@ -48,6 +43,19 @@ def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label):
     return graph
 
 
+def form_preflabel(labels: Iterable, default: str):
+    """
+    Form a new prefLabel for a combined manuscript
+
+    >>> form_preflabel(['Christ Church MS. 343', 'SDBM_MS_18044'], 'Linked manuscript')
+    rdflib.term.Literal('Christ Church MS. 343; SDBM_MS_18044')
+    >>> form_preflabel(['', None], 'Linked manuscript')
+    rdflib.term.Literal('Linked manuscript')
+    """
+
+    return Literal(('; '.join(str(lbl) for lbl in labels if lbl)) or default)
+
+
 def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
     """
     Read manuscript links from a CSV file and mash the manuscripts together
@@ -76,9 +84,10 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
             if resources:
                 old_sdbm = resources[0]
 
-        new_pref_label = bodley.value(old_bod, SKOS.prefLabel) or bibale.value(old_bib, SKOS.prefLabel) or \
-                         sdbm.value(old_sdbm, SKOS.prefLabel) or Literal(
-            'Harmonized manifestation singleton #%s' % (row.Index + 1))
+        labels = (bodley.value(old_bod, SKOS.prefLabel) if old_bod else None,
+                  bibale.value(old_bib, SKOS.prefLabel) if old_bib else None,
+                  sdbm.value(old_sdbm, SKOS.prefLabel) if old_sdbm else None)
+        new_pref_label = form_preflabel(labels, 'Harmonized manifestation singleton #%s' % (row.Index + 1))
 
         log.info('Linking manuscripts %s , %s , %s --> %s (%s)' % (old_bib, old_bod, old_sdbm, new_uri, new_pref_label))
 
@@ -122,10 +131,11 @@ def link_phillipps(bibale: Graph, bodley: Graph, sdbm: Graph):
 
         new_uri = MMMM['phillipps_' + str(number)]
 
-        new_pref_label = (bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None) or \
-                         (bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None) or \
-                         (sdbm.value(sdbm_hit, SKOS.prefLabel) if sdbm_hit else None) or \
-                         Literal('Phillipps manuscript #%s' % number)
+        labels = (bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None,
+                  bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None,
+                  sdbm.value(sdbm_hit, SKOS.prefLabel) if sdbm_hit else None)
+
+        new_pref_label = form_preflabel(labels, 'Phillipps manuscript #%s' % number)
 
         log.info(
             'Harmonizing Phillipps manuscript %s: %s , %s , %s --> %s (%s)' %
