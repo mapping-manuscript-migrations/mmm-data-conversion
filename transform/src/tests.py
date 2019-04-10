@@ -483,6 +483,7 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
         sdbm.add((URIRef('http://ldf.fi/mmm/manifestation_singleton/18044'), MMMS.phillipps_number, Literal(500)))
 
         links = link_by_shelfmark(bib, bod, sdbm, MMMS.phillipps_number, "Phillipps")
+        links += link_by_shelfmark(bib, bod, sdbm, MMMS.phillipps_number, "Phillipps")
 
         bib, bod, sdbm = link_manuscripts(bib, bod, sdbm, links)
 
