@@ -57,7 +57,7 @@ WHERE
               rdfs:label ?label .
 
   OPTIONAL { ?collection bibale:type:collection_type ?collection_type_literal }
-  OPTIONAL { ?collection bibale:type:collection_place ?collection_place }
+  OPTIONAL { ?collection bibale:type:collection_place/crm:P53_has_former_or_current_location ?collection_place }
 
   OPTIONAL {  # This exists for 23 collections
     ?collection crm:P1_is_identified_by/rdfs:label ?altlabel_ .
