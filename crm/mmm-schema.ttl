@@ -192,3 +192,15 @@
 :bnf_latin_number a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Bibliothèque nationale de France latin number" .
+
+:bnf_hebreu_number a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Bibliothèque nationale de France hebreu number" .
+
+:bnf_nal_number a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Bibliothèque nationale de France nouv. acq. lat. number" .
+
+:arsenal_shelfmark a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "l'Arsenal collection number" .

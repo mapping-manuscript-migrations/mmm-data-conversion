@@ -12,66 +12,70 @@ PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 
 CONSTRUCT {
 
-  ?expression_mmm a frbroo:F2_Expression , crm:E33_Linguistic_Object;
-    skos:prefLabel ?expression_label ;
-    skos:altLabel ?expression_title ;
-    mmm-schema:data_provider_url ?expression ;
-    # crm:P72_has_language ?manifestation_work_language ;
-    dct:source mmm-schema:Bibale .
+ ?expression_mmm a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+   skos:prefLabel ?expression_label ;
+   skos:altLabel ?expression_title ;
+   mmm-schema:data_provider_url ?expression ;
+   # crm:P72_has_language ?manifestation_work_language ;
+   dct:source mmm-schema:Bibale .
 
-  ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
-    frbroo:R17_created ?expression_mmm ;
-    frbroo:R18_created ?manifestation_singleton_mmm ;
-    frbroo:R19_created_a_realisation_of ?expression_work_mmm ;
-    mmm-schema:carried_out_by_as_author ?expression_author_mmm ;
-    mmm-schema:carried_out_by_as_scribe ?expression_scribe_mmm ;
-    crm:P7_took_place_at ?expression_place_mmm ;
-    # dct:source mmm-schema:Bibale .
-    .
+ ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
+   frbroo:R17_created ?expression_mmm ;
+   frbroo:R18_created ?manifestation_singleton_mmm ;
+   frbroo:R19_created_a_realisation_of ?expression_work_mmm ;
+   mmm-schema:carried_out_by_as_author ?expression_author_mmm ;
+   mmm-schema:carried_out_by_as_scribe ?expression_scribe_mmm ;
+   crm:P7_took_place_at ?expression_place_mmm ;
+   # dct:source mmm-schema:Bibale .
+   .
 
-  ?production_mmm a crm:E12_Production ;
-    crm:P108_has_produced ?manifestation_singleton_mmm ;
-    crm:P4_has_time-span ?manuscript_timespan_mmm ;
-    crm:P4_has_time-span ?production_timespan_mmm ;
-    crm:P7_took_place_at ?production_place_mmm ;
-    crm:P7_took_place_at ?manuscript_place_mmm ;
-    mmm-schema:carried_out_by_as_author ?production_author_mmm ;
-    mmm-schema:carried_out_by_as_binder ?production_binder_mmm ;
-    mmm-schema:carried_out_by_as_commissioner ?production_commissioner_mmm ;
-    mmm-schema:carried_out_by_as_creator ?production_creator_mmm ;
-    mmm-schema:carried_out_by_as_illuminator ?production_illuminator_mmm ;
-    mmm-schema:carried_out_by_as_printer ?production_printer_mmm ;
-    mmm-schema:carried_out_by_as_scribe ?production_scribe_mmm ;
-    dct:source mmm-schema:Bibale .
+ ?production_mmm a crm:E12_Production ;
+   crm:P108_has_produced ?manifestation_singleton_mmm ;
+   crm:P4_has_time-span ?manuscript_timespan_mmm ;
+   crm:P4_has_time-span ?production_timespan_mmm ;
+   crm:P7_took_place_at ?production_place_mmm ;
+   crm:P7_took_place_at ?manuscript_place_mmm ;
+   mmm-schema:carried_out_by_as_author ?production_author_mmm ;
+   mmm-schema:carried_out_by_as_binder ?production_binder_mmm ;
+   mmm-schema:carried_out_by_as_commissioner ?production_commissioner_mmm ;
+   mmm-schema:carried_out_by_as_creator ?production_creator_mmm ;
+   mmm-schema:carried_out_by_as_illuminator ?production_illuminator_mmm ;
+   mmm-schema:carried_out_by_as_printer ?production_printer_mmm ;
+   mmm-schema:carried_out_by_as_scribe ?production_scribe_mmm ;
+   dct:source mmm-schema:Bibale .
 
-  ?manuscript_timespan_mmm a crm:E52_Time-Span ;
-    skos:prefLabel ?manuscript_timespan_label ;
-    crm:P82a_begin_of_the_begin ?manuscript_timespan_bb ;
-    crm:P81a_end_of_the_begin ?manuscript_timespan_eb ;
-    crm:P81b_begin_of_the_end ?manuscript_timespan_be ;
-    crm:P82b_end_of_the_end ?manuscript_timespan_ee .
+ ?manuscript_timespan_mmm a crm:E52_Time-Span ;
+   skos:prefLabel ?manuscript_timespan_label ;
+   crm:P82a_begin_of_the_begin ?manuscript_timespan_bb ;
+   crm:P81a_end_of_the_begin ?manuscript_timespan_eb ;
+   crm:P81b_begin_of_the_end ?manuscript_timespan_be ;
+   crm:P82b_end_of_the_end ?manuscript_timespan_ee .
 
-  ?production_timespan_mmm a crm:E52_Time-Span ;
-    skos:prefLabel ?production_timespan_label ;
-    crm:P82a_begin_of_the_begin ?production_timespan_bb ;
-    crm:P81a_end_of_the_begin ?production_timespan_eb ;
-    crm:P81b_begin_of_the_end ?production_timespan_be ;
-    crm:P82b_end_of_the_end ?production_timespan_ee .
+ ?production_timespan_mmm a crm:E52_Time-Span ;
+   skos:prefLabel ?production_timespan_label ;
+   crm:P82a_begin_of_the_begin ?production_timespan_bb ;
+   crm:P81a_end_of_the_begin ?production_timespan_eb ;
+   crm:P81b_begin_of_the_end ?production_timespan_be ;
+   crm:P82b_end_of_the_end ?production_timespan_ee .
 
-  ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
-    crm:P128_carries ?expression_mmm ;
-    skos:prefLabel ?preflabel ;
-    mmm-schema:data_provider_url ?manifestation_singleton ;
-    mmm-schema:manuscript_work ?work_mmm ;  # shortcut
-    mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
-    mmm-schema:manuscript_author ?expression_author_mmm ;  # shortcut
-    mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
-    crm:P46i_forms_part_of ?collection_mmm ;
-    crm:P3_has_note ?note ;
-    mmm-schema:bnf_latin_number ?bnf_latin ;
-    dct:source mmm-schema:Bibale
-    .
+ ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
+   crm:P128_carries ?expression_mmm ;
+   skos:prefLabel ?preflabel ;
+   mmm-schema:data_provider_url ?manifestation_singleton ;
+   mmm-schema:manuscript_work ?work_mmm ;  # shortcut
+   mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
+   mmm-schema:manuscript_author ?expression_author_mmm ;  # shortcut
+   mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
+   crm:P46i_forms_part_of ?collection_mmm ;
+   crm:P3_has_note ?note ;
+   mmm-schema:bnf_latin_number ?bnf_latin ;
+   mmm-schema:bnf_hebreu_number ?bnf_hebreu ;
+   mmm-schema:bnf_nal_number ?bnf_nouv ;
+   mmm-schema:arsenal_shelfmark ?arsenal_shelfmark ;
+   dct:source mmm-schema:Bibale
+   .
 }
+# SELECT DISTINCT ?manifestation_singleton ?preflabel ?note ?shelfmark ?phillipps ?bnf_latin ?bnf_hebreu ?bnf_nouv ?bnf_arsenal
 WHERE
 {
   ?manifestation_singleton a bibale:type:livre ;
@@ -99,16 +103,6 @@ WHERE
   # ?set rdfs:label ?settlement_label .
   # ?mark rdfs:label ?shelfmark_label .
 
-  OPTIONAL {
-    # Get NBF Latin number
-    ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
-    ?manifestation_singleton rdfs:label ?preflabel .
-      FILTER REGEX(?preflabel, "paris", "i")
-      FILTER CONTAINS(?shelfmark, "lat. ")
-      BIND(REPLACE(?shelfmark, "^lat. *(\\d.+)$", "$1") as ?bnf_latin)
-      FILTER(?bnf_latin != ?shelfmark)
-  }
-
   # PRODUCTION DATE
   OPTIONAL {
     ?manifestation_singleton bibale:type:date/crm:P4_has_time-span ?manuscript_timespan .
@@ -127,7 +121,7 @@ WHERE
   # PRODUCTION
   OPTIONAL {
     ?production crm:P108_has_produced ?manifestation_singleton ;
-      a crm:E12_Production .
+                a crm:E12_Production .
     OPTIONAL {
       ?production crm:P4_has_time-span ?production_timespan .
       OPTIONAL { ?production_timespan crm:P82a_begin_of_the_begin ?production_timespan_bb }
@@ -140,40 +134,40 @@ WHERE
       ?production crm:P7_took_place_at ?production_place .
     }
     OPTIONAL { ?production crm:P01i_is_domain_of [
-         a crm:PC14_carried_out_by ;
-         crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
-         crm:P02_has_range ?production_author ;
-     ] }
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
+          crm:P02_has_range ?production_author ;
+          ] }
     OPTIONAL { ?production crm:P01i_is_domain_of [
-         a crm:PC14_carried_out_by ;
-         crm:P14.1_in_the_role_of [ crm:E55_Type  "Binder" ] ;
-         crm:P02_has_range ?production_binder ;
-     ] }
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Binder" ] ;
+          crm:P02_has_range ?production_binder ;
+          ] }
     OPTIONAL { ?production crm:P01i_is_domain_of [
-         a crm:PC14_carried_out_by ;
-         crm:P14.1_in_the_role_of [ crm:E55_Type  "Commissioner" ] ;
-         crm:P02_has_range ?production_commissioner ;
-     ] }
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Commissioner" ] ;
+          crm:P02_has_range ?production_commissioner ;
+          ] }
     OPTIONAL { ?production crm:P01i_is_domain_of [
-         a crm:PC14_carried_out_by ;
-         crm:P14.1_in_the_role_of [ crm:E55_Type  "Creator" ] ;
-         crm:P02_has_range ?production_creator ;
-     ] }
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Creator" ] ;
+          crm:P02_has_range ?production_creator ;
+          ] }
     OPTIONAL { ?production crm:P01i_is_domain_of [
-         a crm:PC14_carried_out_by ;
-         crm:P14.1_in_the_role_of [ crm:E55_Type  "Illuminator" ] ;
-         crm:P02_has_range ?production_illuminator ;
-     ] }
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Illuminator" ] ;
+          crm:P02_has_range ?production_illuminator ;
+          ] }
     OPTIONAL { ?production crm:P01i_is_domain_of [
-         a crm:PC14_carried_out_by ;
-         crm:P14.1_in_the_role_of [ crm:E55_Type  "Printer" ] ;
-         crm:P02_has_range ?production_printer ;
-     ] }  # Note, also other scribe path
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Printer" ] ;
+          crm:P02_has_range ?production_printer ;
+          ] }  # Note, also other scribe path
     OPTIONAL { ?production crm:P01i_is_domain_of [
-         a crm:PC14_carried_out_by ;
-         crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ] ;
-         crm:P02_has_range ?production_scribe ;
-     ] }  # Note, also other scribe path
+          a crm:PC14_carried_out_by ;
+          crm:P14.1_in_the_role_of [ crm:E55_Type  "Scribe" ] ;
+          crm:P02_has_range ?production_scribe ;
+          ] }  # Note, also other scribe path
   }
 
   # EXPRESSION
@@ -186,8 +180,8 @@ WHERE
     OPTIONAL { ?expression crm:P102_has_title ?expression_title }
     OPTIONAL {
       ?expression_creation a frbroo2:F28_Expression_Creation ;
-        frbroo2:R17_created ?expression ;
-      OPTIONAL { ?expression_creation crm:P7_took_place_at ?expression_place }
+                           frbroo2:R17_created ?expression ;
+                           OPTIONAL { ?expression_creation crm:P7_took_place_at ?expression_place }
       OPTIONAL {
         { ?expression_creation frbroo2:R19_created_a_realisation_of ?expression_work }
         UNION
@@ -195,16 +189,16 @@ WHERE
       }
       # OPTIONAL { frbroo2:R19_created_a_realisation_of ?manifestation_work }
       OPTIONAL { ?expression_creation crm:P01i_is_domain_of [
-           a crm:PC14_carried_out_by ;
-           crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
-           crm:P02_has_range ?expression_author ;
-           ]
+            a crm:PC14_carried_out_by ;
+            crm:P14.1_in_the_role_of  [ crm:E55_Type  "Author" ] ;
+                                                               crm:P02_has_range ?expression_author ;
+                                                               ]
       }
       OPTIONAL { ?expression_creation crm:P01i_is_domain_of [
-           a crm:PC14_carried_out_by ;
-           crm:P14.1_in_the_role_of  [ crm:E55_Type  "Scribe" ] ;
-           crm:P02_has_range ?expression_scribe ;
-           ]
+            a crm:PC14_carried_out_by ;
+            crm:P14.1_in_the_role_of  [ crm:E55_Type  "Scribe" ] ;
+                                                               crm:P02_has_range ?expression_scribe ;
+                                                               ]
       }
     }
   }
@@ -220,12 +214,47 @@ WHERE
       ?work_conception a frbroo2:F27_Work_Conception .
       OPTIONAL {
         ?work_conception crm:P01i_is_domain_of  [
-          a crm:PC14_carried_out_by ;
-          crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
-          crm:P02_has_range ?work_conception_author ;
-        ] ;
-      }
+            a crm:PC14_carried_out_by ;
+            crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
+                                                              crm:P02_has_range ?work_conception_author ;
+                                                              ] ;
+                                                              }
     }
+  }
+
+  # BNF SHELFMARKS
+  OPTIONAL {
+    ?manifestation_singleton rdfs:label ?preflabel .
+    FILTER CONTAINS(?preflabel, "Bibliothèque nationale de France")
+    OPTIONAL {
+      # NBF LATIN NUMBER
+      ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
+      FILTER CONTAINS(?shelfmark, "lat. ")
+      BIND(REPLACE(?shelfmark, "^lat\\. *(\\d.+)$", "$1") as ?bnf_latin)
+      FILTER(?bnf_latin != ?shelfmark)
+    }
+    OPTIONAL {
+      # NBF HEBREU NUMBER
+      ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
+      FILTER CONTAINS(?shelfmark, "hebr. ")
+      BIND(REPLACE(?shelfmark, "^hebr\\. *(\\d.+)$", "$1") as ?bnf_hebreu)
+      FILTER(?bnf_hebreu != ?shelfmark)
+    }
+    OPTIONAL {
+      # NBF NAL NUMBER
+      ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
+      FILTER CONTAINS(?shelfmark, "nouv. acq. lat. ")
+      BIND(REPLACE(?shelfmark, "^nouv. acq. lat\\. *(\\d.+)$", "$1") as ?bnf_nouv)
+      FILTER(?bnf_nouv != ?shelfmark)
+    }
+  }
+
+  # ARSENAL NUMBER
+  OPTIONAL {
+    ?manifestation_singleton rdfs:label ?preflabel .
+    FILTER CONTAINS(?preflabel, "Bibliothèque de l'Arsenal")
+    ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
+    BIND(?shelfmark as ?arsenal_shelfmark)
   }
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_local_id)
