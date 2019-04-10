@@ -15,7 +15,7 @@ from io import StringIO
 from rdflib import URIRef, RDF, OWL, Literal
 
 from linker import PlaceLinker
-from manuscripts import read_manual_links, link_by_shelfmark
+from manuscripts import read_manual_links, link_by_shelfmark, link_manuscripts, change_manuscript_uri
 from namespaces import *
 
 
@@ -110,7 +110,6 @@ class TestLinkerSDBM(unittest.TestCase):
 
 
 class TestLinkerBodley(unittest.TestCase):
-
     test_bodley_data = """
     @prefix :      <https://sdbm.library.upenn.edu/> .
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
@@ -207,7 +206,6 @@ class TestLinkerBodley(unittest.TestCase):
 
 
 class TestLinkerBibale(unittest.TestCase):
-
     test_bibale_data = """
     @prefix mmm-schema: <http://ldf.fi/mmm/schema/> .
     @prefix dct:   <http://purl.org/dc/terms/> .
@@ -245,7 +243,6 @@ class TestLinkerBibale(unittest.TestCase):
     """
 
     def test_bibale_places(self):
-
         g = Graph()
         g.parse(data=self.test_bibale_data, format='turtle')
 
@@ -363,8 +360,10 @@ class TestLinkerTGN(unittest.TestCase):
 
         # Check place annotations
         self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/bodley_place_21')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/bodley_place_7002445')))) >= 8)
-        self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/bodley_place_7291891')))) >= 8)
+        self.assertTrue(
+            len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/bodley_place_7002445')))) >= 8)
+        self.assertTrue(
+            len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/bodley_place_7291891')))) >= 8)
 
         self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_1005755')))) >= 8)
         self.assertTrue(len(list(places.predicate_objects(URIRef('http://ldf.fi/mmm/place/tgn_7005560')))) >= 8)
@@ -434,12 +433,41 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
 
         sdbm.parse(data=self.test_sdbm, format='turtle')
 
-        bib, bod, sdbm = read_manual_links(bib, bod, sdbm, StringIO(self.test_csv))
+        links = read_manual_links(bib, bod, sdbm, StringIO(self.test_csv))
 
-        # pprint.pprint(sorted(sdbm))
+        bib, bod, sdbm = link_manuscripts(bib, bod, sdbm, links)
 
-        self.assertEquals(len(list(sdbm.triples((MMMM.manually_linked_1, RDF.type, FRBR.F4_Manifestation_Singleton)))), 1)
-        self.assertEquals(len(list(sdbm.triples((MMMM.manually_linked_2, RDF.type, FRBR.F4_Manifestation_Singleton)))), 1)
+        pprint.pprint(sorted(sdbm))
+
+        assert len(list(sdbm.triples((URIRef('http://ldf.fi/mmm/manifestation_singleton/bibale_10832'),
+                                      RDF.type,
+                                      FRBR.F4_Manifestation_Singleton)))) == 1
+        assert len(list(sdbm.triples((URIRef('http://ldf.fi/mmm/manifestation_singleton/bodley_manuscript_4560'),
+                                      RDF.type,
+                                      FRBR.F4_Manifestation_Singleton)))) == 1
+
+    def test_change_manuscript_uri(self):
+        bib = Graph()
+        bod = Graph()
+        sdbm = Graph()
+
+        sdbm.parse(data=self.test_sdbm, format='turtle')
+
+        old_uri = URIRef('http://ldf.fi/mmm/manifestation_singleton/bibale_007')
+        bib.add((old_uri, MMMS.phillipps_number, Literal(500)))
+        bib.add((old_uri,
+                 SKOS.prefLabel,
+                 Literal('Bibale test manuscript')))
+
+        change_manuscript_uri(bib, old_uri, old_uri, Literal('Test'))
+
+        # Nothing should change if old and new URI are the same
+        assert len(list(bib)) == 2
+
+        change_manuscript_uri(bib, old_uri, URIRef('http://example.com/test'), Literal('Test'))
+
+        # The URI should be changed and a new prefLabel added
+        assert len(list(bib.predicate_objects(URIRef('http://example.com/test')))) == 3
 
     def test_link_by_shelfmark(self):
         bib = Graph()
@@ -454,13 +482,12 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
                  Literal('Bibale test manuscript')))
         sdbm.add((URIRef('http://ldf.fi/mmm/manifestation_singleton/18044'), MMMS.phillipps_number, Literal(500)))
 
-        bib, bod, sdbm = link_by_shelfmark(bib, bod, sdbm,
-                                           MMMS.phillipps_number, Namespace(MMMM['phillipps_']), "Phillipps")
+        links = link_by_shelfmark(bib, bod, sdbm, MMMS.phillipps_number, "Phillipps")
+
+        bib, bod, sdbm = link_manuscripts(bib, bod, sdbm, links)
 
         pprint.pprint(sorted(bib))
         pprint.pprint(sorted(sdbm))
 
-        assert len(list(bib.predicate_objects(URIRef('http://ldf.fi/mmm/manifestation_singleton/phillipps_500')))) > 1
-        assert len(list(sdbm.predicate_objects(URIRef('http://ldf.fi/mmm/manifestation_singleton/phillipps_500')))) > 1
-
-
+        assert len(list(bib.predicate_objects(URIRef('http://ldf.fi/mmm/manifestation_singleton/bibale_007')))) > 1
+        assert len(list(sdbm.predicate_objects(URIRef('http://ldf.fi/mmm/manifestation_singleton/bibale_007')))) > 1

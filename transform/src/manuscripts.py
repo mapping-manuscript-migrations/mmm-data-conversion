@@ -35,6 +35,9 @@ def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label):
     """
     Change manuscript URI, redirect links and add new prefLabel
     """
+    if old_uri == new_uri:
+        return graph
+
     graph = redirect_resource(graph, old_uri, new_uri)
 
     graph.add((new_uri, SKOS.prefLabel, new_pref_label))
@@ -56,6 +59,36 @@ def form_preflabel(labels: Iterable, default: str):
     return Literal(('; '.join(str(lbl) for lbl in labels if lbl)) or default)
 
 
+def link_manuscripts(bibale: Graph, bodley: Graph, sdbm: Graph, links: list):
+    """
+    Link manuscripts based on a list of tuples containing matches
+    """
+    for (bib_hit, bod_hit, sdbm_hit) in sorted(set(links)):
+
+        new_uri = bod_hit or bib_hit or sdbm_hit
+
+        labels = (bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None,
+                  bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None,
+                  sdbm.value(sdbm_hit, SKOS.prefLabel) if sdbm_hit else None)
+
+        new_pref_label = form_preflabel(labels, 'Harmonized manuscript')
+
+        log.info(
+            'Harmonizing manuscript {bib} , {bod} , {sdbm} --> {new_uri} {label}'.
+                format(bib=bib_hit, bod=bod_hit, sdbm=sdbm_hit, new_uri=new_uri, label=new_pref_label))
+
+        if bib_hit:
+            change_manuscript_uri(bibale, bib_hit, new_uri, new_pref_label)
+
+        if bod_hit:
+            change_manuscript_uri(bodley, bod_hit, new_uri, new_pref_label)
+
+        if sdbm_hit:
+            change_manuscript_uri(sdbm, sdbm_hit, new_uri, new_pref_label)
+
+    return bibale, bodley, sdbm
+
+
 def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
     """
     Read manuscript links from a CSV file and mash the manuscripts together
@@ -63,8 +96,9 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
     csv_data = pd.read_csv(csv, header=0, keep_default_na=False,
                            names=["bibale", "bodley", "sdbm_record", "sdbm_entry", "notes"])
 
+    links = []
+
     for row in csv_data.itertuples(index=True):
-        new_uri = MMMM['manually_linked_' + str(row.Index + 1)]
         old_bib = MMMM['bibale_' + row.bibale.rstrip('/').split('/')[-1]] if row.bibale else None
         old_bod = MMMM['bodley_' + row.bodley.rstrip('/').split('/')[-1]] if row.bodley else None
 
@@ -84,28 +118,14 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
             if resources:
                 old_sdbm = resources[0]
 
-        labels = (bodley.value(old_bod, SKOS.prefLabel) if old_bod else None,
-                  bibale.value(old_bib, SKOS.prefLabel) if old_bib else None,
-                  sdbm.value(old_sdbm, SKOS.prefLabel) if old_sdbm else None)
-        new_pref_label = form_preflabel(labels, 'Harmonized manifestation singleton #%s' % (row.Index + 1))
+        links.append((old_bib, old_bod, old_sdbm))
 
-        log.info('Linking manuscripts %s , %s , %s --> %s (%s)' % (old_bib, old_bod, old_sdbm, new_uri, new_pref_label))
-
-        if old_bib:
-            change_manuscript_uri(bibale, old_bib, new_uri, new_pref_label)
-
-        if old_bod:
-            change_manuscript_uri(bodley, old_bod, new_uri, new_pref_label)
-
-        if old_sdbm:
-            change_manuscript_uri(sdbm, old_sdbm, new_uri, new_pref_label)
-
-    return bibale, bodley, sdbm
+    return links
 
 
-def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, ns: Namespace, name: str):
+def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, name: str):
     """
-    Link manuscripts by shelfmark numbers
+    Find manuscript links using shelfmark numbers
     """
     manuscripts_bib = {shelfmark: uri for uri, shelfmark in bibale[:prop:]}
     manuscripts_bod = {shelfmark: uri for uri, shelfmark in bodley[:prop:]}
@@ -119,6 +139,8 @@ def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, n
     log.info('Got {num} {name} numbers from Bodley'.format(name=name, num=len(manuscripts_bod)))
     log.info('Got {num} {name} numbers from SDBM'.format(name=name, num=len(manuscripts_sdbm)))
 
+    links = []
+
     for number in sorted(shelfmark_numbers):
         bib_hit = manuscripts_bib.get(number)
         bod_hit = manuscripts_bod.get(number)
@@ -128,28 +150,9 @@ def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, n
             log.debug('Not enough matches to harmonize {name} number {num}'.format(name=name, num=number))
             continue
 
-        new_uri = ns[str(number)]
+        links.append((bib_hit, bod_hit, sdbm_hit))
 
-        labels = (bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None,
-                  bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None,
-                  sdbm.value(sdbm_hit, SKOS.prefLabel) if sdbm_hit else None)
-
-        new_pref_label = form_preflabel(labels, '{name} manuscript #{num}'.format(name=name, num=number))
-
-        log.info(
-            'Harmonizing {name} manuscript {num}: {bib} , {bod} , {sdbm} --> {new_uri}'.
-                format(name=name, num=number, bib=bib_hit, bod=bod_hit, sdbm=sdbm_hit, new_uri=new_uri))
-
-        if bib_hit:
-            change_manuscript_uri(bibale, bib_hit, new_uri, new_pref_label)
-
-        if bod_hit:
-            change_manuscript_uri(bodley, bod_hit, new_uri, new_pref_label)
-
-        if sdbm_hit:
-            change_manuscript_uri(sdbm, sdbm_hit, new_uri, new_pref_label)
-
-    return bibale, bodley, sdbm
+    return links
 
 
 def main():
@@ -180,26 +183,32 @@ def main():
     bodley.parse(args.input_bodley, format=guess_format(args.input_bodley))
     sdbm = Graph()
     sdbm.parse(args.input_sdbm, format=guess_format(args.input_sdbm))
+    links = []
 
     if args.task in ['manual_links', 'all']:
         log.info('Adding manual manuscript links')
-        bibale, bodley, sdbm = read_manual_links(bibale, bodley, sdbm, args.input_csv)
+        links += read_manual_links(bibale, bodley, sdbm, args.input_csv)
 
     if args.task in ['link_shelfmark', 'all']:
-        log.info('Linking manuscripts by Phillipps shelfmarks')
-        bibale, bodley, sdbm = link_by_shelfmark(bibale, bodley, sdbm,
-                                                 MMMS.phillipps_number, Namespace(MMMM['phillipps_']), "Phillipps")
+        log.info('Finding manuscript links by Phillipps shelfmarks')
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.phillipps_number, "Phillipps")
 
-        log.info('Linking manuscripts by BNF latin')
-        bibale, bodley, sdbm = link_by_shelfmark(bibale, bodley, sdbm,
-                                                 MMMS.bnf_latin_number, Namespace(MMMM['bnf_latin_']), "BNF Latin")
+        log.info('Finding manuscript links by BNF latin')
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.bnf_latin_number, "BNF Latin")
 
-    log.info('Serializing output files...')
+    if links:
+        log.info('Linking manuscripts using found links')
 
-    filename_suffix = '_' + args.task + '.ttl'
-    bind_namespaces(bibale).serialize(args.input_bibale.split('.')[0] + filename_suffix, format='turtle')
-    bind_namespaces(bodley).serialize(args.input_bodley.split('.')[0] + filename_suffix, format='turtle')
-    bind_namespaces(sdbm).serialize(args.input_sdbm.split('.')[0] + filename_suffix, format='turtle')
+        bibale, bodley, sdbm = link_manuscripts(bibale, bodley, sdbm, links)
+
+        log.info('Serializing output files...')
+
+        filename_suffix = '_' + args.task + '.ttl'
+        bind_namespaces(bibale).serialize(args.input_bibale.split('.')[0] + filename_suffix, format='turtle')
+        bind_namespaces(bodley).serialize(args.input_bodley.split('.')[0] + filename_suffix, format='turtle')
+        bind_namespaces(sdbm).serialize(args.input_sdbm.split('.')[0] + filename_suffix, format='turtle')
+    else:
+        log.warning('No links found')
 
     log.info('Task finished.')
 
