@@ -25,6 +25,4 @@ printf '\nLinking Bodley places\n\n'
 
 python linker.py bodley_places $OUTPUT/_bodley_combined.ttl $OUTPUT/_bodley_linked.ttl --logfile $OUTPUT/logs/bodley_linking.log
 
-rapper -i turtle $OUTPUT/_bodley_linked.ttl -o turtle > $OUTPUT/bodley_cidoc.ttl
-
 exec "$@"

@@ -125,7 +125,7 @@ def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, n
         sdbm_hit = manuscripts_sdbm.get(number)
 
         if bool(bib_hit) + bool(bod_hit) + bool(sdbm_hit) < 2:
-            log.debug('Not enough matches to harmonize for {name} number {num}'.format(name=name, num=number))
+            log.debug('Not enough matches to harmonize {name} number {num}'.format(name=name, num=number))
             continue
 
         new_uri = ns[str(number)]
@@ -196,9 +196,10 @@ def main():
 
     log.info('Serializing output files...')
 
-    bind_namespaces(bibale).serialize(args.input_bibale, format=guess_format(args.input_bibale))
-    bind_namespaces(bodley).serialize(args.input_bodley, format=guess_format(args.input_bodley))
-    bind_namespaces(sdbm).serialize(args.input_sdbm, format=guess_format(args.input_sdbm))
+    filename_suffix = '_' + args.task + '.ttl'
+    bind_namespaces(bibale).serialize(args.input_bibale.split('.')[0] + filename_suffix, format='turtle')
+    bind_namespaces(bodley).serialize(args.input_bodley.split('.')[0] + filename_suffix, format='turtle')
+    bind_namespaces(sdbm).serialize(args.input_sdbm.split('.')[0] + filename_suffix, format='turtle')
 
     log.info('Task finished.')
 
