@@ -103,7 +103,7 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
     return bibale, bodley, sdbm
 
 
-def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, prefix: Namespace, name: str):
+def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, ns: Namespace, name: str):
     """
     Link manuscripts by shelfmark numbers
     """
@@ -128,7 +128,7 @@ def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, p
             log.debug('Not enough matches to harmonize for {name} number {num}'.format(name=name, num=number))
             continue
 
-        new_uri = prefix[str(number)]
+        new_uri = ns[str(number)]
 
         labels = (bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None,
                   bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None,
@@ -188,11 +188,11 @@ def main():
     if args.task in ['link_shelfmark', 'all']:
         log.info('Linking manuscripts by Phillipps shelfmarks')
         bibale, bodley, sdbm = link_by_shelfmark(bibale, bodley, sdbm,
-                                           MMMS.phillipps_number, MMMM['phillipps_'], "Phillipps")
+                                                 MMMS.phillipps_number, Namespace(MMMM['phillipps_']), "Phillipps")
 
         log.info('Linking manuscripts by BNF latin')
         bibale, bodley, sdbm = link_by_shelfmark(bibale, bodley, sdbm,
-                                           MMMS.bnf_latin_number, MMMM['bnf_latin_'], "BNF Latin")
+                                                 MMMS.bnf_latin_number, Namespace(MMMM['bnf_latin_']), "BNF Latin")
 
     log.info('Serializing output files...')
 

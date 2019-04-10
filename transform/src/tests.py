@@ -12,10 +12,10 @@ import pprint
 import unittest
 from io import StringIO
 
-from rdflib import URIRef, RDF, OWL
+from rdflib import URIRef, RDF, OWL, Literal
 
 from linker import PlaceLinker
-from manuscripts import read_manual_links
+from manuscripts import read_manual_links, link_by_shelfmark
 from namespaces import *
 
 
@@ -440,3 +440,27 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
 
         self.assertEquals(len(list(sdbm.triples((MMMM.manually_linked_1, RDF.type, FRBR.F4_Manifestation_Singleton)))), 1)
         self.assertEquals(len(list(sdbm.triples((MMMM.manually_linked_2, RDF.type, FRBR.F4_Manifestation_Singleton)))), 1)
+
+    def test_link_by_shelfmark(self):
+        bib = Graph()
+        bod = Graph()
+        sdbm = Graph()
+
+        sdbm.parse(data=self.test_sdbm, format='turtle')
+
+        bib.add((URIRef('http://ldf.fi/mmm/manifestation_singleton/bibale_007'), MMMS.phillipps_number, Literal(500)))
+        bib.add((URIRef('http://ldf.fi/mmm/manifestation_singleton/bibale_007'),
+                 SKOS.prefLabel,
+                 Literal('Bibale test manuscript')))
+        sdbm.add((URIRef('http://ldf.fi/mmm/manifestation_singleton/18044'), MMMS.phillipps_number, Literal(500)))
+
+        bib, bod, sdbm = link_by_shelfmark(bib, bod, sdbm,
+                                           MMMS.phillipps_number, Namespace(MMMM['phillipps_']), "Phillipps")
+
+        pprint.pprint(sorted(bib))
+        pprint.pprint(sorted(sdbm))
+
+        assert len(list(bib.predicate_objects(URIRef('http://ldf.fi/mmm/manifestation_singleton/phillipps_500')))) > 1
+        assert len(list(sdbm.predicate_objects(URIRef('http://ldf.fi/mmm/manifestation_singleton/phillipps_500')))) > 1
+
+
