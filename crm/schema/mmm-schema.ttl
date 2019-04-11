@@ -189,6 +189,10 @@
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Phillipps number" .
 
+:shelfmark_buchanan a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Bodley's Buchanan collection shelfmark" .
+
 :shelfmark_bnf_latin a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Bibliothèque nationale de France latin collection shelfmark" .

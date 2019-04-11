@@ -39,6 +39,7 @@ CONSTRUCT {
     mmm-schema:catalog_or_lot_number ?cat_lot_number ;
     ecrm:P3_has_note ?other_info ;
     mmm-schema:phillipps_number ?phillipps ;
+    mmm-schema:shelfmark_buchanan ?shelfmark_buchanan ;
     mmm-schema:shelfmark_bnf_latin ?shelfmark_bnf_latin ;
     mmm-schema:shelfmark_bnf_hebreu ?shelfmark_bnf_hebreu ;
     mmm-schema:shelfmark_bnf_nal ?shelfmark_bnf_nal ;

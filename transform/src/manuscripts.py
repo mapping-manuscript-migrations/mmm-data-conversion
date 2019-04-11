@@ -197,6 +197,7 @@ def main():
         log.info('Finding manuscript links by shelfmark numbers')
 
         links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.phillipps_number, "Phillipps")
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_buchanan, "Buchanan")
         links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_bnf_latin, "BNF Latin")
         links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_bnf_hebreu, "BNF Hébreu")
         links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_bnf_nal, "BNF NAL")
