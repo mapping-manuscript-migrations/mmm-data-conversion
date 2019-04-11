@@ -1,6 +1,7 @@
 PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -10,10 +11,10 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 
 CONSTRUCT {
-  ?production_mmm a crm:E12_Production ;
-    crm:P108_has_produced ?manifestation_singleton_mmm ;
-    crm:P4_has_time-span ?production_timespan_mmm ;
-    crm:P7_took_place_at ?production_place_mmm ;
+  ?production_mmm a ecrm:E12_Production ;
+    ecrm:P108_has_produced ?manifestation_singleton_mmm ;
+    ecrm:P4_has_time-span ?production_timespan_mmm ;
+    ecrm:P7_took_place_at ?production_place_mmm ;
     mmm-schema:carried_out_by_as_artist ?production_artist_mmm ;
     mmm-schema:carried_out_by_as_author ?production_author_mmm ;
     mmm-schema:carried_out_by_as_binder ?production_binder_mmm ;
@@ -25,20 +26,20 @@ CONSTRUCT {
     mmm-schema:carried_out_by_as_signer ?production_signer_mmm ;
     .
 
-  ?production_timespan_mmm a crm:E52_Time-Span ;
+  ?production_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?production_timespan_label ;
-    crm:P82a_begin_of_the_begin ?production_timespan_begin ;
-    crm:P82b_end_of_the_end ?production_timespan_end ;
+    ecrm:P82a_begin_of_the_begin ?production_timespan_begin ;
+    ecrm:P82b_end_of_the_end ?production_timespan_end ;
     .
 
   ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?manifestation_singleton_preflabel ;
-    crm:P128_carries ?expression_mmm ;
-    crm:P52_has_current_owner ?prov_agent_mmm ;
+    ecrm:P128_carries ?expression_mmm ;
+    ecrm:P52_has_current_owner ?prov_agent_mmm ;
     mmm-schema:data_provider_url ?manifestation_singleton ;
     mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
     mmm-schema:manuscript_work ?work_mmm ;  # shortcut
-    crm:P46i_forms_part_of mmm-schema:Bodleian_collection ;
+    ecrm:P46i_forms_part_of mmm-schema:Bodleian_collection ;
     dct:source mmm-schema:Bodley ;
     .
 

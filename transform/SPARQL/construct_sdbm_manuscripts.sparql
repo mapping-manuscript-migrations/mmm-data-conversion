@@ -1,6 +1,7 @@
 PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -18,15 +19,15 @@ CONSTRUCT {
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?manuscript_preflabel ;
-    crm:P128_carries ?expression ;
-    crm:P43_has_dimension ?width_uri ;
-    crm:P43_has_dimension ?height_uri ;
-    crm:P43_has_dimension ?folios_uri ;
-    crm:P43_has_dimension ?lines_uri ;
-    crm:P43_has_dimension ?columns_uri ;
-    crm:P43_has_dimension ?miniatures_uri ;
-    crm:P45_consists_of ?material ;
-    crm:P51_has_former_or_current_owner ?prov_agent ;
+    ecrm:P128_carries ?expression ;
+    ecrm:P43_has_dimension ?width_uri ;
+    ecrm:P43_has_dimension ?height_uri ;
+    ecrm:P43_has_dimension ?folios_uri ;
+    ecrm:P43_has_dimension ?lines_uri ;
+    ecrm:P43_has_dimension ?columns_uri ;
+    ecrm:P43_has_dimension ?miniatures_uri ;
+    ecrm:P45_consists_of ?material ;
+    ecrm:P51_has_former_or_current_owner ?prov_agent ;
     mmm-schema:entry ?entry ;
     mmm-schema:manuscript_record ?manuscript ;
     mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
@@ -34,9 +35,9 @@ CONSTRUCT {
     mmm-schema:manuscript_work ?work ;  # shortcut
     # mmm-schema:language ?language ; # shortcut
     ?property_to_collection ?source_mmm ;
-    crm:P70i_is_documented_in ?source_mmm ;
+    ecrm:P70i_is_documented_in ?source_mmm ;
     mmm-schema:catalog_or_lot_number ?cat_lot_number ;
-    crm:P3_has_note ?other_info ;
+    ecrm:P3_has_note ?other_info ;
     mmm-schema:phillipps_number ?phillipps ;
     mmm-schema:shelfmark_bnf_latin ?shelfmark_bnf_latin ;
     mmm-schema:shelfmark_bnf_hebreu ?shelfmark_bnf_hebreu ;
@@ -49,49 +50,49 @@ CONSTRUCT {
   ?parent_manifestation_singleton
     a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?parent_preflabel ;
-    crm:P46_is_composed_of ?manifestation_singleton .
+    ecrm:P46_is_composed_of ?manifestation_singleton .
 
-  ?production a crm:E12_Production ;
+  ?production a ecrm:E12_Production ;
     # skos:prefLabel # TODO
-    crm:P108_has_produced ?manifestation_singleton ;
-    crm:P4_has_time-span ?production_timespan ;
-    crm:P7_took_place_at ?production_place ;
+    ecrm:P108_has_produced ?manifestation_singleton ;
+    ecrm:P4_has_time-span ?production_timespan ;
+    ecrm:P7_took_place_at ?production_place ;
     # mmm-schema:carried_out_by_as_artist ?production_artist ;
     # mmm-schema:carried_out_by_as_scribe ?production_scribe ;
     # dct:source mmm-schema:SDBM .
     .
 
-  ?production_timespan a crm:E52_Time-Span ;
+  ?production_timespan a ecrm:E52_Time-Span ;
     skos:prefLabel ?production_date_label ;
     skos:altLabel ?production_date_observed ;
-    crm:P82a_begin_of_the_begin ?production_date_start ;
-    crm:P82b_end_of_the_end ?production_date_end .
+    ecrm:P82a_begin_of_the_begin ?production_date_start ;
+    ecrm:P82b_end_of_the_end ?production_date_end .
 
   ?width_uri a ?width_class ;
-    crm:P90_has_value ?width_value ;
-    crm:P91_has_unit "mm"@en .
+    ecrm:P90_has_value ?width_value ;
+    ecrm:P91_has_unit "mm"@en .
 
   ?height_uri a ?height_class ;
-    crm:P90_has_value ?height_value ;
-    crm:P91_has_unit "mm"@en .
+    ecrm:P90_has_value ?height_value ;
+    ecrm:P91_has_unit "mm"@en .
 
   ?folios_uri a ?folios_class ;
-    crm:P90_has_value ?folios_value .
+    ecrm:P90_has_value ?folios_value .
 
   ?lines_uri a ?lines_class ;
-    crm:P90_has_value ?lines_value .
+    ecrm:P90_has_value ?lines_value .
 
   ?columns_uri a ?columns_class ;
-    crm:P90_has_value ?columns_value .
+    ecrm:P90_has_value ?columns_value .
 
   ?miniatures_uri a ?miniatures_class ;
-    crm:P90_has_value ?miniatures_value .
+    ecrm:P90_has_value ?miniatures_value .
 
   # provenance reification
   ?reification_owner_uri
     a rdf:Statement ;
     rdf:subject ?manifestation_singleton ;
-    rdf:predicate crm:P51_has_former_or_current_owner ;
+    rdf:predicate ecrm:P51_has_former_or_current_owner ;
     rdf:object ?prov_agent ;
     mmm-schema:order ?prov_order ;
     rdfs:comment ?prov_comment ;
@@ -111,7 +112,7 @@ CONSTRUCT {
   # # identifier reification
   # ?reification_id_uri a rdf:Statement ;
   #   rdf:subject ?manifestation_singleton ;
-  #   rdf:predicate crm:P48_has_preferred_identifier ;
+  #   rdf:predicate ecrm:P48_has_preferred_identifier ;
   #   rdf:object ?manuscript_id ;
   #   dct:source ?source .
   #
@@ -129,7 +130,7 @@ CONSTRUCT {
   # ?reification_production_time_uri
   #   a rdf:Statement ;
   #   rdf:subject ?production ;
-  #   rdf:predicate crm:P4_has_time-span ;
+  #   rdf:predicate ecrm:P4_has_time-span ;
   #   rdf:object ?production_timespan ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -142,7 +143,7 @@ CONSTRUCT {
   # ?reification_language_uri
   #   a rdf:Statement ;
   #   rdf:subject ?expression;
-  #   rdf:predicate crm:P72_has_language ;
+  #   rdf:predicate ecrm:P72_has_language ;
   #   rdf:object ?language ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -150,7 +151,7 @@ CONSTRUCT {
   # # place reification
   # ?reification_production_place_uri a rdf:Statement ;
   #   rdf:subject ?production ;
-  #   rdf:predicate crm:P7_took_place_at ;
+  #   rdf:predicate ecrm:P7_took_place_at ;
   #   rdf:object ?production_place ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -159,7 +160,7 @@ CONSTRUCT {
   # ?reification_material_uri
   #   a rdf:Statement ;
   #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate crm:P45_consists_of ;
+  #   rdf:predicate ecrm:P45_consists_of ;
   #   rdf:object ?material ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -170,7 +171,7 @@ CONSTRUCT {
   # ?reification_folios_uri
   #   a rdf:Statement;
   #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:predicate ecrm:P43_has_dimension ;
   #   rdf:object ?folios_uri ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -179,7 +180,7 @@ CONSTRUCT {
   # ?reification_lines_uri
   #   a rdf:Statement;
   #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:predicate ecrm:P43_has_dimension ;
   #   rdf:object ?lines_uri ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -188,7 +189,7 @@ CONSTRUCT {
   # ?reification_columns_uri
   #   a rdf:Statement;
   #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:predicate ecrm:P43_has_dimension ;
   #   rdf:object ?columns_uri ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -197,7 +198,7 @@ CONSTRUCT {
   # ?reification_height_uri
   #   a rdf:Statement;
   #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:predicate ecrm:P43_has_dimension ;
   #   rdf:object ?height_uri ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -206,7 +207,7 @@ CONSTRUCT {
   # ?reification_width_uri
   #   a rdf:Statement;
   #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:predicate ecrm:P43_has_dimension ;
   #   rdf:object ?width_uri ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .
@@ -217,7 +218,7 @@ CONSTRUCT {
   # ?reification_miniatures_uri
   #   a rdf:Statement;
   #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate crm:P43_has_dimension ;
+  #   rdf:predicate ecrm:P43_has_dimension ;
   #   rdf:object ?miniatures_uri ;
   #   mmm-schema:data_provider_url ?entry ;
   #   dct:source ?source .

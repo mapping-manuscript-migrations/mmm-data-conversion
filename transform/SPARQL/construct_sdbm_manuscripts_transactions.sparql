@@ -1,6 +1,7 @@
 PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -15,19 +16,19 @@ CONSTRUCT
     skos:prefLabel ?cat_title ;
     ?event_property ?manifestation_singleton ;
     ?event_seller_or_holder_property ?seller ;
-    crm:P29_custody_received_by ?buyer ;
+    ecrm:P29_custody_received_by ?buyer ;
     mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
     mmm-schema:data_provider_url ?entry ;
     ?event_place_property ?source_agent_location ;
     # mmm-schema:place_literal ?cat_location_literal ;
     ?event_timespan_property ?cat_date ;
-    crm:P179_had_sales_price ?monetary_amount_uri ;
-    crm:P70i_is_documented_in ?source_mmm .
+    ecrm:P179_had_sales_price ?monetary_amount_uri ;
+    ecrm:P70i_is_documented_in ?source_mmm .
     # dct:source mmm-schema:SDBM .
 
-  ?monetary_amount_uri a crm:E97_Monetary_Amount ;
-    crm:P180_has_currency ?sales_currency ;
-    crm:P181_has_amount ?sales_price ;
+  ?monetary_amount_uri a ecrm:E97_Monetary_Amount ;
+    ecrm:P180_has_currency ?sales_currency ;
+    ecrm:P181_has_amount ?sales_price ;
     rdfs:comment ?sales_other_currency .
     # dct:source mmm-schema:SDBM .
 }

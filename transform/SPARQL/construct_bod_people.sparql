@@ -2,6 +2,7 @@ PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -17,33 +18,33 @@ CONSTRUCT {
     skos:prefLabel ?preflabel ;
     skos:altLabel ?actor_label ;
     skos:altLabel ?altlabel ;
-    crm:P98i_was_born ?birth_mmm ;
-    crm:P100i_died_in ?death_mmm ;
+    ecrm:P98i_was_born ?birth_mmm ;
+    ecrm:P100i_died_in ?death_mmm ;
     owl:sameAs ?external_uri ;
     mmm-schema:data_provider_url ?actor ;
     dct:source mmm-schema:Bodley ;
     .
 
-  ?birth_mmm a crm:E67_Birth ;
-    crm:P4_has_time-span ?birth_timespan_mmm ;
+  ?birth_mmm a ecrm:E67_Birth ;
+    ecrm:P4_has_time-span ?birth_timespan_mmm ;
     skos:prefLabel ?birth_label ;
     .
 
-  ?birth_timespan_mmm a crm:E52_Time-Span ;
+  ?birth_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?birth_timespan_label ;
-    crm:P82a_begin_of_the_begin ?birth_timespan_begin_begin ;
-    crm:P82b_end_of_the_end ?birth_timespan_end_end ;
+    ecrm:P82a_begin_of_the_begin ?birth_timespan_begin_begin ;
+    ecrm:P82b_end_of_the_end ?birth_timespan_end_end ;
     .
 
-  ?death_mmm a crm:E69_Death ;
-    crm:P4_has_time-span ?death_timespan_mmm ;
+  ?death_mmm a ecrm:E69_Death ;
+    ecrm:P4_has_time-span ?death_timespan_mmm ;
     skos:prefLabel ?death_label ;
     .
 
-  ?death_timespan_mmm a crm:E52_Time-Span ;
+  ?death_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?death_timespan_label ;
-    crm:P82a_begin_of_the_begin ?death_timespan_begin_begin ;
-    crm:P82b_end_of_the_end ?death_timespan_end_end ;
+    ecrm:P82a_begin_of_the_begin ?death_timespan_begin_begin ;
+    ecrm:P82b_end_of_the_end ?death_timespan_end_end ;
     .
 }
 WHERE

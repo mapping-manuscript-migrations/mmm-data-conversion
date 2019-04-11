@@ -2,6 +2,7 @@ PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -18,14 +19,14 @@ CONSTRUCT
     skos:prefLabel ?label ;
     mmm-schema:observed_manuscript ?manifestation_singleton_mmm ;
     mmm-schema:observed_owner ?actor_mmm ;
-    crm:P3_has_note ?note ;
-    crm:P7_took_place_at ?place_mmm ;
-    crm:P4_has_time-span ?timespan_mmm ;
+    ecrm:P3_has_note ?note ;
+    ecrm:P7_took_place_at ?place_mmm ;
+    ecrm:P4_has_time-span ?timespan_mmm ;
     dct:source mmm-schema:Bodley ;
     .
 
-  ?timespan_mmm crm:P82a_begin_of_the_begin ?timespan_bb ;
-    crm:P82b_end_of_the_end ?timespan_ee ;
+  ?timespan_mmm ecrm:P82a_begin_of_the_begin ?timespan_bb ;
+    ecrm:P82b_end_of_the_end ?timespan_ee ;
     # TODO: prefLabel
     .
 

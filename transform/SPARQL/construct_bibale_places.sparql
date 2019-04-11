@@ -1,6 +1,7 @@
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -12,7 +13,7 @@ PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 CONSTRUCT {
-  ?place_mmm a crm:E53_Place ;
+  ?place_mmm a ecrm:E53_Place ;
     skos:prefLabel ?pref_label ;
     skos:altLabel ?combined_label ;
     owl:sameAs ?authority_uri ;

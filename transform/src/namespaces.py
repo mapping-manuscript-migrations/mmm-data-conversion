@@ -5,7 +5,7 @@ Define common RDF namespaces
 """
 from rdflib import Namespace, Graph
 
-CRM = Namespace('http://www.cidoc-crm.org/cidoc-crm/')
+CRM = Namespace('http://erlangen-crm.org/current/')
 DCT = Namespace('http://purl.org/dc/terms/')
 GEO = Namespace('http://www.geonames.org/ontology#')
 GVP = Namespace('http://vocab.getty.edu/ontology#')

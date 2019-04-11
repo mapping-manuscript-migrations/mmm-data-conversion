@@ -2,6 +2,7 @@ PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -12,11 +13,11 @@ PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 
 CONSTRUCT {
 
- ?expression_mmm a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+ ?expression_mmm a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
    skos:prefLabel ?expression_label ;
    skos:altLabel ?expression_title ;
    mmm-schema:data_provider_url ?expression ;
-   # crm:P72_has_language ?manifestation_work_language ;
+   # ecrm:P72_has_language ?manifestation_work_language ;
    dct:source mmm-schema:Bibale .
 
  ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
@@ -25,16 +26,16 @@ CONSTRUCT {
    frbroo:R19_created_a_realisation_of ?expression_work_mmm ;
    mmm-schema:carried_out_by_as_author ?expression_author_mmm ;
    mmm-schema:carried_out_by_as_scribe ?expression_scribe_mmm ;
-   crm:P7_took_place_at ?expression_place_mmm ;
+   ecrm:P7_took_place_at ?expression_place_mmm ;
    # dct:source mmm-schema:Bibale .
    .
 
- ?production_mmm a crm:E12_Production ;
-   crm:P108_has_produced ?manifestation_singleton_mmm ;
-   crm:P4_has_time-span ?manuscript_timespan_mmm ;
-   crm:P4_has_time-span ?production_timespan_mmm ;
-   crm:P7_took_place_at ?production_place_mmm ;
-   crm:P7_took_place_at ?manuscript_place_mmm ;
+ ?production_mmm a ecrm:E12_Production ;
+   ecrm:P108_has_produced ?manifestation_singleton_mmm ;
+   ecrm:P4_has_time-span ?manuscript_timespan_mmm ;
+   ecrm:P4_has_time-span ?production_timespan_mmm ;
+   ecrm:P7_took_place_at ?production_place_mmm ;
+   ecrm:P7_took_place_at ?manuscript_place_mmm ;
    mmm-schema:carried_out_by_as_author ?production_author_mmm ;
    mmm-schema:carried_out_by_as_binder ?production_binder_mmm ;
    mmm-schema:carried_out_by_as_commissioner ?production_commissioner_mmm ;
@@ -44,30 +45,30 @@ CONSTRUCT {
    mmm-schema:carried_out_by_as_scribe ?production_scribe_mmm ;
    dct:source mmm-schema:Bibale .
 
- ?manuscript_timespan_mmm a crm:E52_Time-Span ;
+ ?manuscript_timespan_mmm a ecrm:E52_Time-Span ;
    skos:prefLabel ?manuscript_timespan_label ;
-   crm:P82a_begin_of_the_begin ?manuscript_timespan_bb ;
-   crm:P81a_end_of_the_begin ?manuscript_timespan_eb ;
-   crm:P81b_begin_of_the_end ?manuscript_timespan_be ;
-   crm:P82b_end_of_the_end ?manuscript_timespan_ee .
+   ecrm:P82a_begin_of_the_begin ?manuscript_timespan_bb ;
+   ecrm:P81a_end_of_the_begin ?manuscript_timespan_eb ;
+   ecrm:P81b_begin_of_the_end ?manuscript_timespan_be ;
+   ecrm:P82b_end_of_the_end ?manuscript_timespan_ee .
 
- ?production_timespan_mmm a crm:E52_Time-Span ;
+ ?production_timespan_mmm a ecrm:E52_Time-Span ;
    skos:prefLabel ?production_timespan_label ;
-   crm:P82a_begin_of_the_begin ?production_timespan_bb ;
-   crm:P81a_end_of_the_begin ?production_timespan_eb ;
-   crm:P81b_begin_of_the_end ?production_timespan_be ;
-   crm:P82b_end_of_the_end ?production_timespan_ee .
+   ecrm:P82a_begin_of_the_begin ?production_timespan_bb ;
+   ecrm:P81a_end_of_the_begin ?production_timespan_eb ;
+   ecrm:P81b_begin_of_the_end ?production_timespan_be ;
+   ecrm:P82b_end_of_the_end ?production_timespan_ee .
 
  ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
-   crm:P128_carries ?expression_mmm ;
+   ecrm:P128_carries ?expression_mmm ;
    skos:prefLabel ?preflabel ;
    mmm-schema:data_provider_url ?manifestation_singleton ;
    mmm-schema:manuscript_work ?work_mmm ;  # shortcut
    mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
    mmm-schema:manuscript_author ?expression_author_mmm ;  # shortcut
    mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
-   crm:P46i_forms_part_of ?collection_mmm ;
-   crm:P3_has_note ?note ;
+   ecrm:P46i_forms_part_of ?collection_mmm ;
+   ecrm:P3_has_note ?note ;
    mmm-schema:shelfmark_bnf_latin ?bnf_latin ;
    mmm-schema:shelfmark_bnf_hebreu ?bnf_hebreu ;
    mmm-schema:shelfmark_bnf_nal ?bnf_nouv ;

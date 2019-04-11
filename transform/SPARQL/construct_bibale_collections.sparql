@@ -2,6 +2,7 @@ PREFIX type: <http://info.deepcarbon.net/schema/type#>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -16,38 +17,38 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 # TODO: prefLabel for creation and dispersion events
 
 CONSTRUCT {
-  ?collection_mmm a crm:E78_Collection ;
+  ?collection_mmm a ecrm:E78_Collection ;
     skos:prefLabel ?label ;
     skos:altLabel ?altlabel ;
-    crm:P92i_was_brought_into_existence_by ?creation_event ;
-    crm:P93i_was_taken_out_of_existence_by ?dispersion_event ;
+    ecrm:P92i_was_brought_into_existence_by ?creation_event ;
+    ecrm:P93i_was_taken_out_of_existence_by ?dispersion_event ;
     mmm-schema:collection_type ?collection_type_literal ;
     mmm-schema:collection_location ?collection_place_mmm ;
     dct:source mmm-schema:Bibale ;
     .
 
-  ?creation_event a crm:E63_Beginning_of_Existence ;
-    crm:P4_has_time-span ?creation_date_mmm ;
+  ?creation_event a ecrm:E63_Beginning_of_Existence ;
+    ecrm:P4_has_time-span ?creation_date_mmm ;
     .
 
-  ?creation_date_mmm a crm:E52_Time-Span ;
+  ?creation_date_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?creation_date_label ;
-    crm:P82a_begin_of_the_begin ?creation_date_bb ;
-    crm:P81a_end_of_the_begin ?creation_date_eb ;
-    crm:P81b_begin_of_the_end ?creation_date_be ;
-    crm:P82b_end_of_the_end ?creation_date_ee ;
+    ecrm:P82a_begin_of_the_begin ?creation_date_bb ;
+    ecrm:P81a_end_of_the_begin ?creation_date_eb ;
+    ecrm:P81b_begin_of_the_end ?creation_date_be ;
+    ecrm:P82b_end_of_the_end ?creation_date_ee ;
     .
 
-  ?dispersion_event a crm:E64_End_of_Existence ;
-    crm:P4_has_time-span ?dispersion_date_mmm ;
+  ?dispersion_event a ecrm:E64_End_of_Existence ;
+    ecrm:P4_has_time-span ?dispersion_date_mmm ;
     .
 
-  ?dispersion_date_mmm a crm:E52_Time-Span ;
+  ?dispersion_date_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?dispersion_date_label ;
-    crm:P82a_begin_of_the_begin ?dispersion_date_bb ;
-    crm:P81a_end_of_the_begin ?dispersion_date_eb ;
-    crm:P81b_begin_of_the_end ?dispersion_date_be ;
-    crm:P82b_end_of_the_end ?dispersion_date_ee ;
+    ecrm:P82a_begin_of_the_begin ?dispersion_date_bb ;
+    ecrm:P81a_end_of_the_begin ?dispersion_date_eb ;
+    ecrm:P81b_begin_of_the_end ?dispersion_date_be ;
+    ecrm:P82b_end_of_the_end ?dispersion_date_ee ;
     .
 
 }

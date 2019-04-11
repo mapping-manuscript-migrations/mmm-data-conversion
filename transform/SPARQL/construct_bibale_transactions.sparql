@@ -1,6 +1,7 @@
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -17,20 +18,20 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 
 CONSTRUCT {
-  ?transfer_mmm a crm:E10_Transfer_of_Custody ;
-    crm:P30_transferred_custody_of ?manuscript_or_collection_mmm ;
-    crm:P28_custody_surrendered_by ?old_owner ;
-    crm:P29_custody_received_by ?new_owner_mmm ;
-    crm:P7_took_place_at ?place_mmm ;
-    crm:P4_has_time-span ?timespan_mmm ;
+  ?transfer_mmm a ecrm:E10_Transfer_of_Custody ;
+    ecrm:P30_transferred_custody_of ?manuscript_or_collection_mmm ;
+    ecrm:P28_custody_surrendered_by ?old_owner ;
+    ecrm:P29_custody_received_by ?new_owner_mmm ;
+    ecrm:P7_took_place_at ?place_mmm ;
+    ecrm:P4_has_time-span ?timespan_mmm ;
     .
 
-  ?timespan_mmm a crm:E52_Time-Span ;
+  ?timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?timespan_label ;
-    crm:P82a_begin_of_the_begin ?timespan_bb ;
-    crm:P81a_end_of_the_begin ?timespan_eb ;
-    crm:P81b_begin_of_the_end ?timespan_be ;
-    crm:P82b_end_of_the_end ?timespan_ee ;
+    ecrm:P82a_begin_of_the_begin ?timespan_bb ;
+    ecrm:P81a_end_of_the_begin ?timespan_eb ;
+    ecrm:P81b_begin_of_the_end ?timespan_be ;
+    ecrm:P82b_end_of_the_end ?timespan_ee ;
     .
 
 }

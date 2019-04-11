@@ -1,6 +1,7 @@
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -18,36 +19,36 @@ CONSTRUCT {
     mmm-schema:data_provider_url ?bibale_actor_uri ;
     mmm-schema:person_place ?place_mmm ;
     mmm-schema:gender ?gender_literal ;
-    crm:P98i_was_born ?birth_mmm ;
-    crm:P100i_died_in ?death_mmm ;
+    ecrm:P98i_was_born ?birth_mmm ;
+    ecrm:P100i_died_in ?death_mmm ;
     dct:source mmm-schema:Bibale .
 
   ?birth_mmm a ?birth_class ;
     skos:prefLabel ?birth_label ;
-    crm:P7_took_place_at ?birth_place_mmm ;
-    crm:P4_has_time-span ?birth_time_mmm ;
+    ecrm:P7_took_place_at ?birth_place_mmm ;
+    ecrm:P4_has_time-span ?birth_time_mmm ;
     .
 
   ?death_mmm a ?death_class ;
     skos:prefLabel ?death_label ;
-    crm:P7_took_place_at ?death_place_mmm ;
-    crm:P4_has_time-span ?death_time_mmm ;
+    ecrm:P7_took_place_at ?death_place_mmm ;
+    ecrm:P4_has_time-span ?death_time_mmm ;
     .
 
-  ?birth_time_mmm a crm:E52_Time-Span ;
+  ?birth_time_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?birth_time_label ;
-    crm:P82a_begin_of_the_begin ?birth_time_bb ;
-    crm:P81a_end_of_the_begin ?birth_time_eb ;
-    crm:P81b_begin_of_the_end ?birth_time_be ;
-    crm:P82b_end_of_the_end ?birth_time_ee ;
+    ecrm:P82a_begin_of_the_begin ?birth_time_bb ;
+    ecrm:P81a_end_of_the_begin ?birth_time_eb ;
+    ecrm:P81b_begin_of_the_end ?birth_time_be ;
+    ecrm:P82b_end_of_the_end ?birth_time_ee ;
     .
 
-  ?death_time_mmm a crm:E52_Time-Span ;
+  ?death_time_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?death_time_label ;
-    crm:P82a_begin_of_the_begin ?death_time_bb ;
-    crm:P81a_end_of_the_begin ?death_time_eb ;
-    crm:P81b_begin_of_the_end ?death_time_be ;
-    crm:P82b_end_of_the_end ?death_time_ee ;
+    ecrm:P82a_begin_of_the_begin ?death_time_bb ;
+    ecrm:P81a_end_of_the_begin ?death_time_eb ;
+    ecrm:P81b_begin_of_the_end ?death_time_be ;
+    ecrm:P82b_end_of_the_end ?death_time_ee ;
     .
 }
 WHERE

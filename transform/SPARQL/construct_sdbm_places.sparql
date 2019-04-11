@@ -2,6 +2,7 @@ PREFIX wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -14,9 +15,9 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 BASE <http://>
 
 CONSTRUCT {
-  ?place a crm:E53_Place ;
+  ?place a ecrm:E53_Place ;
     skos:prefLabel ?name ;
-    crm:P89_falls_within ?parent ;
+    ecrm:P89_falls_within ?parent ;
     owl:sameAs ?authority_uri ;
     wgs:lat ?lat ;
     wgs:long ?long ;

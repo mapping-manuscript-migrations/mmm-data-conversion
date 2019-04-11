@@ -11,7 +11,7 @@
 @prefix spatial: <http://jena.apache.org/spatial#> .
 @prefix schema:  <http://schema.org/> .
 @prefix :        <#> .
-@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crm: <http://erlangen-crm.org/current/> .
 
 <#mmm-cidoc>  rdf:type fuseki:Service ;
     fuseki:name              "ds" ;   # http://host:port/ds

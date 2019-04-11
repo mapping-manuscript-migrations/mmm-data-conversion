@@ -1,6 +1,7 @@
 PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -20,14 +21,14 @@ CONSTRUCT {
     # skos:prefLabel # TODO
     frbroo:R16_initiated ?work ;
     mmm-schema:carried_out_by_as_possible_author ?author ;
-    # crm:P7_took_place_at  # TODO: author place/nationality
-    # crm:P4_has_time-span  # TODO: author life dates
+    # ecrm:P7_took_place_at  # TODO: author place/nationality
+    # ecrm:P4_has_time-span  # TODO: author life dates
     # dct:source mmm-schema:SDBM .
     .
 
-  ?expression a frbroo:F2_Expression , crm:E33_Linguistic_Object;
+  ?expression a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
     # skos:prefLabel # TODO
-    crm:P72_has_language ?language ;
+    ecrm:P72_has_language ?language ;
     dct:source mmm-schema:SDBM .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
