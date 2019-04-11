@@ -128,6 +128,7 @@ def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, n
     """
     Find manuscript links using shelfmark numbers
     """
+    log.info('Finding manuscript links by {name} shelfmark/number ({prop})'.format(name=name, prop=prop))
     manuscripts_bib = {shelfmark: uri for uri, shelfmark in bibale[:prop:]}
     manuscripts_bod = {shelfmark: uri for uri, shelfmark in bodley[:prop:]}
     manuscripts_sdbm = {shelfmark: uri for uri, shelfmark in sdbm[:prop:]}
@@ -152,6 +153,8 @@ def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, n
             continue
 
         links.append((bib_hit, bod_hit, sdbm_hit))
+
+    log.info('Found {num} manuscript links for {name} shelfmark/number'.format(num=len(links), name=name))
 
     return links
 
@@ -191,11 +194,14 @@ def main():
         links += read_manual_links(bibale, bodley, sdbm, args.input_csv)
 
     if args.task in ['link_shelfmark', 'all']:
-        log.info('Finding manuscript links by Phillipps shelfmarks')
-        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.phillipps_number, "Phillipps")
+        log.info('Finding manuscript links by shelfmark numbers')
 
-        log.info('Finding manuscript links by BNF latin')
-        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.bnf_latin_number, "BNF Latin")
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.phillipps_number, "Phillipps")
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_bnf_latin, "BNF Latin")
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_bnf_hebreu, "BNF Hébreu")
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_bnf_nal, "BNF NAL")
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_arsenal, "Arsenal")
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_christ_church, "Christ Church")
 
     if links:
         log.info('Linking manuscripts using found links')
