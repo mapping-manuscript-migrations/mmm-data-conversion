@@ -75,10 +75,9 @@ WHERE
       ?birth_timespan rdfs:label ?birth_timespan_label .
       OPTIONAL { ?birth_timespan crm:P82a_begin_of_the_begin ?birth_timespan_begin_begin }
       OPTIONAL { ?birth_timespan crm:P82b_end_of_the_end ?birth_timespan_end_end }
+      BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_birth_timespan")) as ?birth_timespan_mmm)
     }
-    BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id, "_birth")) as ?birth_mmm)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", ?actor_local_id, "_birth_timespan")) as ?birth_timespan_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_birth")) as ?birth_mmm)
   }
 
   OPTIONAL {
@@ -89,10 +88,9 @@ WHERE
       ?death_timespan rdfs:label ?death_timespan_label .
       OPTIONAL { ?death_timespan crm:P82a_begin_of_the_begin ?death_timespan_begin_begin }
       OPTIONAL { ?death_timespan crm:P82b_end_of_the_end ?death_timespan_end_end }
+      BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_death_timespan")) as ?death_timespan_mmm)
     }
-    BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id, "_death")) as ?death_mmm)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", ?actor_local_id, "_death_timespan")) as ?death_timespan_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_death")) as ?death_mmm)
   }
 
   OPTIONAL {
