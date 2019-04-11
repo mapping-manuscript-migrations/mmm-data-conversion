@@ -19,7 +19,7 @@ RUN mkdir -p $FUSEKI_BASE/databases/tdb \
 
 COPY fuseki-config-crm.ttl $FUSEKI_BASE/config.ttl
 COPY crm/assembler.ttl $FUSEKI_BASE/configuration/assembler.ttl
-COPY crm/mmm-schema.ttl $FUSEKI_HOME/mmm-schema.ttl
+COPY crm/schema/* $FUSEKI_HOME/
 
 COPY --chown=9008 tdbloader tdbindexer crm/deploy.sh crm/prune.sh $FUSEKI_HOME/
 RUN chmod +x $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbindexer $FUSEKI_HOME/deploy.sh $FUSEKI_HOME/prune.sh
