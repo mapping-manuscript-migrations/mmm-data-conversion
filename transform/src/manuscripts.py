@@ -48,15 +48,14 @@ def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label):
 
 def form_preflabel(labels: Iterable, default: str):
     """
-    Form a new prefLabel for a combined manuscript
+    Get first existing label from a list of labels or use default
 
     >>> form_preflabel(['Christ Church MS. 343', 'SDBM_MS_18044'], 'Linked manuscript')
-    rdflib.term.Literal('Christ Church MS. 343; SDBM_MS_18044')
+    rdflib.term.Literal('Christ Church MS. 343')
     >>> form_preflabel(['', None], 'Linked manuscript')
     rdflib.term.Literal('Linked manuscript')
     """
-
-    return Literal(('; '.join(str(lbl) for lbl in labels if lbl)) or default)
+    return Literal(next((lbl for lbl in labels if lbl), default))
 
 
 def link_manuscripts(bibale: Graph, bodley: Graph, sdbm: Graph, links: list):
@@ -67,8 +66,10 @@ def link_manuscripts(bibale: Graph, bodley: Graph, sdbm: Graph, links: list):
 
         new_uri = bod_hit or bib_hit or sdbm_hit
 
-        labels = (bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None,
-                  bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None,
+        # TODO: Add owl.sameAs links, follow them in linking if they exist
+
+        labels = (bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None,
+                  bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None,
                   sdbm.value(sdbm_hit, SKOS.prefLabel) if sdbm_hit else None)
 
         new_pref_label = form_preflabel(labels, 'Harmonized manuscript')
