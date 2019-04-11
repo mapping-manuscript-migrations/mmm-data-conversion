@@ -1,8 +1,8 @@
 PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
-PREFIX ecrm: <http://www.cidoc-crm.org/cidoc-crm/>
-PREFIX eecrm: <http://erlangen-crm.org/current/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
 PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
@@ -40,40 +40,40 @@ WHERE
   OPTIONAL {
     ?work frbroo2:R16i_was_initiated_by ?work_conception .
     ?work_conception a frbroo2:F27_Work_Conception .
-    OPTIONAL { ?work_conception ecrm:P7_took_place_at ?work_place }
+    OPTIONAL { ?work_conception crm:P7_took_place_at ?work_place }
     OPTIONAL {
-      ?work_conception ecrm:P01i_is_domain_of  [
-        a ecrm:PC14_carried_out_by ;
-        ecrm:P14.1_in_the_role_of [ ecrm:E55_Type  "Author" ] ;
-        ecrm:P02_has_range ?work_conception_author ;
+      ?work_conception crm:P01i_is_domain_of  [
+        a crm:PC14_carried_out_by ;
+        crm:P14.1_in_the_role_of [ crm:E55_Type  "Author" ] ;
+        crm:P02_has_range ?work_conception_author ;
       ] ;
     }
     OPTIONAL {
-      ?work_conception ecrm:P01i_is_domain_of  [
-        a ecrm:PC14_carried_out_by ;
-        ecrm:P14.1_in_the_role_of [ ecrm:E55_Type  "Translator" ] ;
-        ecrm:P02_has_range ?work_conception_translator ;
+      ?work_conception crm:P01i_is_domain_of  [
+        a crm:PC14_carried_out_by ;
+        crm:P14.1_in_the_role_of [ crm:E55_Type  "Translator" ] ;
+        crm:P02_has_range ?work_conception_translator ;
       ] ;
     }
     OPTIONAL {
-      ?work_conception ecrm:P01i_is_domain_of  [
-        a ecrm:PC14_carried_out_by ;
-        ecrm:P14.1_in_the_role_of [ ecrm:E55_Type  "Editor" ] ;
-        ecrm:P02_has_range ?work_conception_editor ;
+      ?work_conception crm:P01i_is_domain_of  [
+        a crm:PC14_carried_out_by ;
+        crm:P14.1_in_the_role_of [ crm:E55_Type  "Editor" ] ;
+        crm:P02_has_range ?work_conception_editor ;
       ] ;
     }
     OPTIONAL {
-      ?work_conception ecrm:P01i_is_domain_of  [
-        a ecrm:PC14_carried_out_by ;
-        ecrm:P14.1_in_the_role_of [ ecrm:E55_Type  "Commissioner" ] ;
-        ecrm:P02_has_range ?work_conception_commissioner ;
+      ?work_conception crm:P01i_is_domain_of  [
+        a crm:PC14_carried_out_by ;
+        crm:P14.1_in_the_role_of [ crm:E55_Type  "Commissioner" ] ;
+        crm:P02_has_range ?work_conception_commissioner ;
       ] ;
     }
     OPTIONAL {
-      ?work_conception ecrm:P01i_is_domain_of  [
-        a ecrm:PC14_carried_out_by ;
-        ecrm:P14.1_in_the_role_of [ ecrm:E55_Type  "Recipient" ] ;
-        ecrm:P02_has_range ?work_conception_recipient ;
+      ?work_conception crm:P01i_is_domain_of  [
+        a crm:PC14_carried_out_by ;
+        crm:P14.1_in_the_role_of [ crm:E55_Type  "Recipient" ] ;
+        crm:P02_has_range ?work_conception_recipient ;
       ] ;
     }
   }
