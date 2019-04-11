@@ -189,18 +189,26 @@
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Phillipps number" .
 
-:bnf_latin_number a rdfs:Property ;
+:shelfmark_bnf_latin a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
-  skos:prefLabel "Bibliothèque nationale de France latin number" .
+  skos:prefLabel "Bibliothèque nationale de France latin collection shelfmark" .
 
-:bnf_hebreu_number a rdfs:Property ;
+:shelfmark_bnf_hebreu a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
-  skos:prefLabel "Bibliothèque nationale de France hebreu number" .
+  skos:prefLabel "Bibliothèque nationale de France hébreu collection shelfmark" .
 
-:bnf_nal_number a rdfs:Property ;
+:shelfmark_bnf_nal a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
-  skos:prefLabel "Bibliothèque nationale de France nouv. acq. lat. number" .
+  skos:prefLabel "Bibliothèque nationale de France NAL collection shelfmark" .
 
-:arsenal_shelfmark a rdfs:Property ;
+:shelfmark_arsenal a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
-  skos:prefLabel "l'Arsenal collection number" .
+  skos:prefLabel "Bibliothèque de l'Arsenal collection shelfmark" .
+
+:shelfmark_christ_church a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Christ Church collection shelfmark" .
+
+:shelfmark_barocci a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Barocci collection shelfmark" .

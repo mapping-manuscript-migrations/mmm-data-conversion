@@ -68,10 +68,10 @@ CONSTRUCT {
    mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
    crm:P46i_forms_part_of ?collection_mmm ;
    crm:P3_has_note ?note ;
-   mmm-schema:bnf_latin_number ?bnf_latin ;
-   mmm-schema:bnf_hebreu_number ?bnf_hebreu ;
-   mmm-schema:bnf_nal_number ?bnf_nouv ;
-   mmm-schema:arsenal_shelfmark ?arsenal_shelfmark ;
+   mmm-schema:shelfmark_bnf_latin ?bnf_latin ;
+   mmm-schema:shelfmark_bnf_hebreu ?bnf_hebreu ;
+   mmm-schema:shelfmark_bnf_nal ?bnf_nouv ;
+   mmm-schema:shelfmark_arsenal ?arsenal_shelfmark ;
    dct:source mmm-schema:Bibale
    .
 }
