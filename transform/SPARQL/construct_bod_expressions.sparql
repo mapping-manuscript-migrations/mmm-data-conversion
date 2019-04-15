@@ -11,10 +11,10 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 
 CONSTRUCT {
-  ?expression_mmm a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
+  ?expression_mmm a frbroo:F2_Expression , crm:E33_Linguistic_Object;
     skos:prefLabel ?expression_label ;
     skos:altLabel ?work_title ;
-    ecrm:P72_has_language ?work_language_label ;
+    crm:P72_has_language ?work_language_label ;
     dct:source mmm-schema:Bodley .
 
   ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
@@ -34,7 +34,7 @@ WHERE
       OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_preflabel . }
     }
 
-  BIND(REPLACE(STR(?expression), "^.*\\/(.+)", "$1") as ?expression_local_id)
+  BIND(REPLACE(STR(?expression), "^.*\\/(.+)/expression", "$1") as ?expression_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
 
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression_creation/bodley_", ?expression_local_id)) as ?expression_creation_mmm)
