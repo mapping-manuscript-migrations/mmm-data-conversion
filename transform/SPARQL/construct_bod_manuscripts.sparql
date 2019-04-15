@@ -39,15 +39,19 @@ CONSTRUCT {
     mmm-schema:data_provider_url ?manifestation_singleton ;
     mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
     mmm-schema:manuscript_work ?work_mmm ;  # shortcut
+    mmm-schema:shelfmark_buchanan ?shelfmark_buchanan ;
+    mmm-schema:shelfmark_christ_church ?shelfmark_christ_church ;
+    mmm-schema:shelfmark_barocci ?shelfmark_barocci ;
     ecrm:P46i_forms_part_of mmm-schema:Bodleian_collection ;
     dct:source mmm-schema:Bodley ;
     .
 
 }
+#SELECT DISTINCT ?manifestation_singleton ?manifestation_singleton_preflabel ?shelfmark_buchanan ?shelfmark_christ_church ?shelfmark_barocci
 WHERE
 {
   ?manifestation_singleton a frbr:F4_Manifestation_Singleton ;
-    rdfs:label ?manifestation_singleton_preflabel .
+                           rdfs:label ?manifestation_singleton_preflabel .
   OPTIONAL { ?manifestation_singleton crm:P52_has_current_owner ?prov_agent }
 
   # EXPRESSION / WORK
@@ -72,58 +76,79 @@ WHERE
     OPTIONAL { ?production crm:P7_took_place_at ?production_place }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:artist ;
-        crm:P02_has_range ?production_artist ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:artist ;
+          crm:P02_has_range ?production_artist ;
+          ]
     }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:author ;
-        crm:P02_has_range ?production_author ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:author ;
+          crm:P02_has_range ?production_author ;
+          ]
     }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:binder ;
-        crm:P02_has_range ?production_binder ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:binder ;
+          crm:P02_has_range ?production_binder ;
+          ]
     }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:commissioner ;
-        crm:P02_has_range ?production_commissioner ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:commissioner ;
+          crm:P02_has_range ?production_commissioner ;
+          ]
     }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:dedicatee ;
-        crm:P02_has_range ?production_dedicatee ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:dedicatee ;
+          crm:P02_has_range ?production_dedicatee ;
+          ]
     }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:formerOwner ;
-        crm:P02_has_range ?production_formerOwner ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:formerOwner ;
+          crm:P02_has_range ?production_formerOwner ;
+          ]
     }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:patron ;
-        crm:P02_has_range ?production_patron ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:patron ;
+          crm:P02_has_range ?production_patron ;
+          ]
     }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:scribe ;
-        crm:P02_has_range ?production_scribe ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:scribe ;
+          crm:P02_has_range ?production_scribe ;
+          ]
     }
     OPTIONAL {
       ?production crm:P01i_is_domain_of [
-        crm:P14.1_in_the_role_of bod-roles:signer ;
-        crm:P02_has_range ?production_signer ;
-      ]
+          crm:P14.1_in_the_role_of bod-roles:signer ;
+          crm:P02_has_range ?production_signer ;
+          ]
     }
+  }
+
+  OPTIONAL {
+    ?manifestation_singleton rdfs:label ?manifestation_singleton_preflabel .
+    FILTER CONTAINS(?manifestation_singleton_preflabel, "Buchanan")
+    BIND(REPLACE(STR(?manifestation_singleton_preflabel), "^M[sS].*Buchanan (.+)$", "$1") as ?shelfmark_buchanan)
+    FILTER(?shelfmark_buchanan != STR(?manifestation_singleton_preflabel))
+  }
+
+  OPTIONAL {
+    ?manifestation_singleton rdfs:label ?manifestation_singleton_preflabel .
+    FILTER CONTAINS(?manifestation_singleton_preflabel, "Christ Church")
+    BIND(REPLACE(STR(?manifestation_singleton_preflabel), "^Christ Church(?:(?: MS\\. )|(?:, ))(Allestree Library MS)?\\.?(.+)?$", "$1$2") as ?shelfmark_christ_church)
+    FILTER(?shelfmark_christ_church != STR(?manifestation_singleton_preflabel))
+  }
+
+  OPTIONAL {
+    ?manifestation_singleton rdfs:label ?manifestation_singleton_preflabel .
+    FILTER CONTAINS(?manifestation_singleton_preflabel, "Barocci")
+    BIND(REPLACE(STR(?manifestation_singleton_preflabel), "^MS. Barocci (.+)$", "$1") as ?shelfmark_barocci)
+    FILTER(?shelfmark_barocci != STR(?manifestation_singleton_preflabel))
   }
 
   BIND(REPLACE(STR(?expression), "^.*\\/(.+)", "$1") as ?expression_local_id)

@@ -121,6 +121,8 @@ def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
 
         links.append((old_bib, old_bod, old_sdbm))
 
+    log.info('Found {num} manual manuscript links'.format(num=len(links)))
+
     return links
 
 
@@ -203,6 +205,7 @@ def main():
         links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_bnf_nal, "BNF NAL")
         links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_arsenal, "Arsenal")
         links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_christ_church, "Christ Church")
+        links += link_by_shelfmark(bibale, bodley, sdbm, MMMS.shelfmark_barocci, "Barocci")
 
     if links:
         log.info('Linking manuscripts using found links')
