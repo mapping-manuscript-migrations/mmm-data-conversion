@@ -151,7 +151,7 @@ WHERE
     FILTER(?shelfmark_barocci != STR(?manifestation_singleton_preflabel))
   }
 
-  BIND(REPLACE(STR(?expression), "^.*\\/(.+)", "$1") as ?expression_local_id)
+  BIND(REPLACE(REPLACE(STR(?expression), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?expression_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
 
   BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)

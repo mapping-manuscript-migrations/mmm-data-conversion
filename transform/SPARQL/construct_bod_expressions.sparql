@@ -34,7 +34,7 @@ WHERE
       OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_preflabel . }
     }
 
-  BIND(REPLACE(STR(?expression), "^.*\\/(.+)/expression", "$1") as ?expression_local_id)
+  BIND(REPLACE(REPLACE(STR(?expression), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?expression_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
 
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression_creation/bodley_", ?expression_local_id)) as ?expression_creation_mmm)
