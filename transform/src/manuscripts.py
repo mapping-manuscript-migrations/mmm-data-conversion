@@ -6,7 +6,7 @@ import argparse
 import logging
 
 import pandas as pd
-from rdflib import URIRef, Literal, RDF
+from rdflib import URIRef, Literal, RDF, OWL
 from rdflib.util import guess_format
 from typing import Iterable
 
@@ -31,17 +31,24 @@ def redirect_resource(graph: Graph, old_uri: URIRef, new_uri: URIRef, handle_sko
     return graph
 
 
-def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label):
+def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label: Literal, add_sameas: bool=True):
     """
     Change manuscript URI, redirect links and add new prefLabel
     """
     if old_uri == new_uri:
         return graph
 
+    triples = len(list(graph.predicate_objects(old_uri)))
+    if triples <= 1:
+        log.warning('Redirecting URI used as subject in only {num} triples: {uri}'.format(num=triples, uri=old_uri))
+
     graph = redirect_resource(graph, old_uri, new_uri)
 
     graph.add((new_uri, SKOS.prefLabel, new_pref_label))
     graph.remove((new_uri, SKOS.altLabel, new_pref_label))
+
+    if add_sameas:
+        graph.add((old_uri, OWL.sameAs, new_uri))
 
     return graph
 
@@ -62,11 +69,18 @@ def link_manuscripts(bibale: Graph, bodley: Graph, sdbm: Graph, links: list):
     """
     Link manuscripts based on a list of tuples containing matches
     """
-    for (bib_hit, bod_hit, sdbm_hit) in sorted(set(links)):
+    links = sorted(set(links))
+
+    log.info('Got {num} links for manuscript linking'.format(num=len(links)))
+
+    for (bib_hit, bod_hit, sdbm_hit) in links:
+
+        # Redirect based on created owl:sameAs links if found
+        bib_hit = bibale.value(bib_hit, OWL.sameAs, any=False) or bib_hit
+        bod_hit = bodley.value(bod_hit, OWL.sameAs, any=False) or bod_hit
+        sdbm_hit = sdbm.value(sdbm_hit, OWL.sameAs, any=False) or sdbm_hit
 
         new_uri = bod_hit or bib_hit or sdbm_hit
-
-        # TODO: Add owl.sameAs links, follow them in linking if they exist
 
         labels = (bibale.value(bib_hit, SKOS.prefLabel) if bib_hit else None,
                   bodley.value(bod_hit, SKOS.prefLabel) if bod_hit else None,

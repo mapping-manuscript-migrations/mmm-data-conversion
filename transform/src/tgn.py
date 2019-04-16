@@ -63,7 +63,7 @@ class TGN:
 
     def query_tgn(self, query, retries=3):
         results = None
-        while not results and retries:
+        while (not results) and retries:
             # TODO: Handle timeout exception
             results = requests.post(self.endpoint,
                                     {'query': query},
