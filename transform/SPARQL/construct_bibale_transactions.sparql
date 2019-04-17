@@ -20,7 +20,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 CONSTRUCT {
   ?transfer_mmm a ecrm:E10_Transfer_of_Custody ;
     ecrm:P30_transferred_custody_of ?manuscript_or_collection_mmm ;
-    ecrm:P28_custody_surrendered_by ?old_owner ;
+    ecrm:P28_custody_surrendered_by ?old_owner_mmm ;
     ecrm:P29_custody_received_by ?new_owner_mmm ;
     ecrm:P7_took_place_at ?place_mmm ;
     ecrm:P4_has_time-span ?timespan_mmm ;

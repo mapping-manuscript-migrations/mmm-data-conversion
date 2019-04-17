@@ -15,7 +15,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 CONSTRUCT
 {
-  ?provenance_event_mmm a mmm-schema:ManuscriptObservation ;
+  ?provenance_event_mmm a mmm-schema:ManuscriptObservation ;  # Data contains only observations of manifestation singletons
     skos:prefLabel ?label ;
     mmm-schema:observed_manuscript ?manifestation_singleton_mmm ;
     mmm-schema:observed_owner ?actor_mmm ;
