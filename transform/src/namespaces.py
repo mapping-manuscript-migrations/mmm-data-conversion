@@ -21,7 +21,7 @@ MMMM = Namespace('http://ldf.fi/mmm/manifestation_singleton/')
 def bind_namespaces(graph: Graph):
     """Bind common namespaces to the graph"""
     graph.bind("dct", DCT)
-    graph.bind("crm", CRM)
+    graph.bind("ecrm", CRM)
     graph.bind("geo", GEO)
     graph.bind("gvp", GVP)
     graph.bind("skos", SKOS)
@@ -31,4 +31,3 @@ def bind_namespaces(graph: Graph):
     graph.bind("mmmp", MMMP)
 
     return graph
-
