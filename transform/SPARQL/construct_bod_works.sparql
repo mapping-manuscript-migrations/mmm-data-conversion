@@ -36,10 +36,9 @@ WHERE
   BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bodley_", ?work_local_id)) as ?work_mmm)
 
-  BIND(REPLACE(STR(?work_conception), "^.*\\/(.+)", "$1") as ?work_conception_local_id)
+  BIND(REPLACE(REPLACE(STR(?work_conception), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?work_conception_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/work_conception/bodley_", ?work_conception_local_id)) as ?work_conception_mmm)
 
   BIND(REPLACE(STR(?work_conception_author), "^.*\\/(.+)", "$1") as ?actor_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id)) as ?work_conception_author_mmm)
-
 }
