@@ -51,7 +51,9 @@ CONSTRUCT {
   ?parent_manifestation_singleton
     a frbroo:F4_Manifestation_Singleton ;
     skos:prefLabel ?parent_preflabel ;
-    ecrm:P46_is_composed_of ?manifestation_singleton .
+    ecrm:P46_is_composed_of ?manifestation_singleton ;
+    mmm-schema:data_provider_url ?provider_url ; # for showing the link in faceted search
+    dct:source mmm-schema:SDBM .
 
   ?production a ecrm:E12_Production ;
     # skos:prefLabel # TODO

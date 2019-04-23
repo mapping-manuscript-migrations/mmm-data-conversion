@@ -144,11 +144,9 @@
   skos:prefLabel "SDBM manuscript record URL" .
 
 :manuscript_work a rdfs:Property ;
-  rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Work contained in a physical manuscript" .
 
 :manuscript_author a rdfs:Property ;
-  rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Author related to a physical manuscript" .
 
 :Bodleian_collection a crm:E78_Collection ;  # TODO: Move to additional data ttl file (fix references)
