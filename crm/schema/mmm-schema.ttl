@@ -42,23 +42,11 @@
   rdfs:subClassOf crm:E54_Dimension ;
   skos:prefLabel "Miniature count"@en .
 
-:ManuscriptObservation a rdfs:Class ;
-  rdfs:subClassOf crm:E5_Event ;
-  skos:prefLabel "Direct or indirect observation of a manuscript"@en .
-
 :observed_manuscript a rdf:Property;
   rdfs:subPropertyOf crm:P12_occured_in_the_presence_of ;
   skos:prefLabel "Observed manuscript"@en .
 
-:observed_location a rdf:Property;
-  rdfs:subPropertyOf crm:P7_took_place_at ;
-  skos:prefLabel "Observed manuscript location"@en .
-
-:observed_time-span a rdf:Property;
-  rdfs:subPropertyOf crm:P4_has_time-span ;
-  skos:prefLabel "Manuscript observation time-span"@en .
-
-:observed_owner a rdf:Property;
+:ownership_attributed_to a rdf:Property;
   rdfs:subPropertyOf crm:P11_had_participant ;
   skos:prefLabel "Observed manuscript owner"@en .
 
@@ -216,3 +204,6 @@
 :shelfmark_barocci a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Barocci collection shelfmark" .
+
+:had_sales_price a rdfs:Property ;
+  skos:prefLabel "had sales price" .

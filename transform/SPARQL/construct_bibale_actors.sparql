@@ -92,7 +92,7 @@ WHERE
         OPTIONAL { ?birth_time crm:P82b_end_of_the_end ?birth_time_ee }
      }
     BIND("Birth of " + COALESCE(?person_pref_label, "an actor") as ?birth_label)
-    BIND(crm:E67_Birth as ?birth_class)
+    BIND(ecrm:E67_Birth as ?birth_class)
   }
 
   OPTIONAL {
@@ -112,7 +112,7 @@ WHERE
     }
     FILTER(BOUND(?death_time) || BOUND(?death_place))
     BIND("Death of " + COALESCE(?person_pref_label, "an actor") as ?death_label)
-    BIND(crm:E69_Death as ?death_class)
+    BIND(ecrm:E69_Death as ?death_class)
   }
 
   BIND(REPLACE(STR(?bibale_actor_uri), "^.*\\/(.+)", "$1") as ?actor_local_id)

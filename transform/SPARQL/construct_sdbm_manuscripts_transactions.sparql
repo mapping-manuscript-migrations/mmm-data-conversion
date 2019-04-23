@@ -19,10 +19,10 @@ CONSTRUCT
     ecrm:P29_custody_received_by ?buyer ;
     mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
     mmm-schema:data_provider_url ?entry ;
-    ?event_place_property ?source_agent_location ;
+    ecrm:P7_took_place_at ?source_agent_location ;
     # mmm-schema:place_literal ?cat_location_literal ;
-    ?event_timespan_property ?cat_date ;
-    ecrm:P179_had_sales_price ?monetary_amount_uri ;
+    ecrm:P4_has_time-span ?cat_date ;
+    mmm-schema:had_sales_price ?monetary_amount_uri ;
     ecrm:P70i_is_documented_in ?source_mmm .
     # dct:source mmm-schema:SDBM .
 
@@ -72,11 +72,9 @@ WHERE
     OPTIONAL { ?sales_entry :sales_other_currency ?sales_other_currency }
     OPTIONAL {
       ?sales_entry :sales_sold "Yes"
-      BIND(crm:E10_Transfer_of_Custody as ?event_type)
-      BIND(crm:P30_transferred_custody_of as ?event_property)
-      BIND(crm:P7_took_place_at as ?event_place_property)
-      BIND(crm:P4_has_time-span as ?event_timespan_property)
-      BIND(crm:P28_custody_surrendered_by as ?event_seller_or_holder_property)
+      BIND(ecrm:E10_Transfer_of_Custody as ?event_type)
+      BIND(ecrm:P30_transferred_custody_of as ?event_property)
+      BIND(ecrm:P28_custody_surrendered_by as ?event_seller_or_holder_property)
     }
     OPTIONAL {
       ?seller_agent :sale_agents_sale_id ?sales_entry .
@@ -87,11 +85,9 @@ WHERE
       ?buyer_agent :sale_agents_sale_id ?sales_entry .
       ?buyer_agent :sale_agents_role "buyer" .
       ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
-      BIND(crm:E10_Transfer_of_Custody as ?event_type)
-      BIND(crm:P30_transferred_custody_of as ?event_property)
-      BIND(crm:P7_took_place_at as ?event_place_property)
-      BIND(crm:P4_has_time-span as ?event_timespan_property)
-      BIND(crm:P28_custody_surrendered_by as ?event_seller_or_holder_property)
+      BIND(ecrm:E10_Transfer_of_Custody as ?event_type)
+      BIND(ecrm:P30_transferred_custody_of as ?event_property)
+      BIND(ecrm:P28_custody_surrendered_by as ?event_seller_or_holder_property)
     }
     OPTIONAL {
       ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
@@ -103,11 +99,9 @@ WHERE
     }
   }
   OPTIONAL {
-    BIND(mmm-schema:ManuscriptObservation as ?event_type)
+    BIND(ecrm:E7_Activity as ?event_type)
     BIND(mmm-schema:observed_manuscript as ?event_property)
-    BIND(mmm-schema:observed_location as ?event_place_property)
-    BIND(mmm-schema:observed_time-span as ?event_timespan_property)
-    BIND(mmm-schema:observed_owner as ?event_seller_or_holder_property)
+    BIND(mmm-schema:ownership_attributed_to as ?event_seller_or_holder_property)
   }
 
   ## SOURCE ##
@@ -119,7 +113,7 @@ WHERE
       # Collection catalogs
       ?entry_source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
       BIND(CONCAT(STR(mmm:), "collection/sdbm_") as ?source_namespace)
-      BIND(crm:P46i_forms_part_of as ?property_to_collection)
+      BIND(ecrm:P46i_forms_part_of as ?property_to_collection)
 
     }
     OPTIONAL {
