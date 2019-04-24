@@ -24,6 +24,7 @@ CONSTRUCT {
     ecrm:P29_custody_received_by ?new_owner_mmm ;
     ecrm:P7_took_place_at ?place_mmm ;
     ecrm:P4_has_time-span ?timespan_mmm ;
+    mmm-schema:data_provider_url ?manuscript_or_collection ;
     .
 
   ?timespan_mmm a ecrm:E52_Time-Span ;
@@ -82,5 +83,4 @@ WHERE
 
   BIND(REPLACE(STR(?timespan), "^.*\\/(.+)", "$1") as ?timespan_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?timespan_local_id, ":", "_"))) as ?timespan_mmm)
-
 }
