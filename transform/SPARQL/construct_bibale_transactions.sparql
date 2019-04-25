@@ -35,6 +35,8 @@ CONSTRUCT {
     ecrm:P82b_end_of_the_end ?timespan_ee ;
     .
 
+  ?manuscript_or_collection_mmm ecrm:P51_has_former_or_current_owner ?old_owner_mmm , ?new_owner_mmm .
+
 }
 WHERE
 {

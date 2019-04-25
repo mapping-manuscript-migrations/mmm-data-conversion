@@ -31,7 +31,9 @@ CONSTRUCT
     .
 
   ?manifestation_singleton_mmm mmm-schema:phillipps_number ?phillipps ;
+    ecrm:P51_has_former_or_current_owner ?actor_mmm ;
     .
+    
 }
 WHERE
 {
