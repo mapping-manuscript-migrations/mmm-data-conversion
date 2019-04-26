@@ -85,12 +85,12 @@ WHERE
     OPTIONAL { ?birth crm:P7_took_place_at ?birth_place }
     OPTIONAL {
       ?birth crm:P4_has_time-span ?birth_time .
-      ?birth_time rdfs:label ?birth_time_label ;
-        OPTIONAL { ?birth_time crm:P82a_begin_of_the_begin ?birth_time_bb }
-        OPTIONAL { ?birth_time crm:P81a_end_of_the_begin ?birth_time_eb }
-        OPTIONAL { ?birth_time crm:P81b_begin_of_the_end ?birth_time_be }
-        OPTIONAL { ?birth_time crm:P82b_end_of_the_end ?birth_time_ee }
-     }
+      ?birth_time rdfs:label ?birth_time_label .
+      OPTIONAL { ?birth_time crm:P82a_begin_of_the_begin ?birth_time_bb }
+      OPTIONAL { ?birth_time crm:P81a_end_of_the_begin ?birth_time_eb }
+      OPTIONAL { ?birth_time crm:P81b_begin_of_the_end ?birth_time_be }
+      OPTIONAL { ?birth_time crm:P82b_end_of_the_end ?birth_time_ee }
+    }
     BIND("Birth of " + COALESCE(?person_pref_label, "an actor") as ?birth_label)
     BIND(ecrm:E67_Birth as ?birth_class)
   }
@@ -104,11 +104,11 @@ WHERE
     OPTIONAL { ?death crm:P7_took_place_at ?death_place }
     OPTIONAL {
       ?death crm:P4_has_time-span ?death_time .
-      ?death_time rdfs:label ?death_time_label ;
-        OPTIONAL { ?death_time crm:P82a_begin_of_the_begin ?death_time_bb }
-        OPTIONAL { ?death_time crm:P81a_end_of_the_begin ?death_time_eb }
-        OPTIONAL { ?death_time crm:P81b_begin_of_the_end ?death_time_be }
-        OPTIONAL { ?death_time crm:P82b_end_of_the_end ?death_time_ee }
+      ?death_time rdfs:label ?death_time_label .
+      OPTIONAL { ?death_time crm:P82a_begin_of_the_begin ?death_time_bb }
+      OPTIONAL { ?death_time crm:P81a_end_of_the_begin ?death_time_eb }
+      OPTIONAL { ?death_time crm:P81b_begin_of_the_end ?death_time_be }
+      OPTIONAL { ?death_time crm:P82b_end_of_the_end ?death_time_ee }
     }
     FILTER(BOUND(?death_time) || BOUND(?death_place))
     BIND("Death of " + COALESCE(?person_pref_label, "an actor") as ?death_label)
@@ -121,15 +121,15 @@ WHERE
   BIND(REPLACE(STR(?bibale_place_uri), "^.*\\/(.+)", "$1") as ?place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
 
-  BIND(REPLACE(STR(?birth), "^.*\\/(.+)", "$1") as ?birth_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?actor_local_id, "_birth")) as ?birth_mmm)
+  BIND(REPLACE(STR(?birth), "^.*[\\/:]([0-9]+)", "$1") as ?birth_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?birth_local_id, "_birth")) as ?birth_mmm)
   BIND(REPLACE(STR(?birth_place), "^.*\\/(.+)", "$1") as ?birth_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?birth_place_local_id, ":", "_"))) as ?birth_place_mmm)
   BIND(REPLACE(STR(?birth_time), "^.*\\/(.+)", "$1") as ?birth_time_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?birth_time_local_id, ":", "_"))) as ?birth_time_mmm)
 
-  BIND(REPLACE(STR(?death), "^.*\\/(.+)", "$1") as ?death_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?actor_local_id, "_death")) as ?death_mmm)
+  BIND(REPLACE(STR(?death), "^.*[\\/:]([0-9]+)", "$1") as ?death_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?death_local_id, "_death")) as ?death_mmm)
   BIND(REPLACE(STR(?death_place), "^.*\\/(.+)", "$1") as ?death_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?death_place_local_id, ":", "_"))) as ?death_place_mmm)
   BIND(REPLACE(STR(?death_time), "^.*\\/(.+)", "$1") as ?death_time_local_id)
