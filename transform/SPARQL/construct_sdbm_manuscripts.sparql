@@ -92,149 +92,26 @@ CONSTRUCT {
     ecrm:P90_has_value ?miniatures_value .
 
   # provenance reification
-  ?reification_owner_uri
-    a rdf:Statement ;
-    rdf:subject ?manifestation_singleton ;
-    rdf:predicate ecrm:P51_has_former_or_current_owner ;
-    rdf:object ?prov_agent ;
-    mmm-schema:order ?prov_order ;
-    rdfs:comment ?prov_comment ;
-    mmm-schema:data_provider_url ?entry ;
-    # dct:source ?source .
-    .
+  # ?reification_owner_uri
+  #   a rdf:Statement ;
+  #   rdf:subject ?manifestation_singleton ;
+  #   rdf:predicate ecrm:P51_has_former_or_current_owner ;
+  #   rdf:object ?prov_agent ;
+  #   mmm-schema:order ?prov_order ;
+  #   rdfs:comment ?prov_comment ;
+  #   mmm-schema:data_provider_url ?entry ;
+  #   # dct:source ?source .
+  #   .
 
-  # # title reification
-  # ?reification_label_uri
-  #   a rdf:Statement ;
-  #   rdf:subject ?manifestation_singleton ;
-  #   rdf:predicate rdfs:label ;
-  #   rdf:object ?title ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # identifier reification
-  # ?reification_id_uri a rdf:Statement ;
-  #   rdf:subject ?manifestation_singleton ;
-  #   rdf:predicate ecrm:P48_has_preferred_identifier ;
-  #   rdf:object ?manuscript_id ;
-  #   dct:source ?source .
-  #
-  # # author reification
-  # ?reification_author_uri
-  #   a rdf:Statement ;
-  #   rdf:subject ?expression_creation ;
-  #   rdf:predicate mmm-schema:carried_out_by_as_author ;
-  #   rdf:object ?author ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   :observed_author ?observed_author ;
-  #   dct:source ?source .
-  #
-  # # production date reification
-  # ?reification_production_time_uri
-  #   a rdf:Statement ;
-  #   rdf:subject ?production ;
-  #   rdf:predicate ecrm:P4_has_time-span ;
-  #   rdf:object ?production_timespan ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # artist reification
-  #
-  # # scribe reification
-  #
-  # # language reification
-  # ?reification_language_uri
-  #   a rdf:Statement ;
-  #   rdf:subject ?expression;
-  #   rdf:predicate ecrm:P72_has_language ;
-  #   rdf:object ?language ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # place reification
-  # ?reification_production_place_uri a rdf:Statement ;
-  #   rdf:subject ?production ;
-  #   rdf:predicate ecrm:P7_took_place_at ;
-  #   rdf:object ?production_place ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # material reification
-  # ?reification_material_uri
-  #   a rdf:Statement ;
-  #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate ecrm:P45_consists_of ;
-  #   rdf:object ?material ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # use reification
-  #
-  # # folios reification
-  # ?reification_folios_uri
-  #   a rdf:Statement;
-  #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate ecrm:P43_has_dimension ;
-  #   rdf:object ?folios_uri ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # lines reification
-  # ?reification_lines_uri
-  #   a rdf:Statement;
-  #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate ecrm:P43_has_dimension ;
-  #   rdf:object ?lines_uri ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # columns reification
-  # ?reification_columns_uri
-  #   a rdf:Statement;
-  #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate ecrm:P43_has_dimension ;
-  #   rdf:object ?columns_uri ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # height reification
-  # ?reification_height_uri
-  #   a rdf:Statement;
-  #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate ecrm:P43_has_dimension ;
-  #   rdf:object ?height_uri ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # width reification
-  # ?reification_width_uri
-  #   a rdf:Statement;
-  #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate ecrm:P43_has_dimension ;
-  #   rdf:object ?width_uri ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # alternate size reification
-  #
-  # # miniatures reification
-  # ?reification_miniatures_uri
-  #   a rdf:Statement;
-  #   rdf:subject ?manifestation_singleton;
-  #   rdf:predicate ecrm:P43_has_dimension ;
-  #   rdf:object ?miniatures_uri ;
-  #   mmm-schema:data_provider_url ?entry ;
-  #   dct:source ?source .
-  #
-  # # historiated initials reification
-  #
-  # # decorated initials reification
-  #
-  # # binding reification
-  #
-  # # manuscript link reification
-  #
-  # # other Info reification
+  ?observation_mmm  # TODO: prefLabel
+    a ecrm:E7_Activity ;
+    mmm-schema:observed_manuscript ?manifestation_singleton ;
+    mmm-schema:ownership_attributed_to ?prov_agent ;
+    mmm-schema:order ?prov_order ;
+    ecrm:P3_has_note ?prov_comment ;
+    mmm-schema:data_provider_url ?entry ;
+    dct:source ?source ;
+    .
 
 }
 # SELECT DISTINCT ?entry ?entry_manuscript ?entry_source ?title ?common_title ?cat_lot_property ?other_info ?cat_lot_number ?phillipps ?shelfmark_bnf_latin ?shelfmark_bnf_hebreu ?shelfmark_bnf_nal ?shelfmark_buchanan ?shelfmark_arsenal ?shelfmark_christ_church ?shelfmark_barocci
@@ -278,7 +155,8 @@ WHERE {
   OPTIONAL {
     ?provenance_entry :provenance_entry_id ?entry ;
                       :provenance_provenance_agent_id/:names_id ?prov_agent_id ;
-                                                     :provenance_order ?prov_order .
+                      :provenance_order ?prov_order ;
+                      :provenance_id ?prov_id ;
     FILTER(STR(?prov_order) != "")
     OPTIONAL { ?provenance_entry :provenance_comment ?prov_comment . }
   }
@@ -580,4 +458,6 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_language_", REPLACE(?language, " ", "-"))) as ?reification_language_uri)
   BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id))) as ?reification_label_uri)
   # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id), "_", SUBSTR(REPLACE(?title, "[\\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\#\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-"), 0, 21))) as ?reification_label_uri)
+
+  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_", STR(?prov_id))) as ?observation_mmm)
 }
