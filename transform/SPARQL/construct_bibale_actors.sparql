@@ -21,6 +21,7 @@ CONSTRUCT {
     mmm-schema:gender ?gender_literal ;
     ecrm:P98i_was_born ?birth_mmm ;
     ecrm:P100i_died_in ?death_mmm ;
+    owl:sameAs ?external_uri ;    
     dct:source mmm-schema:Bibale .
 
   ?birth_mmm a ?birth_class ;
@@ -113,6 +114,10 @@ WHERE
     FILTER(BOUND(?death_time) || BOUND(?death_place))
     BIND("Death of " + COALESCE(?person_pref_label, "an actor") as ?death_label)
     BIND(ecrm:E69_Death as ?death_class)
+  }
+
+  OPTIONAL {
+    ?actor owl:sameAs ?external_uri .
   }
 
   BIND(REPLACE(STR(?bibale_actor_uri), "^.*\\/(.+)", "$1") as ?actor_local_id)
