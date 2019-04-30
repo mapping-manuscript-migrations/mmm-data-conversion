@@ -21,7 +21,7 @@ CONSTRUCT {
     mmm-schema:gender ?gender_literal ;
     ecrm:P98i_was_born ?birth_mmm ;
     ecrm:P100i_died_in ?death_mmm ;
-    owl:sameAs ?external_uri ;    
+    owl:sameAs ?external_uri ;
     dct:source mmm-schema:Bibale .
 
   ?birth_mmm a ?birth_class ;
@@ -117,7 +117,7 @@ WHERE
   }
 
   OPTIONAL {
-    ?actor owl:sameAs ?external_uri .
+    ?bibale_actor_uri owl:sameAs ?external_uri .
   }
 
   BIND(REPLACE(STR(?bibale_actor_uri), "^.*\\/(.+)", "$1") as ?actor_local_id)
