@@ -20,7 +20,7 @@ CONSTRUCT {
   ?work_conception a frbroo:F27_Work_Conception ;
     # skos:prefLabel # TODO
     frbroo:R16_initiated ?work ;
-    mmm-schema:carried_out_by_as_possible_author ?author ;
+    mmm-schema:carried_out_by_as_possible_author ?author_mmm ;
     # ecrm:P7_took_place_at  # TODO: author place/nationality
     # ecrm:P4_has_time-span  # TODO: author life dates
     # dct:source mmm-schema:SDBM .
@@ -37,6 +37,9 @@ CONSTRUCT {
     frbroo:R19_created_a_realisation_of ?work ;
     # dct:source mmm-schema:SDBM .
     .
+
+  ?author_mmm skos:altLabel ?observed_author
+  .
 
 }
 #SELECT *
@@ -58,15 +61,14 @@ WHERE {
   OPTIONAL {
     ?entry_author :entry_authors_entry_id ?entry .
     ?entry_author :entry_authors_author_id/:names_id ?author_id .
-    ?entry_author :entry_authors_observed_name ?observed_author .
+    OPTIONAL { ?entry_author :entry_authors_observed_name ?observed_author . }
   }
 
   # language
   OPTIONAL {
     ?entry_language :entry_languages_entry_id ?entry .
     ?entry_language :entry_languages_language_id/:languages_id ?language_id .
-    ?entry_language :entry_languages_language_id/:languages_name ?language_ .
-    BIND(STRLANG(?language_, 'en') AS ?language)
+    ?entry_language :entry_languages_language_id/:languages_name ?language .
   }
 
   BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
@@ -76,7 +78,7 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "work_conception/", STR(?title_id))) as ?work_conception)
   BIND(IRI(CONCAT(STR(mmm:), "expression/", STR(?title_id))) as ?expression)
   BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author_mmm)
 
   BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
 }
