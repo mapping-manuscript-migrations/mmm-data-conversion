@@ -5,7 +5,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -18,11 +18,13 @@ CONSTRUCT {
   ?mmm_actor_uri a ?actor_class ;
     skos:prefLabel ?name ;
     owl:sameAs ?viaf_uri ;
-    mmm-schema:person_place ?mmm_place ;  # Place/nationality
-    mmm-schema:birth_date ?birth_date ;
-    mmm-schema:death_date ?death_date ;
-    mmm-schema:data_provider_url ?name_id ;
-    dct:source mmm-schema:SDBM ;
+    mmms:person_place ?mmm_place ;  # Place/nationality
+    mmms:birth_date ?birth_date ;
+    mmms:death_date ?death_date ;
+    mmms:data_provider_url ?name_id ;
+    dct:source mmms:SDBM ;
+    ecrm:P3_has_note ?other_info ;
+    ecrm:P3_has_note ?name_type_literal ;
     .
 }
 WHERE
@@ -31,6 +33,7 @@ WHERE
            :names_id ?person_local_id .
   FILTER(NOT EXISTS { ?name_id :names_deleted true })
 
+  # LABEL
   OPTIONAL {
     ?name_id :names_name ?name
   }
@@ -38,37 +41,52 @@ WHERE
     BIND("Unknown actor" as ?name)
   }
 
+  # CLASS (PERSON / ORGANIZATION / ACTOR)
   OPTIONAL {
     ?name_id :names_subtype "Personal" .
-    BIND(IRI(mmm-schema:Person) as ?actor_class)
+    BIND(IRI(mmms:Person) as ?actor_class)
   }
   OPTIONAL {
     ?name_id :names_subtype "Corporate" .
-    BIND(IRI(mmm-schema:Organization) as ?actor_class)
+    BIND(IRI(mmms:Organization) as ?actor_class)
   }
-  OPTIONAL { BIND(IRI(mmm-schema:Actor) as ?actor_class)}
+  OPTIONAL { BIND(IRI(mmms:Actor) as ?actor_class)}
 
+  # NAME SUBTYPE (e.g. Personal, Corporate, Geographic)
   OPTIONAL { ?name_id :names_subtype ?name_type_literal . }
+
+  # VIAF URI
   OPTIONAL {
     ?name_id :names_viaf_id ?viaf_id .
     FILTER(STR(?viaf_id) != "") .
     BIND(URI(CONCAT("https://viaf.org/viaf/", REPLACE(?viaf_id, " ", ""))) as ?viaf_uri)
   }
+
+  # BIRTH DATE
   OPTIONAL {
     ?name_id :names_startdate ?birth_date .
     FILTER(STR(?birth_date) != "")
   }
+
+  # DEATH DATE
   OPTIONAL {
     ?name_id :names_enddate ?death_date .
     FILTER(STR(?death_date) != "")
   }
 
+  # OTHER INFO
+  OPTIONAL {
+    ?name_id :names_other_info ?other_info
+  }
+
+  # ACTOR PLACE
   OPTIONAL {
     ?name_place_id :name_places_name_id ?name_id ;
                    :name_places_place_id ?place_id ;
                    a :name_places .
     ?place_id :places_id ?place_local_id .
   }
+
   BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?place_local_id))) as ?mmm_place)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?person_local_id))) as ?mmm_actor_uri)
 }
