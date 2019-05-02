@@ -20,11 +20,16 @@
 
 :Width a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Width"@en .
+  skos:prefLabel "Width"@en ;
+  crm:P91_has_unit :Millimetre .
 
 :Height a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Height"@en .
+  skos:prefLabel "Height"@en ;
+  crm:P91_has_unit :Millimetre .
+
+:Millimetre a crm:E58_Measurement_Unit ;
+  skos:prefLabel "mm"@en .
 
 :Folios a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
@@ -41,6 +46,17 @@
 :Miniatures a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
   skos:prefLabel "Miniature count"@en .
+
+:DecoratedInitials a rdfs:Class ;
+  rdfs:subClassOf crm:E54_Dimension ;
+  skos:prefLabel "Number of decorated initials"@en .
+
+:HistoriatedInitials a rdfs:Class ;
+  rdfs:subClassOf crm:E54_Dimension ;
+  skos:prefLabel "Number of historiated initials"@en .
+
+:binding a rdf:Property ;
+  skos:prefLabel "Description of manuscript binding"@en .
 
 :observed_manuscript a rdf:Property;
   rdfs:subPropertyOf crm:P12_occured_in_the_presence_of ;
