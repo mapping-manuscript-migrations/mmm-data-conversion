@@ -28,9 +28,15 @@ CONSTRUCT {
 WHERE
 {
   ?name_id a :names ;
-           :names_name ?name ;
            :names_id ?person_local_id .
   FILTER(NOT EXISTS { ?name_id :names_deleted true })
+
+  OPTIONAL {
+    ?name_id :names_name ?name
+  }
+  OPTIONAL {
+    BIND("Unknown actor" as ?name)
+  }
 
   OPTIONAL {
     ?name_id :names_subtype "Personal" .
