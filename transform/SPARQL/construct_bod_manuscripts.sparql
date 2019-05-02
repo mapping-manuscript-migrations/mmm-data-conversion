@@ -36,6 +36,7 @@ CONSTRUCT {
     skos:prefLabel ?manifestation_singleton_preflabel ;
     ecrm:P128_carries ?expression_mmm ;
     ecrm:P52_has_current_owner ?prov_agent_mmm ;
+    ecrm:P45_consists_of ?material_uri ;
     mmm-schema:data_provider_url ?manifestation_singleton ;
     mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
     mmm-schema:manuscript_work ?work_mmm ;  # shortcut
@@ -44,6 +45,10 @@ CONSTRUCT {
     mmm-schema:shelfmark_barocci ?shelfmark_barocci ;
     ecrm:P46i_forms_part_of mmm-schema:Bodleian_collection ;
     dct:source mmm-schema:Bodley ;
+    .
+
+  ?material_uri a ecrm:E57_Material ;
+    skos:prefLabel ?material_label ;
     .
 
 }
@@ -149,6 +154,11 @@ WHERE
     FILTER CONTAINS(?manifestation_singleton_preflabel, "Barocci")
     BIND(REPLACE(STR(?manifestation_singleton_preflabel), "^MS. Barocci (.+)$", "$1") as ?shelfmark_barocci)
     FILTER(?shelfmark_barocci != STR(?manifestation_singleton_preflabel))
+  }
+
+  OPTIONAL {
+    ?manifestation_singleton crm:P45_consists_of ?material_uri .
+    ?material_uri rdfs:label ?material_label .
   }
 
   BIND(REPLACE(REPLACE(STR(?expression), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?expression_local_id)
