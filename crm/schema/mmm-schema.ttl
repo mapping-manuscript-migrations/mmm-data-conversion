@@ -221,3 +221,7 @@
 
 :had_sales_price a rdfs:Property ;
   skos:prefLabel "had sales price" .
+
+:biblissima_id a rdfs:Property ;
+  rdfs:subPropertyOf crm:P1_is_identified_by ;
+  skos:prefLabel "Biblissima identifier" .
