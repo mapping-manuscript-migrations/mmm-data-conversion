@@ -13,6 +13,8 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
+# TODO: Use E66_Formation, E68_Dissolution, E63_Beginning_of_Existence, E64_End_of_Existence
+
 CONSTRUCT {
   ?actor_mmm a ?actor_class ;
     skos:prefLabel ?preflabel ;

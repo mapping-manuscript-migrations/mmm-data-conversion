@@ -12,20 +12,43 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-# TODO: Birth and Death as events
+# TODO: Format dates
 
 CONSTRUCT {
   ?mmm_actor_uri a ?actor_class ;
     skos:prefLabel ?name ;
     owl:sameAs ?viaf_uri ;
     mmms:person_place ?mmm_place ;  # Place/nationality
-    mmms:birth_date ?birth_date ;
-    mmms:death_date ?death_date ;
+    ecrm:P98i_was_born ?birth_mmm ;
+    ecrm:P100i_died_in ?death_mmm ;
     mmms:data_provider_url ?name_id ;
     dct:source mmms:SDBM ;
     ecrm:P3_has_note ?other_info ;
     ecrm:P3_has_note ?name_type_literal ;
     .
+
+  ?birth_mmm a ?birth_class ;
+    skos:prefLabel ?birth_label ;
+    ecrm:P4_has_time-span ?birth_timespan_mmm ;
+    .
+
+  ?birth_timespan_mmm a ecrm:E52_Time-Span ;
+    skos:prefLabel ?birth_date ;
+    ecrm:P82a_begin_of_the_begin ?birth_date ;
+    ecrm:P82b_end_of_the_end ?birth_date ;
+    .
+
+  ?death_mmm a ?death_class ;
+    skos:prefLabel ?death_label ;
+    ecrm:P4_has_time-span ?death_timespan_mmm ;
+    .
+
+  ?death_timespan_mmm a ecrm:E52_Time-Span ;
+    skos:prefLabel ?death_date ;
+    ecrm:P82a_begin_of_the_begin ?death_date ;
+    ecrm:P82b_end_of_the_end ?death_date ;
+    .
+
 }
 WHERE
 {
@@ -45,15 +68,33 @@ WHERE
   OPTIONAL {
     ?name_id :names_subtype "Personal" .
     BIND(IRI(mmms:Person) as ?actor_class)
+    BIND(ecrm:E67_Birth as ?birth_class)
+    BIND(ecrm:E69_Death as ?death_class)
+    BIND("Birth of " as ?birth_prefix)
+    BIND("Death of " as ?death_prefix)
   }
   OPTIONAL {
     ?name_id :names_subtype "Corporate" .
     BIND(IRI(mmms:Organization) as ?actor_class)
+    BIND(ecrm:E66_Formation as ?birth_class)
+    BIND(ecrm:E68_Dissolution as ?death_class)
+    BIND("Formation of " as ?birth_prefix)
+    BIND("Dissolution of " as ?death_prefix)
   }
-  OPTIONAL { BIND(IRI(mmms:Actor) as ?actor_class)}
+  OPTIONAL {
+    # Actors of unknown type
+    BIND(IRI(mmms:Actor) as ?actor_class)
+    BIND(ecrm:E63_Beginning_of_Existence as ?birth_class)
+    BIND(ecrm:E64_End_of_Existence as ?death_class)
+    BIND("Beginning of existence of " as ?birth_prefix)
+    BIND("End of existence of " as ?death_prefix)
+  }
 
   # NAME SUBTYPE (e.g. Personal, Corporate, Geographic)
-  OPTIONAL { ?name_id :names_subtype ?name_type_literal . }
+  OPTIONAL {
+    ?name_id :names_subtype ?name_type_literal .
+    FILTER(STR(?name_type_literal) != "") .
+  }
 
   # VIAF URI
   OPTIONAL {
@@ -66,17 +107,24 @@ WHERE
   OPTIONAL {
     ?name_id :names_startdate ?birth_date .
     FILTER(STR(?birth_date) != "")
+    ?name_id :names_id ?person_local_id .
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_birth")) as ?birth_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_birth_timespan")) as ?birth_timespan_mmm)
   }
 
   # DEATH DATE
   OPTIONAL {
     ?name_id :names_enddate ?death_date .
     FILTER(STR(?death_date) != "")
+    ?name_id :names_id ?person_local_id .
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_death")) as ?death_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_death_timespan")) as ?death_timespan_mmm)
   }
 
   # OTHER INFO
   OPTIONAL {
     ?name_id :names_other_info ?other_info
+    FILTER(STR(?other_info) != "") .
   }
 
   # ACTOR PLACE
@@ -86,6 +134,9 @@ WHERE
                    a :name_places .
     ?place_id :places_id ?place_local_id .
   }
+
+  BIND(?birth_prefix + ?name as ?birth_label)
+  BIND(?death_prefix + ?name as ?death_label)
 
   BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?place_local_id))) as ?mmm_place)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?person_local_id))) as ?mmm_actor_uri)
