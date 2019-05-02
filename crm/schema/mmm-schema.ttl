@@ -7,149 +7,149 @@
 @prefix mmmp: <http://ldf.fi/mmm/place/> .
 
 :entry a rdf:Property;
-  skos:prefLabel "Source entry in SDBM"@en .
+  skos:prefLabel "Source entry in SDBM" .
 
 :manuscript_record a rdf:Property;
-  skos:prefLabel "Source manuscript record in SDBM"@en ;
+  skos:prefLabel "Source manuscript record in SDBM" ;
   rdfs:domain frbroo:F4_Manifestation_Singleton .
 
 :order a rdf:Property;
-  skos:prefLabel "Ordering number"@en ;
-  rdfs:comment "Used, e.g., for ordering of provenance information"@en ;
+  skos:prefLabel "Ordering number" ;
+  rdfs:comment "Used, e.g., for ordering of provenance information" ;
   rdfs:domain rdf:Statement .
 
 :Width a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Width"@en ;
+  skos:prefLabel "Width" ;
   crm:P91_has_unit :Millimetre .
 
 :Height a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Height"@en ;
+  skos:prefLabel "Height" ;
   crm:P91_has_unit :Millimetre .
 
 :Millimetre a crm:E58_Measurement_Unit ;
-  skos:prefLabel "mm"@en .
+  skos:prefLabel "mm" .
 
 :Folios a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Folio count"@en .
+  skos:prefLabel "Folio count" .
 
 :Lines a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Line count"@en .
+  skos:prefLabel "Line count" .
 
 :Columns a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Column count"@en .
+  skos:prefLabel "Column count" .
 
 :Miniatures a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Miniature count"@en .
+  skos:prefLabel "Miniature count" .
 
 :DecoratedInitials a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Number of decorated initials"@en .
+  skos:prefLabel "Number of decorated initials" .
 
 :HistoriatedInitials a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
-  skos:prefLabel "Number of historiated initials"@en .
+  skos:prefLabel "Number of historiated initials" .
 
 :binding a rdf:Property ;
-  skos:prefLabel "Description of manuscript binding"@en .
+  skos:prefLabel "Description of manuscript binding" .
 
 :observed_manuscript a rdf:Property;
   rdfs:subPropertyOf crm:P12_occured_in_the_presence_of ;
-  skos:prefLabel "Observed manuscript"@en .
+  skos:prefLabel "Observed manuscript" .
 
 :ownership_attributed_to a rdf:Property;
   rdfs:subPropertyOf crm:P11_had_participant ;
-  skos:prefLabel "Observed manuscript owner"@en .
+  skos:prefLabel "Observed manuscript owner" .
 
 :data_provider a rdfs:Property ;
-  skos:prefLabel "The data provider database"@en ;
+  skos:prefLabel "The data provider database" ;
   rdfs:range :Database .
 
 :data_provider_url a rdfs:Property ;
-  skos:prefLabel "URL link to find more information from"@en .
+  skos:prefLabel "URL link to find more information from" .
 
 :external_url a rdfs:Property ;
-  skos:prefLabel "External URL link to find more information from"@en .
+  skos:prefLabel "External URL link to find more information from" .
 
 :Database a rdfs:Class ;
-  skos:prefLabel "A database containing source information"@en .
+  skos:prefLabel "A database containing source information" .
 
 :SDBM a :Database ;
-  skos:prefLabel "Schoenberg Database of Manuscripts"@en ;
+  skos:prefLabel "Schoenberg Database of Manuscripts" ;
   :data_provider_url <https://sdbm.library.upenn.edu/> .
 
 :Bodley a :Database ;
-  skos:prefLabel "Medieval Manuscripts in Oxford Libraries"@en ;
+  skos:prefLabel "Medieval Manuscripts in Oxford Libraries" ;
   :data_provider_url <https://medieval.bodleian.ox.ac.uk/> .
 
 :Bibale a :Database ;
-  skos:prefLabel "Bibale Database"@en ;
+  skos:prefLabel "Bibale Database" ;
   :data_provider_url <http://bibale.irht.cnrs.fr/> .
 
 :Source a rdfs:Class ;
   rdfs:subClassOf crm:E31_Document ;
-  skos:prefLabel "Source document"@en .
+  skos:prefLabel "Source document" .
 
 :carried_out_by_as_artist a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by artist"@en .
+  skos:prefLabel "Carried out by artist" .
 
 :carried_out_by_as_author a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by author"@en .
+  skos:prefLabel "Carried out by author" .
 
 :carried_out_by_as_binder a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by binder"@en .
+  skos:prefLabel "Carried out by binder" .
 
 :carried_out_by_as_commissioner a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by commissioner"@en .
+  skos:prefLabel "Carried out by commissioner" .
 
 :carried_out_by_as_creator a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by creator"@en .
+  skos:prefLabel "Carried out by creator" .
 
 :carried_out_by_as_dedicatee a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by dedicatee"@en .
+  skos:prefLabel "Carried out by dedicatee" .
 
 :carried_out_by_as_formerOwner a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by former owner"@en .
+  skos:prefLabel "Carried out by former owner" .
 
 :carried_out_by_as_illuminator a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by illuminator"@en .
+  skos:prefLabel "Carried out by illuminator" .
 
 :carried_out_by_as_patron a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by patron"@en .
+  skos:prefLabel "Carried out by patron" .
 
 :carried_out_by_as_printer a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by printer"@en .
+  skos:prefLabel "Carried out by printer" .
 
 :carried_out_by_as_scribe a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by scribe"@en .
+  skos:prefLabel "Carried out by scribe" .
 
 :carried_out_by_as_signer a rdf:Property ;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by signer"@en .
+  skos:prefLabel "Carried out by signer" .
 
 :carried_out_by_as_selling_agent a rdf:Property;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Carried out by selling agent"@en .
+  skos:prefLabel "Carried out by selling agent" .
 
 :carried_out_by_as_possible_author a rdf:Property;
   rdfs:subPropertyOf crm:P14_carried_out_by ;
-  skos:prefLabel "Possibly carried out by author"@en .
+  skos:prefLabel "Possibly carried out by author" .
 
 :entry a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
