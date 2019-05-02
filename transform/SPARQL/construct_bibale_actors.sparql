@@ -131,6 +131,10 @@ WHERE
     }
     BIND("Birth of " + COALESCE(?person_pref_label, "an actor") as ?birth_label)
     BIND(ecrm:E67_Birth as ?birth_class)
+
+    # Must mint URI based on actor ID to combine place and time-span
+    BIND(REPLACE(STR(?bibale_actor_uri), "^.*[\\/:]([0-9]+)", "$1") as ?actor_local_id_)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?actor_local_id_, "_birth")) as ?birth_mmm)
   }
 
   # DEATH
@@ -152,6 +156,10 @@ WHERE
     FILTER(BOUND(?death_time) || BOUND(?death_place))
     BIND("Death of " + COALESCE(?person_pref_label, "an actor") as ?death_label)
     BIND(ecrm:E69_Death as ?death_class)
+
+    # Must mint URI based on actor ID to combine place and time-span
+    BIND(REPLACE(STR(?bibale_actor_uri), "^.*[\\/:]([0-9]+)", "$1") as ?actor_local_id_)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?actor_local_id_, "_death")) as ?death_mmm)
   }
 
   OPTIONAL {
@@ -194,15 +202,11 @@ WHERE
   BIND(REPLACE(STR(?bibale_place_uri), "^.*\\/(.+)", "$1") as ?place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
 
-  BIND(REPLACE(STR(?birth), "^.*[\\/:]([0-9]+)", "$1") as ?birth_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?birth_local_id, "_birth")) as ?birth_mmm)
   BIND(REPLACE(STR(?birth_place), "^.*\\/(.+)", "$1") as ?birth_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?birth_place_local_id, ":", "_"))) as ?birth_place_mmm)
   BIND(REPLACE(STR(?birth_time), "^.*\\/(.+)", "$1") as ?birth_time_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?birth_time_local_id, ":", "_"))) as ?birth_time_mmm)
 
-  BIND(REPLACE(STR(?death), "^.*[\\/:]([0-9]+)", "$1") as ?death_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?death_local_id, "_death")) as ?death_mmm)
   BIND(REPLACE(STR(?death_place), "^.*\\/(.+)", "$1") as ?death_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?death_place_local_id, ":", "_"))) as ?death_place_mmm)
   BIND(REPLACE(STR(?death_time), "^.*\\/(.+)", "$1") as ?death_time_local_id)
