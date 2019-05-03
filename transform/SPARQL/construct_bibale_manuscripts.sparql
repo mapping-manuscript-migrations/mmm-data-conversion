@@ -244,22 +244,25 @@ WHERE
       # NBF LATIN NUMBER
       ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
       FILTER CONTAINS(?shelfmark, "lat. ")
-      BIND(REPLACE(?shelfmark, "^lat\\. *(\\d.+)$", "$1") as ?bnf_latin)
+      BIND(REPLACE(?shelfmark, "^lat\\. *0*([1-9].+)$", "$1") as ?bnf_latin)
       FILTER(?bnf_latin != ?shelfmark)
+      FILTER(?bnf_latin != "")
     }
     OPTIONAL {
       # NBF HEBREU NUMBER
       ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
       FILTER CONTAINS(?shelfmark, "hebr. ")
-      BIND(REPLACE(?shelfmark, "^hebr\\. *(\\d.+)$", "$1") as ?bnf_hebreu)
+      BIND(REPLACE(?shelfmark, "^hebr\\. *0*([1-9].+)$", "$1") as ?bnf_hebreu)
       FILTER(?bnf_hebreu != ?shelfmark)
+      FILTER(?bnf_hebreu != "")
     }
     OPTIONAL {
       # NBF NAL NUMBER
       ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
       FILTER CONTAINS(?shelfmark, "nouv. acq. lat. ")
-      BIND(REPLACE(?shelfmark, "^nouv. acq. lat\\. *(\\d.+)$", "$1") as ?bnf_nouv)
+      BIND(REPLACE(?shelfmark, "^nouv. acq. lat\\. *0*([1-9].+)$", "$1") as ?bnf_nouv)
       FILTER(?bnf_nouv != ?shelfmark)
+      FILTER(?bnf_nouv != "")
     }
   }
 
