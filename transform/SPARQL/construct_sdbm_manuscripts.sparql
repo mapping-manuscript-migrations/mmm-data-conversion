@@ -76,9 +76,11 @@ CONSTRUCT {
     ecrm:P82b_end_of_the_end ?production_date_end .
 
   ?width_uri a mmms:Width ;
+    ecrm:P91_has_unit :Millimetre ;
     ecrm:P90_has_value ?width_value .
 
   ?height_uri a mmms:Height ;
+    ecrm:P91_has_unit :Millimetre ;
     ecrm:P90_has_value ?height_value .
 
   ?folios_uri a mmms:Folios ;

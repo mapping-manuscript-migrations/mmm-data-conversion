@@ -21,12 +21,12 @@
 :Width a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
   skos:prefLabel "Width" ;
-  crm:P91_has_unit :Millimetre .
+  .
 
 :Height a rdfs:Class ;
   rdfs:subClassOf crm:E54_Dimension ;
   skos:prefLabel "Height" ;
-  crm:P91_has_unit :Millimetre .
+  .
 
 :Millimetre a crm:E58_Measurement_Unit ;
   skos:prefLabel "mm" .
