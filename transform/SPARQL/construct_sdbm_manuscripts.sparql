@@ -423,7 +423,7 @@ WHERE {
       # Get Phillipps number
       ?entry :entries_other_info ?other_info
       FILTER CONTAINS(?other_info, "Phillipps")
-      BIND(REPLACE(?other_info, "^(.*)Phillipps *(\\d+)(.*)$", "$2") as ?phillipps)
+      BIND(REPLACE(?other_info, "^(.*)Phillipps *0*([1-9]\\d+)(.*)$", "$2") as ?phillipps)
       FILTER(?phillipps != ?other_info)
     }
   }
