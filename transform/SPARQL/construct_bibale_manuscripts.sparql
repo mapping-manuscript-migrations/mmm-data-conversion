@@ -271,7 +271,7 @@ WHERE
     ?manifestation_singleton rdfs:label ?preflabel .
     FILTER CONTAINS(?preflabel, "Bibliothèque de l'Arsenal")
     ?manifestation_singleton (bibale:type:medium_shelfmark|(bibale:type:medium_reference/bibale:type:medium_shelfmark))/rdfs:label ?shelfmark .
-    BIND(?shelfmark as ?arsenal_shelfmark)
+    BIND(REPLACE(?shelfmark, "^0*([1-9a-zA-Z].+)$", "$1") as ?arsenal_shelfmark)
   }
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_local_id)
