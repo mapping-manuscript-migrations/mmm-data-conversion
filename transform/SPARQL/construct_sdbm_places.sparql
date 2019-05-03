@@ -5,7 +5,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -21,8 +21,8 @@ CONSTRUCT {
     owl:sameAs ?authority_uri ;
     wgs:lat ?lat ;
     wgs:long ?long ;
-    mmm-schema:data_provider_url ?place_id ;
-    dct:source mmm-schema:SDBM .
+    mmms:data_provider_url ?place_id ;
+    dct:source mmms:SDBM .
 }
 WHERE {
   ?place_id a :places ;

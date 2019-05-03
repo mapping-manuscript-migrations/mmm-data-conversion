@@ -5,7 +5,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX mmm-actors: <http://ldf.fi/mmm/actor/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -22,9 +22,9 @@ CONSTRUCT {
     skos:altLabel ?altlabel ;
     ecrm:P92i_was_brought_into_existence_by ?creation_event ;
     ecrm:P93i_was_taken_out_of_existence_by ?dispersion_event ;
-    mmm-schema:collection_type ?collection_type_literal ;
-    mmm-schema:collection_location ?collection_place_mmm ;
-    dct:source mmm-schema:Bibale ;
+    mmms:collection_type ?collection_type_literal ;
+    mmms:collection_location ?collection_place_mmm ;
+    dct:source mmms:Bibale ;
     .
 
   ?creation_event a ecrm:E63_Beginning_of_Existence ;

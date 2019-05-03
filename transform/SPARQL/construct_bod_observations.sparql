@@ -5,7 +5,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -17,12 +17,12 @@ CONSTRUCT
 {
   ?provenance_event_mmm a ecrm:E7_Activity ;  # Data contains only observations of manifestation singletons
     skos:prefLabel ?label ;
-    mmm-schema:observed_manuscript ?manifestation_singleton_mmm ;
-    mmm-schema:ownership_attributed_to ?actor_mmm ;
+    mmms:observed_manuscript ?manifestation_singleton_mmm ;
+    mmms:ownership_attributed_to ?actor_mmm ;
     ecrm:P3_has_note ?note ;
     ecrm:P7_took_place_at ?place_mmm ;
     ecrm:P4_has_time-span ?timespan_mmm ;
-    dct:source mmm-schema:Bodley ;
+    dct:source mmms:Bodley ;
     .
 
   ?timespan_mmm ecrm:P82a_begin_of_the_begin ?timespan_bb ;
@@ -30,10 +30,10 @@ CONSTRUCT
     # TODO: prefLabel
     .
 
-  ?manifestation_singleton_mmm mmm-schema:phillipps_number ?phillipps ;
+  ?manifestation_singleton_mmm mmms:phillipps_number ?phillipps ;
     ecrm:P51_has_former_or_current_owner ?actor_mmm ;
     .
-    
+
 }
 WHERE
 {

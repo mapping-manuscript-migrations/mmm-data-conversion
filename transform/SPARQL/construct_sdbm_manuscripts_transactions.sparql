@@ -4,7 +4,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -17,20 +17,20 @@ CONSTRUCT
     ?event_property ?manifestation_singleton ;
     ?event_seller_or_holder_property ?seller ;
     ecrm:P29_custody_received_by ?buyer ;
-    mmm-schema:carried_out_by_as_selling_agent ?selling_agent ;
-    mmm-schema:data_provider_url ?entry ;
+    mmms:carried_out_by_as_selling_agent ?selling_agent ;
+    mmms:data_provider_url ?entry ;
     ecrm:P7_took_place_at ?source_agent_location ;
-    # mmm-schema:place_literal ?cat_location_literal ;
+    # mmms:place_literal ?cat_location_literal ;
     ecrm:P4_has_time-span ?cat_date ;
-    mmm-schema:had_sales_price ?monetary_amount_uri ;
+    mmms:had_sales_price ?monetary_amount_uri ;
     ecrm:P70i_is_documented_in ?source_mmm .
-    # dct:source mmm-schema:SDBM .
+    # dct:source mmms:SDBM .
 
   ?monetary_amount_uri a ecrm:E97_Monetary_Amount ;
     ecrm:P180_has_currency ?sales_currency ;
     ecrm:P181_has_amount ?sales_price ;
     rdfs:comment ?sales_other_currency .
-    # dct:source mmm-schema:SDBM .
+    # dct:source mmms:SDBM .
 }
 WHERE
 {
@@ -100,8 +100,8 @@ WHERE
   }
   OPTIONAL {
     BIND(ecrm:E7_Activity as ?event_type)
-    BIND(mmm-schema:observed_manuscript as ?event_property)
-    BIND(mmm-schema:ownership_attributed_to as ?event_seller_or_holder_property)
+    BIND(mmms:observed_manuscript as ?event_property)
+    BIND(mmms:ownership_attributed_to as ?event_seller_or_holder_property)
   }
 
   ## SOURCE ##

@@ -4,7 +4,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -19,12 +19,12 @@ CONSTRUCT {
     owl:sameAs ?authority_uri ;
     # wgs:lat ?lat ;
     # wgs:long ?long ;
-    # mmm-schema:data_provider_url ?bod_place_uri ;
-    mmm-schema:place_type ?place_type_mmm ;
-    mmm-schema:bibale_settlement ?settlement_label ;
-    mmm-schema:bibale_region ?region_label ;
-    mmm-schema:bibale_country ?country_label ;
-    dct:source mmm-schema:Bibale .
+    # mmms:data_provider_url ?bod_place_uri ;
+    mmms:place_type ?place_type_mmm ;
+    mmms:bibale_settlement ?settlement_label ;
+    mmms:bibale_region ?region_label ;
+    mmms:bibale_country ?country_label ;
+    dct:source mmms:Bibale .
 }
 WHERE
 {

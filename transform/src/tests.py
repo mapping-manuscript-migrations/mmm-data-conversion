@@ -23,7 +23,7 @@ class TestLinkerSDBM(unittest.TestCase):
     test_sdbm_data = """
     @prefix :      <https://sdbm.library.upenn.edu/> .
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-    @prefix mmm-schema: <http://ldf.fi/mmm/schema/> .
+    @prefix mmms: <http://ldf.fi/mmm/schema/> .
     @prefix dct:   <http://purl.org/dc/terms/> .
     @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -36,15 +36,15 @@ class TestLinkerSDBM(unittest.TestCase):
 
     <http://ldf.fi/mmm/production/orphan_61316>
         a                      ecrm:E12_Production ;
-        dct:source             mmm-schema:SDBM ;
+        dct:source             mmms:SDBM ;
         ecrm:P108_has_produced  <http://ldf.fi/mmm/manifestation_singleton/orphan_61316> ;
         ecrm:P4_has_time-span   <http://ldf.fi/mmm/time/59403> ;
         ecrm:P7_took_place_at   <http://ldf.fi/mmm/place/1012> .
 
     <http://ldf.fi/mmm/place/2121>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/place/2121> ;
-            dct:source                    mmm-schema:SDBM ;
+            mmms:data_provider_url  <https://sdbm.library.upenn.edu/place/2121> ;
+            dct:source                    mmms:SDBM ;
             ecrm:P89_falls_within          <http://ldf.fi/mmm/place/214> ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/1005755> ;
             wgs:lat                       51.5833 ;
@@ -53,8 +53,8 @@ class TestLinkerSDBM(unittest.TestCase):
 
     <http://ldf.fi/mmm/place/1012>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/place/1012> ;
-            dct:source                    mmm-schema:SDBM ;
+            mmms:data_provider_url  <https://sdbm.library.upenn.edu/place/1012> ;
+            dct:source                    mmms:SDBM ;
             ecrm:P89_falls_within          <http://ldf.fi/mmm/place/3991> ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/7005560> ;
             wgs:lat                       "23"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
@@ -63,8 +63,8 @@ class TestLinkerSDBM(unittest.TestCase):
 
     <http://ldf.fi/mmm/place/847>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/place/847> ;
-            dct:source                    mmm-schema:SDBM ;
+            mmms:data_provider_url  <https://sdbm.library.upenn.edu/place/847> ;
+            dct:source                    mmms:SDBM ;
             ecrm:P89_falls_within          <http://ldf.fi/mmm/place/2398> ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/7024079> ;
             wgs:lat                       "32"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
@@ -113,7 +113,7 @@ class TestLinkerBodley(unittest.TestCase):
     test_bodley_data = """
     @prefix :      <https://sdbm.library.upenn.edu/> .
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-    @prefix mmm-schema: <http://ldf.fi/mmm/schema/> .
+    @prefix mmms: <http://ldf.fi/mmm/schema/> .
     @prefix dct:   <http://purl.org/dc/terms/> .
     @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -126,8 +126,8 @@ class TestLinkerBodley(unittest.TestCase):
 
     <https://medieval.bodleian.ox.ac.uk/catalog/place_1029598>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_1029598> ;
-            dct:source                    mmm-schema:Bodley ;
+            mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_1029598> ;
+            dct:source                    mmms:Bodley ;
             ecrm:P89_falls_within          <https://medieval.bodleian.ox.ac.uk/catalog/place_place_7002445> ;
             wgs:lat                       "51.983333" ;
             wgs:long                      "-1.483333" ;
@@ -137,8 +137,8 @@ class TestLinkerBodley(unittest.TestCase):
 
     <https://medieval.bodleian.ox.ac.uk/catalog/place_7002445>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_7002445> ;
-            dct:source                    mmm-schema:Bodley ;
+            mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_7002445> ;
+            dct:source                    mmms:Bodley ;
             wgs:lat                       "53.0" ;
             wgs:long                      "-2.0" ;
             skos:altLabel                 "Angleterre" , "English"@en , "English" , "Britannia Romana" , "Inglaterra" , "Britannia propria" , "Anglia" , "Britannia maior" , "Inghilterra" , "Engleterre" , "England"@en , "England" ;
@@ -146,7 +146,7 @@ class TestLinkerBodley(unittest.TestCase):
 
     <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947/production>
             a                      ecrm:E12_Production ;
-            dct:source             mmm-schema:Bodley ;
+            dct:source             mmms:Bodley ;
             ecrm:P108_has_produced  <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947> ;
             ecrm:P4_has_time-span   <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947/production-time-span> ;
             ecrm:P7_took_place_at   <https://medieval.bodleian.ox.ac.uk/catalog/place_1029598> ,
@@ -154,9 +154,9 @@ class TestLinkerBodley(unittest.TestCase):
 
     <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947>
             a                             frbroo:F4_Manifestation_Singleton ;
-            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947> ;
-            mmm-schema:manuscript_work    <https://medieval.bodleian.ox.ac.uk/catalog/work_16002> ;
-            dct:source                    mmm-schema:Bodley ;
+            mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947> ;
+            mmms:manuscript_work    <https://medieval.bodleian.ox.ac.uk/catalog/work_16002> ;
+            dct:source                    mmms:Bodley ;
             ecrm:P128_carries              <https://medieval.bodleian.ox.ac.uk/catalog/manuscript_3947%23Christ_Church_MS_343-item1/expression> ;
             ecrm:P51_has_former_or_current_owner
                     <https://medieval.bodleian.ox.ac.uk/catalog/person_37261411> , <https://medieval.bodleian.ox.ac.uk/catalog/person_2677> , <https://medieval.bodleian.ox.ac.uk/catalog/org_155836576> ;
@@ -207,7 +207,7 @@ class TestLinkerBodley(unittest.TestCase):
 
 class TestLinkerBibale(unittest.TestCase):
     test_bibale_data = """
-    @prefix mmm-schema: <http://ldf.fi/mmm/schema/> .
+    @prefix mmms: <http://ldf.fi/mmm/schema/> .
     @prefix dct:   <http://purl.org/dc/terms/> .
     @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -222,22 +222,22 @@ class TestLinkerBibale(unittest.TestCase):
 
     bibale:element:876437
             a                             ecrm:E53_Place ;
-            mmm-schema:bibale_country     "France" ;
-            mmm-schema:bibale_region      "Grand Est" ;
-            mmm-schema:bibale_settlement  "Épinal" ;
-            mmm-schema:place_type         bibale:type:settlement ;
-            dct:source                    mmm-schema:Bibale ;
+            mmms:bibale_country     "France" ;
+            mmms:bibale_region      "Grand Est" ;
+            mmms:bibale_settlement  "Épinal" ;
+            mmms:place_type         bibale:type:settlement ;
+            dct:source                    mmms:Bibale ;
             owl:sameAs                    <http://www.geonames.org/3020035> ;
             skos:altLabel                 "France, Grand Est, Épinal" ;
             skos:prefLabel                "Épinal" .
 
     bibale:element:57644-272
             a                             ecrm:E53_Place ;
-            mmm-schema:bibale_country     "Allemagne" ;
-            mmm-schema:bibale_region      "Rheinland-Pfalz (Rhénanie-Palatinat)" ;
-            mmm-schema:bibale_settlement  "Trier (Trèves)" ;
-            mmm-schema:place_type         bibale:type:settlement ;
-            dct:source                    mmm-schema:Bibale ;
+            mmms:bibale_country     "Allemagne" ;
+            mmms:bibale_region      "Rheinland-Pfalz (Rhénanie-Palatinat)" ;
+            mmms:bibale_settlement  "Trier (Trèves)" ;
+            mmms:place_type         bibale:type:settlement ;
+            dct:source                    mmms:Bibale ;
             skos:altLabel                 "Allemagne, Rheinland-Pfalz (Rhénanie-Palatinat), Trier (Trèves)" ;
             skos:prefLabel                "Trier (Trèves)" .
     """
@@ -278,8 +278,8 @@ class TestLinkerTGN(unittest.TestCase):
 
         <https://medieval.bodleian.ox.ac.uk/catalog/place_21>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_21> ;
-            dct:source                    mmm-schema:Bodley ;
+            mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_21> ;
+            dct:source                    mmms:Bodley ;
             owl:sameAs                    <http://placenames.org.uk/id/placename/24/005479> ;
             wgs:lat                       "51.89493" ;
             wgs:long                      "-1.52538" ;
@@ -288,8 +288,8 @@ class TestLinkerTGN(unittest.TestCase):
 
         <https://medieval.bodleian.ox.ac.uk/catalog/place_7291891>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_7291891> ;
-            dct:source                    mmm-schema:Bodley ;
+            mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_7291891> ;
+            dct:source                    mmms:Bodley ;
             owl:sameAs                    <http://www.geonames.org/7291891> , <http://www.visionofbritain.org.uk/place/7116> ;
             wgs:lat                       "52.14707" ;
             wgs:long                      " 1.31332" ;
@@ -298,8 +298,8 @@ class TestLinkerTGN(unittest.TestCase):
 
         <https://medieval.bodleian.ox.ac.uk/catalog/place_7005560>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_7005560> ;
-            dct:source                    mmm-schema:Bodley ;
+            mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/place_7005560> ;
+            dct:source                    mmms:Bodley ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/7005560> ;
             wgs:lat                       "23.0" ;
             wgs:long                      "-102.0" ;
@@ -316,8 +316,8 @@ class TestLinkerTGN(unittest.TestCase):
     test_sdbm_extra = """
         <http://ldf.fi/mmm/place/5>
             a                             ecrm:E53_Place ;
-            mmm-schema:data_provider_url  <https://sdbm.library.upenn.edu/place/5> ;
-            dct:source                    mmm-schema:SDBM ;
+            mmms:data_provider_url  <https://sdbm.library.upenn.edu/place/5> ;
+            dct:source                    mmms:SDBM ;
             ecrm:P89_falls_within          <http://ldf.fi/mmm/place/2351> ;
             owl:sameAs                    <http://vocab.getty.edu/tgn/7002445> ;
             wgs:lat                       53.0 ;
@@ -393,7 +393,7 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
         @base <http://ldf.fi/mmm/> .
         @prefix :      <https://sdbm.library.upenn.edu/> .
         @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-        @prefix mmm-schema: <http://ldf.fi/mmm/schema/> .
+        @prefix mmms: <http://ldf.fi/mmm/schema/> .
         @prefix dct:   <http://purl.org/dc/terms/> .
         @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
         @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -405,22 +405,22 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
         @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
 
         <manifestation_singleton/18044>
-            mmm-schema:data_provider_url <https://sdbm.library.upenn.edu/manuscripts/18044> ;
-            mmm-schema:entry <https://sdbm.library.upenn.edu/entries/194739>, <https://sdbm.library.upenn.edu/entries/79641> ;
-            mmm-schema:manuscript_author <actor/599> ;
-            mmm-schema:manuscript_record <https://sdbm.library.upenn.edu/manuscripts/18044> ;
-            mmm-schema:manuscript_work <work/100826>, <work/298734> ;
-            dct:source mmm-schema:SDBM ;
+            mmms:data_provider_url <https://sdbm.library.upenn.edu/manuscripts/18044> ;
+            mmms:entry <https://sdbm.library.upenn.edu/entries/194739>, <https://sdbm.library.upenn.edu/entries/79641> ;
+            mmms:manuscript_author <actor/599> ;
+            mmms:manuscript_record <https://sdbm.library.upenn.edu/manuscripts/18044> ;
+            mmms:manuscript_work <work/100826>, <work/298734> ;
+            dct:source mmms:SDBM ;
             ecrm:P128_carries <expression/100826>, <expression/298734> ;
             a frbroo:F4_Manifestation_Singleton ;
             skos:prefLabel "SDBM_MS_18044" .
 
         <manifestation_singleton/orphan_99694>
-            mmm-schema:data_provider_url <https://sdbm.library.upenn.edu/entries/99694> ;
-            mmm-schema:entry <https://sdbm.library.upenn.edu/entries/99694> ;
-            mmm-schema:manuscript_author <actor/661> ;
-            mmm-schema:manuscript_work <work/125620> ;
-            dct:source mmm-schema:SDBM ;
+            mmms:data_provider_url <https://sdbm.library.upenn.edu/entries/99694> ;
+            mmms:entry <https://sdbm.library.upenn.edu/entries/99694> ;
+            mmms:manuscript_author <actor/661> ;
+            mmms:manuscript_work <work/125620> ;
+            dct:source mmms:SDBM ;
             ecrm:P128_carries <expression/125620> ;
             a frbroo:F4_Manifestation_Singleton ;
             skos:prefLabel "SDBM_MS_orphan_99694" .

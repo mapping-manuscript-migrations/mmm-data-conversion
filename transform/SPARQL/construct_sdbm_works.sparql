@@ -4,7 +4,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -15,27 +15,27 @@ PREFIX dct: <http://purl.org/dc/terms/>
 CONSTRUCT {
   ?work a frbroo:F1_Work ;
     skos:prefLabel ?title ;
-    dct:source mmm-schema:SDBM .
+    dct:source mmms:SDBM .
 
   ?work_conception a frbroo:F27_Work_Conception ;
     # skos:prefLabel # TODO
     frbroo:R16_initiated ?work ;
-    mmm-schema:carried_out_by_as_possible_author ?author_mmm ;
+    mmms:carried_out_by_as_possible_author ?author_mmm ;
     # ecrm:P7_took_place_at  # TODO: author place/nationality
     # ecrm:P4_has_time-span  # TODO: author life dates
-    # dct:source mmm-schema:SDBM .
+    # dct:source mmms:SDBM .
     .
 
   ?expression a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
     # skos:prefLabel # TODO
     ecrm:P72_has_language ?language ;
-    dct:source mmm-schema:SDBM .
+    dct:source mmms:SDBM .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
     # skos:prefLabel # TODO
     frbroo:R17_created ?expression ;
     frbroo:R19_created_a_realisation_of ?work ;
-    # dct:source mmm-schema:SDBM .
+    # dct:source mmms:SDBM .
     .
 
   ?author_mmm skos:altLabel ?observed_author

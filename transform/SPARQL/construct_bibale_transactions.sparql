@@ -4,7 +4,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX mmm-actors: <http://ldf.fi/mmm/actor/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -24,7 +24,7 @@ CONSTRUCT {
     ecrm:P29_custody_received_by ?new_owner_mmm ;
     ecrm:P7_took_place_at ?place_mmm ;
     ecrm:P4_has_time-span ?timespan_mmm ;
-    mmm-schema:data_provider_url ?manuscript_or_collection ;
+    mmms:data_provider_url ?manuscript_or_collection ;
     .
 
   ?timespan_mmm a ecrm:E52_Time-Span ;

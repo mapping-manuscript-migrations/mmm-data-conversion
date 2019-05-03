@@ -3,7 +3,7 @@ PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -13,13 +13,13 @@ PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 CONSTRUCT {
   ?work_mmm a frbroo:F1_Work  ;
     skos:prefLabel ?work_preflabel ;
-    mmm-schema:data_provider_url ?work ;
-    dct:source mmm-schema:Bodley .
+    mmms:data_provider_url ?work ;
+    dct:source mmms:Bodley .
 
   ?work_conception_mmm a frbroo:F27_Work_Conception ;
     skos:prefLabel ?work_conception_pref_label ;
     frbroo:R16_initiated ?work_mmm ;
-    mmm-schema:carried_out_by_as_author ?work_conception_author_mmm ;
+    mmms:carried_out_by_as_author ?work_conception_author_mmm ;
     .
 }
 WHERE

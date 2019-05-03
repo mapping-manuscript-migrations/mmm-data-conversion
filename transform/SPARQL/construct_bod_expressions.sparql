@@ -3,7 +3,7 @@ PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -15,7 +15,7 @@ CONSTRUCT {
     skos:prefLabel ?expression_label ;
     skos:altLabel ?work_title ;
     ecrm:P72_has_language ?work_language_label ;
-    dct:source mmm-schema:Bodley .
+    dct:source mmms:Bodley .
 
   ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
     skos:prefLabel ?expression_creation_label ;

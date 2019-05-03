@@ -4,7 +4,7 @@ PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmm-schema: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -16,18 +16,18 @@ CONSTRUCT {
  ?expression_mmm a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
    skos:prefLabel ?expression_label ;
    skos:altLabel ?expression_title ;
-   mmm-schema:data_provider_url ?expression ;
+   mmms:data_provider_url ?expression ;
    # ecrm:P72_has_language ?manifestation_work_language ;
-   dct:source mmm-schema:Bibale .
+   dct:source mmms:Bibale .
 
  ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
    frbroo:R17_created ?expression_mmm ;
    frbroo:R18_created ?manifestation_singleton_mmm ;
    frbroo:R19_created_a_realisation_of ?expression_work_mmm ;
-   mmm-schema:carried_out_by_as_author ?expression_author_mmm ;
-   mmm-schema:carried_out_by_as_scribe ?expression_scribe_mmm ;
+   mmms:carried_out_by_as_author ?expression_author_mmm ;
+   mmms:carried_out_by_as_scribe ?expression_scribe_mmm ;
    ecrm:P7_took_place_at ?expression_place_mmm ;
-   # dct:source mmm-schema:Bibale .
+   # dct:source mmms:Bibale .
    .
 
  ?production_mmm a ecrm:E12_Production ;
@@ -36,14 +36,14 @@ CONSTRUCT {
    ecrm:P4_has_time-span ?production_timespan_mmm ;
    ecrm:P7_took_place_at ?production_place_mmm ;
    ecrm:P7_took_place_at ?manuscript_place_mmm ;
-   mmm-schema:carried_out_by_as_author ?production_author_mmm ;
-   mmm-schema:carried_out_by_as_binder ?production_binder_mmm ;
-   mmm-schema:carried_out_by_as_commissioner ?production_commissioner_mmm ;
-   mmm-schema:carried_out_by_as_creator ?production_creator_mmm ;
-   mmm-schema:carried_out_by_as_illuminator ?production_illuminator_mmm ;
-   mmm-schema:carried_out_by_as_printer ?production_printer_mmm ;
-   mmm-schema:carried_out_by_as_scribe ?production_scribe_mmm ;
-   dct:source mmm-schema:Bibale .
+   mmms:carried_out_by_as_author ?production_author_mmm ;
+   mmms:carried_out_by_as_binder ?production_binder_mmm ;
+   mmms:carried_out_by_as_commissioner ?production_commissioner_mmm ;
+   mmms:carried_out_by_as_creator ?production_creator_mmm ;
+   mmms:carried_out_by_as_illuminator ?production_illuminator_mmm ;
+   mmms:carried_out_by_as_printer ?production_printer_mmm ;
+   mmms:carried_out_by_as_scribe ?production_scribe_mmm ;
+   dct:source mmms:Bibale .
 
  ?manuscript_timespan_mmm a ecrm:E52_Time-Span ;
    skos:prefLabel ?manuscript_timespan_label ;
@@ -62,19 +62,19 @@ CONSTRUCT {
  ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
    ecrm:P128_carries ?expression_mmm ;
    skos:prefLabel ?preflabel ;
-   mmm-schema:data_provider_url ?manifestation_singleton ;
-   mmm-schema:manuscript_work ?work_mmm ;  # shortcut
-   mmm-schema:manuscript_author ?work_conception_author_mmm ;  # shortcut
-   mmm-schema:manuscript_author ?expression_author_mmm ;  # shortcut
-   mmm-schema:manuscript_author ?production_author_mmm ;  # shortcut
+   mmms:data_provider_url ?manifestation_singleton ;
+   mmms:manuscript_work ?work_mmm ;  # shortcut
+   mmms:manuscript_author ?work_conception_author_mmm ;  # shortcut
+   mmms:manuscript_author ?expression_author_mmm ;  # shortcut
+   mmms:manuscript_author ?production_author_mmm ;  # shortcut
    ecrm:P46i_forms_part_of ?collection_mmm ;
    ecrm:P46_is_composed_of ?manifestation_singleton_child ;
    ecrm:P3_has_note ?note ;
-   mmm-schema:shelfmark_bnf_latin ?bnf_latin ;
-   mmm-schema:shelfmark_bnf_hebreu ?bnf_hebreu ;
-   mmm-schema:shelfmark_bnf_nal ?bnf_nouv ;
-   mmm-schema:shelfmark_arsenal ?arsenal_shelfmark ;
-   dct:source mmm-schema:Bibale
+   mmms:shelfmark_bnf_latin ?bnf_latin ;
+   mmms:shelfmark_bnf_hebreu ?bnf_hebreu ;
+   mmms:shelfmark_bnf_nal ?bnf_nouv ;
+   mmms:shelfmark_arsenal ?arsenal_shelfmark ;
+   dct:source mmms:Bibale
    .
 }
 # SELECT DISTINCT ?manifestation_singleton ?preflabel ?note ?shelfmark ?phillipps ?bnf_latin ?bnf_hebreu ?bnf_nouv ?bnf_arsenal
