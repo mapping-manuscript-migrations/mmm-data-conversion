@@ -80,18 +80,12 @@ CONSTRUCT {
 # SELECT DISTINCT ?manifestation_singleton ?preflabel ?note ?shelfmark ?phillipps ?bnf_latin ?bnf_hebreu ?bnf_nouv ?bnf_arsenal
 WHERE
 {
-  ?manifestation_singleton a frbroo2:F4_Manifestation_Singleton .
+  # COMPOSITE MANUSCRIPTS EXIST AS F4_Manifestation_Singleton, WHICH ARE SKIPPED FOR NOW
+  # ?manifestation_singleton a frbroo2:F4_Manifestation_Singleton .
+  
+  ?manifestation_singleton a bibale:type:livre .
 
-  OPTIONAL { ?manifestation_singleton rdfs:label ?preflabel }
-  OPTIONAL {
-    ?manifestation_singleton a bibale:associationType:97 .
-    BIND("Material ensemble of books" as ?preflabel)
-  }
-
-  OPTIONAL {
-    ?manifestation_singleton a bibale:associationType:117 .
-    BIND("Textual ensemble of books" as ?preflabel)
-  }
+  ?manifestation_singleton rdfs:label ?preflabel .
 
   OPTIONAL { ?manifestation_singleton crm:P46i_forms_part_of ?collection }
 
