@@ -151,7 +151,7 @@ def main():
         
         log.info('Serializing output files...')
 
-        filename_suffix = '_link_people.ttl' # '_' + args.task + '.ttl'
+        filename_suffix = '_people.ttl' # '_' + args.task + '.ttl'
         bind_namespaces(bibale).serialize(args.input_bibale.split('.')[0] + filename_suffix, format='turtle')
         bind_namespaces(bodley).serialize(args.input_bodley.split('.')[0] + filename_suffix, format='turtle')
         bind_namespaces(sdbm).serialize(args.input_sdbm.split('.')[0] + filename_suffix, format='turtle')
