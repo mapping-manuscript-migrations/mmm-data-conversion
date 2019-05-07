@@ -215,13 +215,13 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?death_time_local_id, ":", "_"))) as ?death_time_mmm)
 
   BIND(REPLACE(STR(?religion_event), "^.*[\\/:]([0-9]+)", "$1") as ?religion_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?religion_local_id)) as ?religion_event_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_religion_event_", ?religion_local_id)) as ?religion_event_mmm)
   BIND(REPLACE(STR(?religion_timespan), "^.*[\\/:]([0-9]+)", "$1") as ?religion_timespan_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", ?religion_timespan_local_id)) as ?religion_timespan_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_religion_event_", ?religion_timespan_local_id)) as ?religion_timespan_mmm)
 
   BIND(REPLACE(STR(?activity), "^.*[\\/:]([0-9]+)", "$1") as ?activity_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?activity_local_id)) as ?activity_event_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_activity_event_", ?activity_local_id)) as ?activity_event_mmm)
   BIND(REPLACE(STR(?activity_timespan), "^.*[\\/:]([0-9]+)", "$1") as ?activity_timespan_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", ?activity_timespan_local_id)) as ?activity_timespan_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_activity_event_", ?activity_timespan_local_id)) as ?activity_timespan_mmm)
 
 }
