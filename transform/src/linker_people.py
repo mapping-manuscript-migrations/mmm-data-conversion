@@ -113,8 +113,8 @@ class PersonLinker:
 
 def main():
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
-
-    argparser.add_argument("task", help="Task to perform", choices=['link people'], default='link people')
+    
+    # argparser.add_argument("task", help="Task to perform", choices=['link_people', 'all'], default='link_people')
     argparser.add_argument("input_bibale", help="Input Bibale RDF file")
     argparser.add_argument("input_bodley", help="Input Bodley RDF file")
     argparser.add_argument("input_sdbm", help="Input SDBM RDF file")
@@ -140,23 +140,23 @@ def main():
     sdbm.parse(args.input_sdbm, format=guess_format(args.input_sdbm))
     
     
-    if args.task in ['link people']:
-        log.info('Linking people of three graphs')
-        p = PersonLinker(sdbm, bodley, bibale)
+    # if args.task in ['link_people', 'all']:
+    log.info('Linking people of three graphs')
+    p = PersonLinker(sdbm, bodley, bibale)
+    
+    if p.links:
+        log.info('Linking manuscripts using found links')
+
+        bibale, bodley, sdbm = p.datasets()
         
-        if p.links:
-            log.info('Linking manuscripts using found links')
-    
-            bibale, bodley, sdbm = p.datasets()
-            
-            log.info('Serializing output files...')
-    
-            filename_suffix = '_' + args.task + '.ttl'
-            bind_namespaces(bibale).serialize(args.input_bibale.split('.')[0] + filename_suffix, format='turtle')
-            bind_namespaces(bodley).serialize(args.input_bodley.split('.')[0] + filename_suffix, format='turtle')
-            bind_namespaces(sdbm).serialize(args.input_sdbm.split('.')[0] + filename_suffix, format='turtle')
-        else:
-            log.warning('No links found')
+        log.info('Serializing output files...')
+
+        filename_suffix = '_link_people.ttl' # '_' + args.task + '.ttl'
+        bind_namespaces(bibale).serialize(args.input_bibale.split('.')[0] + filename_suffix, format='turtle')
+        bind_namespaces(bodley).serialize(args.input_bodley.split('.')[0] + filename_suffix, format='turtle')
+        bind_namespaces(sdbm).serialize(args.input_sdbm.split('.')[0] + filename_suffix, format='turtle')
+    else:
+        log.warning('No links found')
 
     log.info('Task finished.')
 
