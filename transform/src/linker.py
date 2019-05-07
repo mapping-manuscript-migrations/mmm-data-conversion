@@ -130,8 +130,10 @@ class PlaceLinker:
             if settlement:
                 self.places.add((uri, MMMS.bibale_settlement, Literal(settlement)))
 
+            if place_type:
+                self.places.add((uri, MMMS.place_type, place_type))
+
             self.places.add((uri, RDF.type, CRM.E53_Place))
-            self.places.add((uri, MMMS.place_type, place_type))
             self.places.add((uri, DCT.source, MMMS.Bibale))
 
             if tgn_match:
