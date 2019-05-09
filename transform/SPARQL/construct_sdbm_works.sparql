@@ -10,8 +10,6 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 
-# TODO: Link expression and work together
-
 CONSTRUCT {
   ?work a frbroo:F1_Work ;
     skos:prefLabel ?title ;
@@ -21,7 +19,6 @@ CONSTRUCT {
     # skos:prefLabel # TODO
     frbroo:R16_initiated ?work ;
     mmms:carried_out_by_as_possible_author ?author_mmm ;
-    # ecrm:P7_took_place_at  # TODO: author place/nationality
     # ecrm:P4_has_time-span  # TODO: author life dates
     # dct:source mmms:SDBM .
     .
@@ -60,8 +57,12 @@ WHERE {
   # author
   OPTIONAL {
     ?entry_author :entry_authors_entry_id ?entry .
-    ?entry_author :entry_authors_author_id/:names_id ?author_id .
-    OPTIONAL { ?entry_author :entry_authors_observed_name ?observed_author . }
+    ?entry_author :entry_authors_author_id ?author .
+    FILTER NOT EXISTS { ?author :names_deleted true }
+    ?author :names_id ?author_id .
+    OPTIONAL {
+      ?entry_author :entry_authors_observed_name ?observed_author .
+    }
   }
 
   # language

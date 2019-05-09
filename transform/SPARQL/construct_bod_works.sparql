@@ -19,7 +19,7 @@ CONSTRUCT {
   ?work_conception_mmm a frbroo:F27_Work_Conception ;
     skos:prefLabel ?work_conception_pref_label ;
     frbroo:R16_initiated ?work_mmm ;
-    mmms:carried_out_by_as_author ?work_conception_author_mmm ;
+    mmms:carried_out_by_as_author ?work_conception_author_mmm ;  # TODO: P14 carried out by
     .
 }
 WHERE
