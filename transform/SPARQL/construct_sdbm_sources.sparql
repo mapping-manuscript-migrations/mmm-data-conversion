@@ -92,7 +92,9 @@ WHERE {
     }
     OPTIONAL {
       FILTER NOT EXISTS { ?source_agent :source_agents_role "institution" }
-      ?source_agent :source_agents_agent_id/:names_id ?source_agent_id .
+      ?source_agent :source_agents_agent_id ?source_agent_ .
+      FILTER NOT EXISTS { ?source_agent_ :names_deleted true }
+      ?source_agent_ :names_id ?source_agent_id .
       BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_id))) as ?mmm_source_actor)
     }
   }

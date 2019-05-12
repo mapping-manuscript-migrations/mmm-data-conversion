@@ -167,9 +167,11 @@ WHERE {
 
   OPTIONAL {
     ?provenance_entry :provenance_entry_id ?entry ;
-                      :provenance_provenance_agent_id/:names_id ?prov_agent_id ;
+                      :provenance_provenance_agent_id ?prov_agent_ ;
                       :provenance_order ?prov_order ;
-                      :provenance_id ?prov_id ;
+                      :provenance_id ?prov_id .
+    FILTER NOT EXISTS { ?prov_agent_ :names_deleted true }
+    ?prov_agent_ :names_id ?prov_agent_id ;
     FILTER(STR(?prov_order) != "")
     OPTIONAL { ?provenance_entry :provenance_comment ?prov_comment . }
   }
@@ -191,7 +193,9 @@ WHERE {
   # author
   OPTIONAL {
     ?entry_author :entry_authors_entry_id ?entry .
-    ?entry_author :entry_authors_author_id/:names_id ?author_id .
+    ?entry_author :entry_authors_author_id ?author_ .
+    FILTER NOT EXISTS { ?author_ :names_deleted true }
+    ?author_ :names_id ?author_id .
     ?entry_author :entry_authors_observed_name ?observed_author .
   }
 

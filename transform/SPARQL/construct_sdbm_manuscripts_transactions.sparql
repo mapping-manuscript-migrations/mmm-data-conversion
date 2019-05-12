@@ -17,7 +17,7 @@ CONSTRUCT
     ?event_property ?manifestation_singleton ;
     ?event_seller_or_holder_property ?seller ;
     ecrm:P29_custody_received_by ?buyer ;
-    mmms:carried_out_by_as_selling_agent ?selling_agent ;
+    mmms:carried_out_by_as_selling_agent ?selling_agent_mmm ;
     mmms:data_provider_url ?entry ;
     ecrm:P7_took_place_at ?source_agent_location ;
     # mmms:place_literal ?cat_location_literal ;
@@ -79,12 +79,16 @@ WHERE
     OPTIONAL {
       ?seller_agent :sale_agents_sale_id ?sales_entry .
       ?seller_agent :sale_agents_role "seller_or_holder" .
-      ?seller_agent :sale_agents_agent_id/:names_id ?seller_id .
+      ?seller_agent :sale_agents_agent_id ?seller_agent_ .
+      FILTER NOT EXISTS { ?seller_agent_ :names_deleted true }
+      ?seller_agent_ :names_id ?seller_id .
     }
     OPTIONAL {
       ?buyer_agent :sale_agents_sale_id ?sales_entry .
       ?buyer_agent :sale_agents_role "buyer" .
-      ?buyer_agent :sale_agents_agent_id/:names_id ?buyer_id .
+      ?buyer_agent :sale_agents_agent_id ?buyer_agent_ .
+      FILTER NOT EXISTS { ?buyer_agent_ :names_deleted true }
+      ?buyer_agent_ :names_id ?buyer_id .
       BIND(ecrm:E10_Transfer_of_Custody as ?event_type)
       BIND(ecrm:P30_transferred_custody_of as ?event_property)
       BIND(ecrm:P28_custody_surrendered_by as ?event_seller_or_holder_property)
@@ -93,6 +97,7 @@ WHERE
       ?selling_agent_agent :sale_agents_sale_id ?sales_entry .
       ?selling_agent_agent :sale_agents_role "selling_agent" .
       ?selling_agent_agent :sale_agents_agent_id ?selling_agent_name .
+      FILTER NOT EXISTS { ?selling_agent_name :names_deleted true }
       ?selling_agent_name :names_id ?selling_agent_id .
       # ?selling_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?place_local_id .
       # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?selling_agent_location)
@@ -152,9 +157,9 @@ WHERE
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", ?manuscript_id)) as ?manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(?source_namespace, STR(?source_id))) as ?source_mmm)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?seller_id))) as ?seller)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?buyer_id))) as ?buyer)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?selling_agent_id))) as ?selling_agent_mmm)
   BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/sdbm_", ?sales_id)) as ?monetary_amount_uri)
 }
