@@ -487,5 +487,5 @@ WHERE {
   # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id))) as ?reification_label_uri)
   # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id), "_", SUBSTR(REPLACE(?title, "[\\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\#\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-"), 0, 21))) as ?reification_label_uri)
 
-  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_", STR(?prov_id))) as ?observation_mmm)
+  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_provenance_", STR(?prov_id))) as ?observation_mmm)
 }

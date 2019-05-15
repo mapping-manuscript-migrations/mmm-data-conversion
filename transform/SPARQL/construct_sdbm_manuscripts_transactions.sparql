@@ -160,6 +160,6 @@ WHERE
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?seller_id))) as ?seller)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?buyer_id))) as ?buyer)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?selling_agent_id))) as ?selling_agent_mmm)
-  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_", ?entry_id)) as ?acquisition_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_source_observation_", ?entry_id)) as ?acquisition_uri)
   BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/sdbm_", ?sales_id)) as ?monetary_amount_uri)
 }
