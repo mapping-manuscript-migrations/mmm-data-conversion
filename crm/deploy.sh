@@ -1,9 +1,9 @@
 #!/bin/bash
 set -eo pipefail
 
-$FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-bibale/ /output/bibale_cidoc.ttl
-$FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-bodley/ /output/bodley_cidoc.ttl
-$FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-sdbm/ /output/sdbm_cidoc.ttl
+$FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-bibale/ /output/mmm_bibale.ttl
+$FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-bodley/ /output/mmm_bodley.ttl
+$FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-sdbm/ /output/mmm_sdbm.ttl
 
 $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm/places/ /output/mmm_places.ttl
 

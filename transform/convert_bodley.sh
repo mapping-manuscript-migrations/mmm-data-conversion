@@ -3,7 +3,7 @@
 set -eo pipefail
 
 rm -f $OUTPUT/_bodley*
-rm -f $OUTPUT/bodley_cidoc.ttl
+rm -f $OUTPUT/mmm_bodley.ttl
 
 # run the SPARQL construct query
 printf '\nConstructing Bodley manuscripts\n\n'

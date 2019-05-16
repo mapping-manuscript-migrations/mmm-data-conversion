@@ -3,7 +3,7 @@
 set -eo pipefail
 
 rm -f $OUTPUT/_sdbm*
-rm -f $OUTPUT/sdbm_cidoc.ttl
+rm -f $OUTPUT/mmm_sdbm.ttl
 
 # run the SPARQL construct query
 

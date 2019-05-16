@@ -3,7 +3,7 @@
 set -eo pipefail
 
 rm -f /output/_bibale*
-rm -f /output/bibale_cidoc.ttl
+rm -f /output/mmm_bibale.ttl
 
 printf '\nConverting Phillipps numbers\n\n'
 python bibale_phillipps_csv.py /data/bibale_phillipps.csv /output/_bibale_phillipps.ttl
