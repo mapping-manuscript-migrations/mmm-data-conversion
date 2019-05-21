@@ -10,6 +10,8 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 
+# TODO: crm:P12i_was_present_at, crm:P46i_forms_part_of
+
 CONSTRUCT {
   ?production_mmm a ecrm:E12_Production ;
     ecrm:P108_has_produced ?manifestation_singleton_mmm ;
@@ -44,6 +46,11 @@ CONSTRUCT {
     mmms:shelfmark_christ_church ?shelfmark_christ_church ;
     mmms:shelfmark_barocci ?shelfmark_barocci ;
     ecrm:P46i_forms_part_of mmms:Bodleian_collection ;
+    ecrm:P46_is_composed_of ?child_manifestation_singleton_mmm ;
+    dct:source mmms:Bodley ;
+    .
+
+  ?child_manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
     dct:source mmms:Bodley ;
     .
 
@@ -55,9 +62,17 @@ CONSTRUCT {
 #SELECT DISTINCT ?manifestation_singleton ?manifestation_singleton_preflabel ?shelfmark_buchanan ?shelfmark_christ_church ?shelfmark_barocci
 WHERE
 {
-  ?manifestation_singleton a frbr:F4_Manifestation_Singleton ;
-                           rdfs:label ?manifestation_singleton_preflabel .
+  {
+    ?manifestation_singleton a frbr:F4_Manifestation_Singleton .
+  } UNION {
+    ?manifestation_singleton a crm:E24_Physical_Man-Made_Thing .
+  }
+
+  ?manifestation_singleton rdfs:label ?manifestation_singleton_preflabel .
+
   OPTIONAL { ?manifestation_singleton crm:P52_has_current_owner ?prov_agent }
+
+  OPTIONAL { ?manifestation_singleton crm:P46_is_composed_of ?child_manifestation_singleton }
 
   # EXPRESSION / WORK
   OPTIONAL {
@@ -169,6 +184,9 @@ WHERE
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_singleton_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bodley_", ?manifestation_singleton_local_id)) as ?manifestation_singleton_mmm)
+
+  BIND(REPLACE(STR(?child_manifestation_singleton), "^.*\\/(.+)", "$1") as ?child_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bodley_", ?child_local_id)) as ?child_manifestation_singleton_mmm)
 
   BIND(IRI(CONCAT("http://ldf.fi/mmm/production/bodley_", ?manifestation_singleton_local_id, "_production")) as ?production_mmm)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", ?manifestation_singleton_local_id, "_production_timespan")) as ?production_timespan_mmm)
