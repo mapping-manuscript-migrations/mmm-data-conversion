@@ -1,37 +1,30 @@
 #!/usr/bin/env python3
 #  -*- coding: UTF-8 -*-
-"""Convert Bibale Phillipps CSV"""
+"""Convert Phillipps numbers from CSV"""
 
 import argparse
 import logging
-import os
-from collections import defaultdict
-from decimal import Decimal
-from itertools import chain
 
 import pandas as pd
-from rdflib import URIRef, Literal, RDF, OWL
+from rdflib import URIRef, Literal
 from rdflib.util import guess_format
 
-from geonames import GeoNames
-from linker import redirect_refs
 from namespaces import *
-from tgn import TGN
 
 log = logging.getLogger(__name__)
 
 
-def read_csv(csv):
+def read_csv(csv, localname_prefix):
     csv_data = pd.read_csv(csv, header=0, keep_default_na=False,
-                           names=["bibale", "phillipps", "notes"])
+                           names=["uri", "phillipps", "notes"])
 
     g = Graph()
 
     for row in csv_data.itertuples(index=True):
-        new_uri = MMMM['bibale_' + row.bibale.split('/')[-1]]
+        new_uri = MMMM[localname_prefix + row.uri.split('/')[-1]]
         for phillipp in str(row.phillipps).split(';'):
             g.add((URIRef(new_uri), MMMS.phillipps_number, Literal(phillipp.strip())))
-            g.add((URIRef(new_uri), CRM.P46i_forms_part_of, URIRef('http://ldf.fi/mmm/collection/bibale_8500')))
+            # g.add((URIRef(new_uri), CRM.P46i_forms_part_of, URIRef('http://ldf.fi/mmm/collection/bibale_8500')))
         if row.notes:
             g.add((URIRef(new_uri), CRM.P3_has_note, Literal(row.notes)))
 
@@ -43,6 +36,7 @@ def main():
 
     argparser.add_argument("input_csv", help="Input CSV file of manual links")
     argparser.add_argument("output", help="OutputRDF file")
+    argparser.add_argument("localname_prefix", help="URI localname prefix")
     argparser.add_argument("--loglevel", default='DEBUG', help="Logging level",
                            choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     argparser.add_argument("--logfile", default='tasks.log', help="Logfile")
@@ -55,7 +49,7 @@ def main():
     log.addHandler(log_handler)
     log.setLevel(args.loglevel)
 
-    graph = read_csv(args.input_csv)
+    graph = read_csv(args.input_csv, args.localname_prefix)
 
     log.info('Serializing output...')
 
