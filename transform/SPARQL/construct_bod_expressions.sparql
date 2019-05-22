@@ -32,6 +32,7 @@ WHERE
       ?expression frbr:R3i_realises ?work .
       OPTIONAL { ?work rdfs:label ?work_title . }
       OPTIONAL { ?work crm:P102_has_title/rdfs:label ?work_preflabel . }
+      OPTIONAL { ?work crm:P72_has_language/rdfs:label ?work_language_label . }  # TODO: Mint URI
     }
 
   BIND(REPLACE(REPLACE(STR(?expression), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?expression_local_id)
