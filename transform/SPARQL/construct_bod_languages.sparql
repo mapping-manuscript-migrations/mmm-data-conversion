@@ -1,0 +1,145 @@
+PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
+
+CONSTRUCT {
+  ?expression_mmm a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
+    ecrm:P72_has_language ?language_mmm .
+
+  ?language_mmm a ecrm:E56_Language ;
+    skos:prefLabel ?language_name ;
+    skos:altLabel ?language_abbreviation ;
+    dct:source mmms:Bodley .
+}
+WHERE
+{
+  ?language a crm:E56_Language ;
+            rdfs:label ?language_abbreviation .
+
+  # Handle language references
+  OPTIONAL {
+    ?expression a frbr:F22_Self-Contained_Expression ;
+                frbr:R3i_realises ?work .
+    ?work crm:P72_has_language ?language .
+
+    # Note: These BINDs need to match those in construct_bod_expressions.sparql
+    BIND(REPLACE(REPLACE(STR(?expression), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?expression_local_id)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
+  }
+
+  OPTIONAL {
+    ?language rdfs:label "ar" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_25> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "ca" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_9> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "cop" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_44> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "cs" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_10> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "cu" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_250> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "cy" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_49> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "de" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_6> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "egy-Egyd" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_148> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "egy-Egyh" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_51> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "el" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_155> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "en" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_4> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "es" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_8> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "fr" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_3> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "fy" .
+    BIND(<http://ldf.fi/mmm/language/bodley_fy> as ?language_mmm)
+    BIND("Western Frisian" as ?language_name)
+  }
+  OPTIONAL {
+    ?language rdfs:label "ga" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_84> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "grc" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_249> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "he" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_5> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "is" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_50> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "it" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_2> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "kw" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_236> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "la" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_1> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "nl" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_7> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "pro" .
+    BIND(<http://ldf.fi/mmm/language/bodley_pro> as ?language_mmm)
+    BIND("Provencal, Old" as ?language_name)
+  }
+  OPTIONAL {
+    ?language rdfs:label "pt" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_13> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "ru" .
+    BIND(<http://ldf.fi/mmm/language/sdbm_72> as ?language_mmm)
+  }
+  OPTIONAL {
+    ?language rdfs:label "zxx" .
+    BIND(<http://ldf.fi/mmm/language/bodley_zxx> as ?language_mmm)
+    BIND("No Linguistic Content" as ?language_name)
+  }
+}

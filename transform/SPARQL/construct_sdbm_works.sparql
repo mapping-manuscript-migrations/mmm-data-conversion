@@ -10,6 +10,10 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 
+# TODO: Harmonize works withing a manuscript record based on same title
+
+# TODO: Ghosts
+
 CONSTRUCT {
   ?work a frbroo:F1_Work ;
     skos:prefLabel ?title ;
@@ -25,7 +29,7 @@ CONSTRUCT {
 
   ?expression a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
     # skos:prefLabel # TODO
-    ecrm:P72_has_language ?language ;
+    ecrm:P72_has_language ?language_mmm ;
     dct:source mmms:SDBM .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
@@ -39,7 +43,6 @@ CONSTRUCT {
   .
 
 }
-#SELECT *
 WHERE {
 
   # title
@@ -68,8 +71,9 @@ WHERE {
   # language
   OPTIONAL {
     ?entry_language :entry_languages_entry_id ?entry .
-    ?entry_language :entry_languages_language_id/:languages_id ?language_id .
-    ?entry_language :entry_languages_language_id/:languages_name ?language .
+    ?entry_language :entry_languages_language_id ?language .
+    # ?entry_language :entry_languages_language_id/:languages_id ?language_id .
+    # ?entry_language :entry_languages_language_id/:languages_name ?language .
   }
 
   BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
@@ -82,4 +86,8 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author_mmm)
 
   BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
+
+  BIND(REPLACE(STR(?language), "^.*\\/(.+)", "$1") as ?language_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/language/sdbm_", ?language_local_id)) as ?language_mmm)
+
 }
