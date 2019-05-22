@@ -225,3 +225,18 @@
 :biblissima_id a rdfs:Property ;
   rdfs:subPropertyOf crm:P1_is_identified_by ;
   skos:prefLabel "Biblissima identifier" .
+
+:place_type a rdfs:Property ;
+  skos:prefLabel "Bibale place type" .
+
+:Bibale_place_type a rdfs:Class ;
+  skos:prefLabel "Bibale place type class" .
+
+:bibale_type_settlement a :Bibale_place_type ;
+  skos:prefLabel "Settlement" .
+
+:bibale_type_country a :Bibale_place_type ;
+  skos:prefLabel "Country" .
+
+:bibale_type_region a :Bibale_place_type ;
+  skos:prefLabel "Region" .

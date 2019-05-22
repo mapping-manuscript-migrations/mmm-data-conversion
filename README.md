@@ -16,7 +16,7 @@ Currently the pipeline includes the following steps:
 3. Convert input datasets to unified data model using SPARQL CONSTRUCTs (automated)
     * Link Bibale places to GeoNames (You'll need GeoNames API key(s) for this)
 
-4. Load the final result into `http://localhost:3050/ds/sparql` 
+4. Load the final result into `http://localhost:3050/ds/sparql`
 
 
 ## Build, convert, and run
@@ -48,6 +48,11 @@ or
 ## Rebuild after updating input data
 
 `./rebuild.sh`
+
+
+## Validating the output
+
+`./validate.sh`
 
 
 ## Logs

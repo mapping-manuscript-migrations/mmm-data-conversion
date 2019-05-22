@@ -30,8 +30,8 @@ CONSTRUCT {
     ecrm:P43_has_dimension ?historiated_initials_uri ;
     ecrm:P45_consists_of ?material_uri_mmm ;
     ecrm:P51_has_former_or_current_owner ?prov_agent ;
-    mmms:entry ?entry ;
-    mmms:manuscript_record ?manuscript ;
+    # mmms:entry ?entry ;
+    # mmms:manuscript_record ?manuscript ;
     mmms:data_provider_url ?provider_url ; # for showing the link in faceted search
     mmms:manuscript_author ?author ;  # shortcut
     mmms:manuscript_work ?work ;  # shortcut
