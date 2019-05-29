@@ -17,6 +17,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 CONSTRUCT {
   ?work a frbroo:F1_Work ;
     skos:prefLabel ?title ;
+    mmms:data_provider_url ?entry ;
     dct:source mmms:SDBM .
 
   ?work_conception a frbroo:F27_Work_Conception ;
