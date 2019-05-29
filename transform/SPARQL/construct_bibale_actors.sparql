@@ -75,7 +75,7 @@ CONSTRUCT {
 
   ?activity_event_mmm a ecrm:E7_Activity ;
     ecrm:P11_had_participant ?actor_mmm ;
-    skos:prefLabel "Religion event" ;
+    skos:prefLabel "Activity event" ;
     ecrm:P4_has_time-span ?activity_timespan_mmm ;
     .
 
@@ -102,12 +102,12 @@ WHERE
   # ORGANIZATION
   OPTIONAL {
     ?bibale_actor_uri bibale:type:person_type/rdfs:label* "morale" .
-    BIND(IRI(mmms:Organization) as ?actor_class)
+    BIND(IRI(ecrm:E74_Group) as ?actor_class)
   }
 
   # PERSON
   OPTIONAL {
-    BIND(IRI(mmms:Person) as ?actor_class)
+    BIND(IRI(ecrm:E21_Person) as ?actor_class)
   }
 
   OPTIONAL {

@@ -67,7 +67,7 @@ WHERE
   # CLASS (PERSON / ORGANIZATION / ACTOR)
   OPTIONAL {
     ?name_id :names_subtype "Personal" .
-    BIND(IRI(mmms:Person) as ?actor_class)
+    BIND(IRI(ecrm:E21_Person) as ?actor_class)
     BIND(ecrm:E67_Birth as ?birth_class)
     BIND(ecrm:E69_Death as ?death_class)
     BIND("Birth of " as ?birth_prefix)
@@ -75,7 +75,7 @@ WHERE
   }
   OPTIONAL {
     ?name_id :names_subtype "Corporate" .
-    BIND(IRI(mmms:Organization) as ?actor_class)
+    BIND(IRI(ecrm:E74_Group) as ?actor_class)
     BIND(ecrm:E66_Formation as ?birth_class)
     BIND(ecrm:E68_Dissolution as ?death_class)
     BIND("Formation of " as ?birth_prefix)
@@ -83,7 +83,7 @@ WHERE
   }
   OPTIONAL {
     # Actors of unknown type
-    BIND(IRI(mmms:Actor) as ?actor_class)
+    BIND(IRI(ecrm:E39_Actor) as ?actor_class)
     BIND(ecrm:E63_Beginning_of_Existence as ?birth_class)
     BIND(ecrm:E64_End_of_Existence as ?death_class)
     BIND("Beginning of existence of " as ?birth_prefix)

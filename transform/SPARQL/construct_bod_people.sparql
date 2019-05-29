@@ -12,8 +12,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-
-# TODO: Use E66_Formation, E68_Dissolution, E63_Beginning_of_Existence, E64_End_of_Existence
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
   ?actor_mmm a ?actor_class ;
@@ -27,43 +26,50 @@ CONSTRUCT {
     dct:source mmms:Bodley ;
     .
 
-  ?birth_mmm a ecrm:E67_Birth ;
+  ?birth_mmm a ?birth_class ;
     ecrm:P4_has_time-span ?birth_timespan_mmm ;
     skos:prefLabel ?birth_label ;
     .
 
   ?birth_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?birth_timespan_label ;
-    ecrm:P82a_begin_of_the_begin ?birth_timespan_begin_begin ;
-    ecrm:P82b_end_of_the_end ?birth_timespan_end_end ;
+    ecrm:P82a_begin_of_the_begin ?birth_timespan_begin_begin_mmm ;
+    ecrm:P82b_end_of_the_end ?birth_timespan_end_end_mmm ;
     .
 
-  ?death_mmm a ecrm:E69_Death ;
+  ?death_mmm a ?death_class ;
     ecrm:P4_has_time-span ?death_timespan_mmm ;
     skos:prefLabel ?death_label ;
     .
 
   ?death_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?death_timespan_label ;
-    ecrm:P82a_begin_of_the_begin ?death_timespan_begin_begin ;
-    ecrm:P82b_end_of_the_end ?death_timespan_end_end ;
+    ecrm:P82a_begin_of_the_begin ?death_timespan_begin_begin_mmm ;
+    ecrm:P82b_end_of_the_end ?death_timespan_end_end_mmm ;
     .
 }
+#SELECT *
 WHERE
 {
   {
     ?actor a crm:E21_Person .
-    BIND(IRI(mmms:Person) as ?actor_class)
+    BIND(IRI(ecrm:E21_Person) as ?actor_class)
+    BIND(ecrm:E67_Birth as ?birth_class)
+    BIND(ecrm:E69_Death as ?death_class)
   }
   UNION
   {
     ?actor a crm:E74_Group .
-    BIND(IRI(mmms:Organization) as ?actor_class)
+    BIND(IRI(ecrm:E74_Group) as ?actor_class)
+    BIND(ecrm:E66_Formation as ?birth_class)
+    BIND(ecrm:E68_Dissolution as ?death_class)
   }
   UNION
   {
     ?actor a frbr:F44_Bibliographic_Agency .
-    BIND(IRI(mmms:Organization) as ?actor_class)
+    BIND(IRI(ecrm:E74_Group) as ?actor_class)
+    BIND(ecrm:E66_Formation as ?birth_class)
+    BIND(ecrm:E68_Dissolution as ?death_class)
   }
 
   OPTIONAL {
@@ -74,10 +80,17 @@ WHERE
     ?actor crm:P98i_was_born ?birth_event .
     ?birth_event rdfs:label ?birth_label .
     OPTIONAL {
+      ?actor crm:P98i_was_born ?birth_event .
       ?birth_event crm:P4_has_time-span ?birth_timespan .
-      ?birth_timespan rdfs:label ?birth_timespan_label .
-      OPTIONAL { ?birth_timespan crm:P82a_begin_of_the_begin ?birth_timespan_begin_begin }
-      OPTIONAL { ?birth_timespan crm:P82b_end_of_the_end ?birth_timespan_end_end }
+      #      ?birth_timespan rdfs:label ?birth_timespan_label .
+      OPTIONAL {
+        ?birth_timespan crm:P82a_begin_of_the_begin ?birth_timespan_begin_begin .
+        BIND(STRDT(SUBSTR(STR(?birth_timespan_begin_begin), 0, 11), xsd:date) as ?birth_timespan_begin_begin_mmm)
+      }
+      OPTIONAL {
+        ?birth_timespan crm:P82b_end_of_the_end ?birth_timespan_end_end .
+        BIND(STRDT(SUBSTR(STR(?birth_timespan_end_end), 0, 11), xsd:date) as ?birth_timespan_end_end_mmm)
+      }
       BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_birth_timespan")) as ?birth_timespan_mmm)
     }
     BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_birth")) as ?birth_mmm)
@@ -87,10 +100,17 @@ WHERE
     ?actor crm:P100i_died_in ?death_event .
     ?death_event rdfs:label ?death_label .
     OPTIONAL {
+      ?actor crm:P100i_died_in ?death_event .
       ?death_event crm:P4_has_time-span ?death_timespan .
-      ?death_timespan rdfs:label ?death_timespan_label .
-      OPTIONAL { ?death_timespan crm:P82a_begin_of_the_begin ?death_timespan_begin_begin }
-      OPTIONAL { ?death_timespan crm:P82b_end_of_the_end ?death_timespan_end_end }
+      #      ?death_timespan rdfs:label ?death_timespan_label .
+      OPTIONAL {
+        ?death_timespan crm:P82a_begin_of_the_begin ?death_timespan_begin_begin .
+        BIND(STRDT(SUBSTR(STR(?death_timespan_begin_begin), 0, 11), xsd:date) as ?death_timespan_begin_begin_mmm)
+      }
+      OPTIONAL {
+        ?death_timespan crm:P82b_end_of_the_end ?death_timespan_end_end
+        BIND(STRDT(SUBSTR(STR(?death_timespan_end_end), 0, 11), xsd:date) as ?death_timespan_end_end_mmm)
+      }
       BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_death_timespan")) as ?death_timespan_mmm)
     }
     BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_death")) as ?death_mmm)
@@ -108,4 +128,12 @@ WHERE
 
   BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id)) as ?actor_mmm)
+
+  BIND(SUBSTR(?birth_timespan_begin_begin, 1, 4) as ?birth_begin_year)
+  BIND(SUBSTR(?birth_timespan_end_end, 1, 4) as ?birth_end_year)
+  BIND(STR(?birth_begin_year) + "-" + STR(?birth_end_year) as ?birth_timespan_label)
+
+  BIND(SUBSTR(?death_timespan_begin_begin, 1, 4) as ?death_begin_year)
+  BIND(SUBSTR(?death_timespan_end_end, 1, 4) as ?death_end_year)
+  BIND(STR(?death_begin_year) + "-" + STR(?death_end_year) as ?death_timespan_label)
 }

@@ -12,6 +12,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT
 {
@@ -25,9 +26,10 @@ CONSTRUCT
     dct:source mmms:Bodley ;
     .
 
-  ?timespan_mmm ecrm:P82a_begin_of_the_begin ?timespan_bb ;
-    ecrm:P82b_end_of_the_end ?timespan_ee ;
-    # TODO: prefLabel
+  ?timespan_mmm a ecrm:E52_Time-Span ;
+    ecrm:P82a_begin_of_the_begin ?timespan_bb_mmm ;
+    ecrm:P82b_end_of_the_end ?timespan_ee_mmm ;
+    skos:prefLabel ?timespan_label ;
     .
 
   ?manifestation_singleton_mmm mmms:phillipps_number ?phillipps ;
@@ -55,8 +57,17 @@ WHERE
   OPTIONAL { ?provenance_event crm:P7_took_place_at ?place }
   OPTIONAL {
     ?provenance_event crm:P4_has_time-span ?timespan .
-    OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?timespan_bb }
-    OPTIONAL { ?timespan crm:P82b_end_of_the_end ?timespan_ee }
+    OPTIONAL {
+      ?timespan crm:P82a_begin_of_the_begin ?timespan_bb
+      BIND(STRDT(SUBSTR(STR(?timespan_bb), 0, 11), xsd:date) as ?timespan_bb_mmm)
+    }
+    OPTIONAL {
+      ?timespan crm:P82b_end_of_the_end ?timespan_ee
+      BIND(STRDT(SUBSTR(STR(?timespan_ee), 0, 11), xsd:date) as ?timespan_ee_mmm)
+    }
+    BIND(SUBSTR(?timespan_bb, 1, 4) as ?begin_year)
+    BIND(SUBSTR(?timespan_ee, 1, 4) as ?end_year)
+    BIND(STR(?begin_year) + "-" + STR(?end_year) as ?timespan_label)
   }
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_singleton_local_id)

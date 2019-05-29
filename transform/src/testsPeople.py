@@ -21,60 +21,60 @@ log = logging.getLogger(__name__)
 """TODO : multiple births and deaths ?
 """
 class TestStringMethods(unittest.TestCase):
-    
+
     def test_person_linkage(self):
         bib = self.read_example_data(self.test_bibale)
         bod = self.read_example_data(self.test_bodley)
         sdbm = self.read_example_data(self.test_sdbm)
-        
+
         p = PersonLinker(sdbm, bod, bib)
-        
+
         #    test that all link tuples have two non-None elements
         for link in p.links:
             self.assertEqual(len(list(filter(lambda x: x is not None, list(link)))), 2)
-        
+
         bib, bod, sdbm = p.datasets()
-        
+
         """ # test saving the graph
         if False:
             oput = str(sdbm.serialize(format='turtle'))
             print(oput.replace("\\n","\n"))
-            
+
             oput = str(bod.serialize(format='turtle'))
             print(oput.replace("\\n","\n"))
-            
+
             oput = str(bib.serialize(format='turtle'))
             print(oput.replace("\\n","\n"))
         else:
             oput = str((sdbm+bod+bib).serialize(format='turtle'))
             print(oput.replace("\\n","\n"))
         """
-        
+
         person = URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271')
         self.assertTrue(len(list(bod.triples((person, SKOS.prefLabel, None)))) < 2)
-        
+
         person_xyz = URIRef('http://ldf.fi/mmm/actor/bibale_person_XYZ')
         self.assertIsNone(bib.value(person_xyz, SKOS.prefLabel))
         self.assertIsNone(sdbm.value(URIRef('http://ldf.fi/mmm/actor/sdbm_xyz'), SKOS.prefLabel))
-        
+
         self.assertEqual(str(bod.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)), "Herodianus, pseudo")
         self.assertEqual(str(bib.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)), "Herodianus, pseudo")
         self.assertEqual(str(sdbm.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)), "Herodianus, pseudo")
-        
+
         #    test that unique entry is not linked:
         self.assertEqual(str(bib.value(URIRef('http://ldf.fi/mmm/actor/bibale_person_unique'), OWL.sameAs)), "https://viaf.org/viaf/123unique")
-        
+
         #    test that places are not linked:
         self.assertEqual(sdbm.value(URIRef('http://ldf.fi/mmm/actor/sdbm_nowhere'), RDF.type), MMMS.Place)
         self.assertEqual(bib.value(URIRef('http://ldf.fi/mmm/actor/bibale_nowhere'), RDF.type), MMMS.Place)
-        self.assertEqual(bib.value(URIRef('http://ldf.fi/mmm/actor/bibale_nobody'), RDF.type), MMMS.Person)
-    
-    
+        self.assertEqual(bib.value(URIRef('http://ldf.fi/mmm/actor/bibale_nobody'), RDF.type), CRM.E21_Person)
+
+
     def read_example_data(self, data):
         g = Graph()
         g.parse(data=self.test_prefices+data, format='turtle')
         return g
-    
+
     #    test data produced with query http://yasgui.org/short/QNXAjx5qr
     test_prefices = """
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
@@ -91,15 +91,15 @@ class TestStringMethods(unittest.TestCase):
     @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
     @prefix viaf:  <https://viaf.org/viaf/> .
     """
-    
+
     test_sdbm = """
-mmma:sdbm_1002  a               mmms:Person ;
+mmma:sdbm_1002  a               ecrm:E21_Person ;
         mmms:data_provider_url  <https://sdbm.library.upenn.edu/names/1002> ;
         dct:source              mmms:SDBM ;
         owl:sameAs              viaf:285172151 ;
         skos:prefLabel          "Simon de Hesdin" .
 
-mmma:sdbm_1008  a               mmms:Person ;
+mmma:sdbm_1008  a               ecrm:E21_Person ;
         mmms:birth_date         "490" ;
         mmms:data_provider_url  <https://sdbm.library.upenn.edu/names/1008> ;
         mmms:death_date         "0560-01-01" ;
@@ -108,7 +108,7 @@ mmma:sdbm_1008  a               mmms:Person ;
         owl:sameAs              viaf:71399875 ;
         skos:prefLabel          "Simplicius, of Cilicia" .
 
-mmma:sdbm_1011  a               mmms:Actor ;
+mmma:sdbm_1011  a               ecrm:E39_Actor ;
         mmms:birth_date         "1414-07-21" ;
         mmms:data_provider_url  <https://sdbm.library.upenn.edu/names/1011> ;
         mmms:death_date         "1484-08-13" ;
@@ -118,14 +118,14 @@ mmma:sdbm_1011  a               mmms:Actor ;
         skos:prefLabel          "Sixtus IV, Pope, 1414-1484" .
 
 mmma:sdbm_xyz
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_76393969> ;
         dct:source              mmms:SDBM ;
         owl:sameAs              viaf:88626271 ;
         skos:altLabel           "Herodianos, Sohn des Apollonios Dyskolos, ca. 2. Jh." , "Herodianos, Grammatiker, ca. 2. Jh." , "Herodianus, Rhetor, ca. 2. Jh." , "Herodianos, Ailios, ca. 2. Jh." , "Herodianos, Technikos, ca. 2. Jh." , "Hérodien, dÁlexandrie, ca. 2. Jh." , "Herodianus, Aelius, active 2nd century" , "Herodianus, Grammaticus, ca. 2. Jh." , "Herodianos, von Alexandreia, ca. 2. Jh." , "Herodianus, Romanus, ca. 2. Jh." , "Herodianus, Alexandrinus, ca. 2. Jh." , "Herodianus, Technicus, ca. 2. Jh." , "Pseudo-Herodianus, ca. 2. Jh." , "Aelius, Herodianus, ca. 2. Jh." , "Herodian, von Alexandreia, ca. 2. Jh." ;
         skos:prefLabel          "Herodianus, Aelius, active 2nd century" .
 
-mmma:sdbm_101  a                mmms:Person ;
+mmma:sdbm_101  a                ecrm:E21_Person ;
         mmms:birth_date         "1141" ;
         mmms:data_provider_url  <https://sdbm.library.upenn.edu/names/101> ;
         mmms:death_date         "1210" ;
@@ -134,7 +134,7 @@ mmma:sdbm_101  a                mmms:Person ;
         owl:sameAs              viaf:61906944 ;
         skos:prefLabel          "Gervase, of Canterbury, approximately 1141-approximately 1210" .
 
-mmma:sdbm_1001  a               mmms:Person ;
+mmma:sdbm_1001  a               ecrm:E21_Person ;
         mmms:birth_date         "26" ;
         mmms:data_provider_url  <https://sdbm.library.upenn.edu/names/1001> ;
         mmms:death_date         "101" ;
@@ -143,7 +143,7 @@ mmma:sdbm_1001  a               mmms:Person ;
         owl:sameAs              viaf:27071645 ;
         skos:prefLabel          "Silius Italicus, Tiberius Catius" .
 
-mmma:sdbm_1007  a               mmms:Person ;
+mmma:sdbm_1007  a               ecrm:E21_Person ;
         mmms:birth_date         "1285" ;
         mmms:data_provider_url  <https://sdbm.library.upenn.edu/names/1007> ;
         mmms:death_date         "1348-02-02" ;
@@ -151,16 +151,16 @@ mmma:sdbm_1007  a               mmms:Person ;
         dct:source              mmms:SDBM ;
         owl:sameAs              viaf:4472713 ;
         skos:prefLabel          "Simone Fidati da Cascia, -1348 " .
-        
+
 mmma:sdbm_nowhere  a               mmms:Place ;
         dct:source              mmms:SDBM ;
         owl:sameAs              viaf:nowhere ;
         skos:prefLabel          "Nowhere" .
     """
-    
+
     test_bodley = """
     mmma:bodley_person_4472713
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_4472713_death ;
         ecrm:P98i_was_born      mmma:bodley_person_4472713_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_4472713> ;
@@ -170,7 +170,7 @@ mmma:sdbm_nowhere  a               mmms:Place ;
         skos:prefLabel          "Fidati, Simone, -1348" .
 
 mmma:bodley_person_61906944
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_61906944_death ;
         ecrm:P98i_was_born      mmma:bodley_person_61906944_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_61906944> ;
@@ -180,7 +180,7 @@ mmma:bodley_person_61906944
         skos:prefLabel          "Gervase, of Canterbury, approximately 1141-approximately 1210" .
 
 mmma:bodley_person_32352720
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_32352720_death ;
         ecrm:P98i_was_born      mmma:bodley_person_32352720_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_32352720> ;
@@ -190,7 +190,7 @@ mmma:bodley_person_32352720
         skos:prefLabel          "Simon, of Faversham, -1306" .
 
 mmma:bodley_person_27071645
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_27071645_death ;
         ecrm:P98i_was_born      mmma:bodley_person_27071645_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_27071645> ;
@@ -200,7 +200,7 @@ mmma:bodley_person_27071645
         skos:prefLabel          "Silius Italicus, Tiberius Catius" .
 
 mmma:bodley_person_88626271
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_88626271_death ;
         ecrm:P98i_was_born      mmma:bodley_person_88626271_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_88626271> ;
@@ -210,7 +210,7 @@ mmma:bodley_person_88626271
         skos:prefLabel          "Herodianus, pseudo" .
 
 mmma:bodley_person_310715648
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_310715648> ;
         dct:source              mmms:Bodley ;
         owl:sameAs              viaf:310715648 , viaf:20072061 , <http://id.loc.gov/authorities/names/n2014188541> , <http://d-nb.info/gnd/102515735> ;
@@ -218,7 +218,7 @@ mmma:bodley_person_310715648
         skos:prefLabel          "Philip, of Tripoli, fl. 1243" .
 
 mmma:bodley_person_37712552
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_37712552_death ;
         ecrm:P98i_was_born      mmma:bodley_person_37712552_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_37712552> ;
@@ -228,14 +228,14 @@ mmma:bodley_person_37712552
         skos:prefLabel          "Sixtus, IV, Pope, 1414-1484" .
 
 mmma:bodley_person_20072061
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_20072061> ;
         dct:source              mmms:Bodley ;
         owl:sameAs              viaf:20072061 , <http://d-nb.info/gnd/102515735> ;
         skos:altLabel           "Tripolitanus, Philippus, ca. 1243" , "Philippus, Tripolitanus, ca. 1243" , "Philippus, Clericus Tripolitanus, ca. 1243" ;
         skos:prefLabel          "Philippus, Tripolitanus, ca. 1243" .
 
-mmma:sdbm_1004  a               mmms:Person ;
+mmma:sdbm_1004  a               ecrm:E21_Person ;
         mmms:birth_date         "1260" ;
         mmms:data_provider_url  <https://sdbm.library.upenn.edu/names/1004> ;
         mmms:death_date         "1306" ;
@@ -244,7 +244,7 @@ mmma:sdbm_1004  a               mmms:Person ;
         skos:prefLabel          "Simon, of Faversham, -1306" .
 
 mmma:bodley_person_285172151
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_285172151_death ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_285172151> ;
         dct:source              mmms:Bodley ;
@@ -252,7 +252,7 @@ mmma:bodley_person_285172151
         skos:altLabel           "Hesdin, Simon de, -1383" ;
         skos:prefLabel          "Hesdin, Simon de, -1383" .
 
-mmma:sdbm_1003  a               mmms:Person ;
+mmma:sdbm_1003  a               ecrm:E21_Person ;
         mmms:birth_date         "1270" ;
         mmms:data_provider_url  <https://sdbm.library.upenn.edu/names/1003> ;
         mmms:death_date         "1303" ;
@@ -262,7 +262,7 @@ mmma:sdbm_1003  a               mmms:Person ;
         skos:prefLabel          "Simon, of Genoa, active 13th century " .
 
 mmma:bodley_person_71399875
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_71399875_death ;
         ecrm:P98i_was_born      mmma:bodley_person_71399875_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_71399875> ;
@@ -272,7 +272,7 @@ mmma:bodley_person_71399875
         skos:prefLabel          "Simplicius, of Cilicia" .
 
 mmma:bodley_person_165124171
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_165124171_death ;
         ecrm:P98i_was_born      mmma:bodley_person_165124171_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_165124171> ;
@@ -282,43 +282,43 @@ mmma:bodley_person_165124171
         skos:prefLabel          "Cordo, Simone, -1300" .
 
     """
-    
+
     test_bibale = """
     mmma:bibale_person_4472713
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_4472713_death ;
         ecrm:P98i_was_born      mmma:bodley_person_4472713_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_4472713> ;
         dct:source              mmms:Bibale ;
         owl:sameAs              viaf:NO_LINK ;
         skos:altLabel           "Simone, Fidati, -1348" , "Cascia, Simon Fidati von, -1348" , "Simon, Cassianus, -1348" , "Cassia OESA, Simon Fidati de, -1348" , "Simon Fidati, de Cassia, -1348" , "Simon, Fidati von Cascia, -1348" , "Fidati, Simone, -1348" , "Simon aus Cascia, -1348" , "Simon Fidati, de Cassia OESA, -1348" , "Cascia, Simone Fidati da, -1348" , "Fidati, Simon, -1348" , "Simon, von Cascia, -1348" , "Simon, da Cascia, -1348" , "Simon, de Cassia, -1348" , "Fidati da Cascia, Simone, -1348" , "Fidato, Simon, -1348" , "Cassia, Simon de, -1348" , "Cassia, Simon Fidati de, -1348" ;
-        skos:prefLabel          "Fidati, Simone, -1348" . 
-        
+        skos:prefLabel          "Fidati, Simone, -1348" .
+
     mmma:bibale_person_XYZ
-        a                       mmms:Person ;
+        a                       ecrm:E21_Person ;
         ecrm:P100i_died_in      mmma:bodley_person_76393969_death ;
         ecrm:P98i_was_born      mmma:bodley_person_76393969_birth ;
         mmms:data_provider_url  <https://medieval.bodleian.ox.ac.uk/catalog/person_76393969> ;
         dct:source              mmms:Bibale ;
         owl:sameAs              viaf:88626271 ;
         skos:prefLabel          "Herodianos, Sohn des Apollonios Dyskolos, ca. 2. Jh." .
-        
+
     mmma:bibale_person_unique
-        a                       mmms:Actor ; 
+        a                       ecrm:E39_Actor ;
         dct:source              mmms:Bibale ;
         owl:sameAs              viaf:123unique ;
         skos:prefLabel          "unique" .
-    
+
     mmma:bibale_nowhere  a               mmms:Place ;
         dct:source              mmms:Bibale ;
         owl:sameAs              viaf:nowhere ;
         skos:prefLabel          "In the middle of Nothing and Nowhere" .
-    
-    mmma:bibale_nobody  a               mmms:Person ;
+
+    mmma:bibale_nobody  a               ecrm:E21_Person ;
         dct:source              mmms:Bibale ;
         owl:sameAs              viaf:nowhere ;
         skos:prefLabel          "Nobody" .
-        
+
         """
 
 if __name__ == '__main__':

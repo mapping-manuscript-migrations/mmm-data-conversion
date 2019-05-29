@@ -172,18 +172,6 @@
 :collection_location a rdfs:Property ;
   skos:prefLabel "Location of a manuscript collection at some point during its existence" .
 
-:Actor a rdfs:Class ;
-  rdfs:subClassOf crm:E39_Actor;
-  skos:prefLabel "Actor" .
-
-:Person a rdfs:Class ;
-  rdfs:subClassOf crm:E21_Person;
-  skos:prefLabel "Person" .
-
-:Organization a rdfs:Class ;
-  rdfs:subClassOf crm:E74_Group ;
-  skos:prefLabel "Organization" .
-
 :catalog_or_lot_number a rdfs:Property ;
   skos:prefLabel "Catalog or lot number" .
 
