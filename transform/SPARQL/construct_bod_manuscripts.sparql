@@ -46,7 +46,7 @@ CONSTRUCT {
     mmms:shelfmark_buchanan ?shelfmark_buchanan ;
     mmms:shelfmark_christ_church ?shelfmark_christ_church ;
     mmms:shelfmark_barocci ?shelfmark_barocci ;
-    ecrm:P46i_forms_part_of mmms:Bodleian_collection ;
+    ecrm:P46i_forms_part_of ?collection_mmm ;
     ecrm:P46_is_composed_of ?child_manifestation_singleton_mmm ;
     dct:source mmms:Bodley ;
     .
@@ -179,10 +179,17 @@ WHERE
     FILTER(?shelfmark_barocci != STR(?manifestation_singleton_preflabel))
   }
 
+  # MATERIAL
   OPTIONAL {
     ?manifestation_singleton crm:P45_consists_of ?material_uri .
     ?material_uri rdfs:label ?material_label .
   }
+
+  # COLLECTIONS
+  OPTIONAL {
+    ?manifestation_singleton crm:P46i_forms_part_of ?collection .
+  }
+
 
   BIND(REPLACE(REPLACE(STR(?expression), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?expression_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
@@ -234,4 +241,7 @@ WHERE
 
   BIND(REPLACE(STR(?production_signer), "^.*\\/(.+)", "$1") as ?production_signer_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?production_signer_local_id)) as ?production_signer_mmm)
+
+  BIND(REPLACE(STR(?collection), "^.*\\/(.+)", "$1") as ?collection_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/collection/bodley_", ?collection_local_id)) as ?collection_mmm)
 }
