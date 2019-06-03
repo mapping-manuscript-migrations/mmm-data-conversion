@@ -16,7 +16,8 @@ PREFIX dct: <http://purl.org/dc/terms/>
 
 CONSTRUCT {
   ?work a frbroo:F1_Work ;
-    skos:prefLabel ?title ;
+    skos:prefLabel ?work_preflabel ;
+    skos:altLabel ?work_altlabel ;
     mmms:data_provider_url ?entry ;
     dct:source mmms:SDBM .
 
@@ -50,7 +51,7 @@ WHERE {
   ?entry_title :entry_titles_entry_id ?entry .
   ?entry_title :entry_titles_id ?title_id .
   OPTIONAL {
-    ?entry_title :entry_titles_title|:entry_titles_common_title ?title .
+    ?entry_title :entry_titles_title ?title .
     FILTER(STR(?title) != "")
   }
   OPTIONAL {
@@ -86,7 +87,8 @@ WHERE {
   BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author_mmm)
 
-  BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?preflabel)  # TODO: Get most common value from ?title
+  BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?work_preflabel)
+  BIND(IF(?title != ?work_preflabel, ?title, ?common_title) as ?work_altlabel)
 
   BIND(REPLACE(STR(?language), "^.*\\/(.+)", "$1") as ?language_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/language/sdbm_", ?language_local_id)) as ?language_mmm)

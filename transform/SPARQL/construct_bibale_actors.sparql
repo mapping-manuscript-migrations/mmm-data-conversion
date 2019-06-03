@@ -66,7 +66,7 @@ CONSTRUCT {
     .
 
   ?religion_timespan_mmm a ecrm:E52_Time-Span ;
-    skos:prefLabel ?death_time_label ;
+    skos:prefLabel ?religion_timespan_label ;
     ecrm:P82a_begin_of_the_begin ?religion_bb ;
     ecrm:P81a_end_of_the_begin ?religion_eb ;
     ecrm:P81b_begin_of_the_end ?religion_be ;
