@@ -9,3 +9,5 @@ printf '\nMissing skos:prefLabel\n\n'
 curl -f -H "Accept: text/csv" --data-urlencode "query=$(cat validation/missing_preflabel.sparql)" http://localhost:3050/ds/sparql -v > output/validation_missing_preflabel.csv
 
 # TODO: Resources missing class annotation
+
+# TODO: Timespan ends before it begins

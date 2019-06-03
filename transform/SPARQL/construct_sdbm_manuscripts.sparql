@@ -9,6 +9,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 # TODO: Folio count URIs etc. to be based on the count to avoid duplicates
 # TODO: Material URIs etc. to be based on the material to avoid duplicates
@@ -70,10 +71,10 @@ CONSTRUCT {
     .
 
   ?production_timespan a ecrm:E52_Time-Span ;
-    skos:prefLabel ?production_date_label ;
+    skos:prefLabel ?production_timespan_label ;
     skos:altLabel ?production_date_observed ;
-    ecrm:P82a_begin_of_the_begin ?production_date_start ;
-    ecrm:P82b_end_of_the_end ?production_date_end .
+    ecrm:P82a_begin_of_the_begin ?production_date_start_mmm ;
+    ecrm:P82b_end_of_the_end ?production_date_end_mmm .
 
   ?width_uri a mmms:Width ;
     ecrm:P91_has_unit :Millimetre ;
@@ -163,8 +164,6 @@ WHERE {
 
   ## MANUSCRIPT DETAILS ##
 
-  # TODO: Add dates
-
   OPTIONAL {
     ?provenance_entry :provenance_entry_id ?entry ;
                       :provenance_provenance_agent_id ?prov_agent_ ;
@@ -203,22 +202,28 @@ WHERE {
   OPTIONAL {
     ?entry_date :entry_dates_entry_id ?entry .
     ?entry_date :entry_dates_id ?production_date_id .
-    ?entry_date :entry_dates_date_normalized_start ?production_date_start .
-    ?entry_date :entry_dates_date_normalized_end ?production_date_end .
+    ?entry_date :entry_dates_date_normalized_start ?production_year_start .
+    ?entry_date :entry_dates_date_normalized_end ?production_year_end .
     ?entry_date :entry_dates_observed_date ?production_date_observed .
+
+    FILTER(?production_year_start != "")
+    FILTER(?production_year_end != "")
+
+    BIND(IF(STRSTARTS(?production_year_start, "-"),
+        CONCAT("-", SUBSTR("0000", STRLEN(?production_year_start)), SUBSTR(?production_year_start, 2, 4)),
+        CONCAT(SUBSTR("0000", STRLEN(?production_year_start) + 1), ?production_year_start)) as ?production_year_start_iso)
+
+    BIND(IF(STRSTARTS(?production_year_end, "-"),
+        CONCAT("-", SUBSTR("0000", STRLEN(?production_year_end)), SUBSTR(?production_year_end, 2, 4)),
+        CONCAT(SUBSTR("0000", STRLEN(?production_year_end) + 1), ?production_year_end)) as ?production_year_end_iso)
+
+    BIND(STRDT(?production_year_start_iso + "-01-01", xsd:date) as ?production_date_start_mmm)
+    BIND(STRDT(?production_year_end_iso + "-12-31", xsd:date) as ?production_date_end_mmm)
   }
 
-  # artist
+  # TODO: artist
 
-  # scribe
-
-  # # language
-  # OPTIONAL {
-  #   ?entry_language :entry_languages_entry_id ?entry .
-  #   ?entry_language :entry_languages_language_id/:languages_id ?language_id .
-  #   ?entry_language :entry_languages_language_id/:languages_name ?language_ .
-  #   BIND(STRLANG(?language_, 'en') AS ?language)
-  # }
+  # TODO: scribe
 
   # place
   OPTIONAL {
@@ -339,7 +344,6 @@ WHERE {
       ?entry_source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
       BIND(CONCAT(STR(mmm:), "collection/sdbm_") as ?source_namespace)
       BIND(ecrm:P46i_forms_part_of as ?property_to_collection)
-      # TODO: Get last known location from collection
     }
     OPTIONAL {
       BIND(CONCAT(STR(mmm:), "source/sdbm_") as ?source_namespace)
@@ -434,11 +438,6 @@ WHERE {
     }
   }
 
-  BIND(SUBSTR(?cat_date_raw, 1, 4) as ?cat_date_year)
-  BIND(SUBSTR(?cat_date_raw, 5, 2) as ?cat_date_month)
-  BIND(SUBSTR(?cat_date_raw, 7) as ?cat_date_day)
-  BIND(?cat_date_year + "-" + ?cat_date_month + "-" + ?cat_date_day as ?cat_date)
-
   BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
   BIND(REPLACE(STR(?entry_partial_uri), "^.*\\/(.+)", "$1") as ?entry_partial_id)
 
@@ -459,11 +458,11 @@ WHERE {
   #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?selling_agent_id))) as ?selling_agent)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?prov_agent_id))) as ?prov_agent)
   BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?production_place_id))) as ?production_place)
-  BIND(IRI(CONCAT(STR(mmm:), "timespan/", STR(?production_date_id))) as ?production_timespan)
+  BIND(IRI(CONCAT(STR(mmm:), "timespan/production_", STR(?production_date_id))) as ?production_timespan)
   #BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
   #BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
 
-  BIND(CONCAT(STR(?production_date_start),"-",STR(?production_date_end)) as ?production_date_label)
+  BIND(CONCAT(STR(?production_year_start_iso)," - ",STR(?production_year_end_iso)) as ?production_timespan_label)
   BIND("SDBM_MS_" + STR(?manuscript_id) as ?manuscript_preflabel)
   BIND("SDBM_MS_" + STR(?manuscript_parent_id_int) as ?parent_preflabel)
 
