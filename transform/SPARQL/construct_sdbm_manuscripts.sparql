@@ -463,7 +463,7 @@ WHERE {
   #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?selling_agent_id))) as ?selling_agent)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?prov_agent_id))) as ?prov_agent)
   BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?production_place_id))) as ?production_place)
-  BIND(IRI(CONCAT(STR(mmm:), "timespan/production_", STR(?production_date_id))) as ?production_timespan)
+  BIND(IRI(CONCAT(STR(mmm:), "time/production_", STR(?production_date_id))) as ?production_timespan)
   #BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
   #BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
 

@@ -11,7 +11,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 
 SELECT ?no_preflabel WHERE {
-  ?no_preflabel ?pred ?obj .
+  ?no_preflabel a ?class .
   FILTER (!(
       EXISTS { ?no_preflabel skos:prefLabel ?label }
       || STRSTARTS(STR(?no_preflabel), "http://erlangen-crm.org/current/")
