@@ -185,13 +185,10 @@ WHERE
   BIND(?source_date_year + "-" + ?source_date_end_month + "-" + ?source_date_end_day as ?source_date_end)
   BIND(STRDT(?source_date_begin, xsd:date) as ?source_date_begin_mmm)
   BIND(STRDT(?source_date_end, xsd:date) as ?source_date_end_mmm)
-  OPTIONAL {
-    FILTER (?source_date_begin != ?source_date_end)
-    BIND(" - " as ?source_date_label_separator)
-  }
-  BIND(COALESCE(CONCAT(STR(?source_date_begin), ?source_date_label_separator, STR(?source_date_end)), ?source_date_begin) as ?source_date_label)
 
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/sdbm_", ?source_date_raw)) as ?source_timespan_mmm)
+  BIND(IF(?source_date_begin = ?source_date_end, ?source_date_begin, IF(?source_date_begin_month = ?source_date_end_month, ?source_date_begin + " - " + ?source_date_end, ?source_date_year)) as ?source_date_label)
+
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/sdbm_sources_", ?source_date_raw)) as ?source_timespan_mmm)
 
   # ENTRY IDS
   BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
