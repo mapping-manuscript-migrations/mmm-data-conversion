@@ -11,6 +11,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 # TODO: Format dates
 
@@ -33,9 +34,9 @@ CONSTRUCT {
     .
 
   ?birth_timespan_mmm a ecrm:E52_Time-Span ;
-    skos:prefLabel ?birth_date ;
-    ecrm:P82a_begin_of_the_begin ?birth_date ;
-    ecrm:P82b_end_of_the_end ?birth_date ;
+    skos:prefLabel ?birth_timespan_label ;
+    ecrm:P82a_begin_of_the_begin ?birth_begin_mmm ;
+    ecrm:P82b_end_of_the_end ?birth_end_mmm ;
     .
 
   ?death_mmm a ?death_class ;
@@ -44,9 +45,9 @@ CONSTRUCT {
     .
 
   ?death_timespan_mmm a ecrm:E52_Time-Span ;
-    skos:prefLabel ?death_date ;
-    ecrm:P82a_begin_of_the_begin ?death_date ;
-    ecrm:P82b_end_of_the_end ?death_date ;
+    skos:prefLabel ?death_timespan_label ;
+    ecrm:P82a_begin_of_the_begin ?death_begin ;
+    ecrm:P82b_end_of_the_end ?death_end ;
     .
 
 }
@@ -106,7 +107,52 @@ WHERE
   # BIRTH DATE
   OPTIONAL {
     ?name_id :names_startdate ?birth_date .
-    FILTER(STR(?birth_date) != "")
+
+    FILTER(?birth_date != "" && ?birth_date != "0")
+
+    BIND(SUBSTR(?birth_date, 1, 4) as ?birth_year_)
+    BIND(SUBSTR(?birth_date, 6, 2) as ?birth_month_)
+    BIND(SUBSTR(?birth_date, 9) as ?birth_day_)
+
+    BIND(IF(STRSTARTS(?birth_year_, "-"),
+        CONCAT("-", SUBSTR("0000", STRLEN(?birth_year_)), SUBSTR(?birth_year_, 2, 4)),
+        CONCAT(SUBSTR("0000", STRLEN(?birth_year_) + 1), ?birth_year_)) as ?birth_year_iso)
+
+    OPTIONAL {
+      FILTER (?birth_day_ = "00" && (?birth_month_ = "02"))
+      BIND("01" as ?birth_begin_day_)
+      BIND("28" as ?birth_end_day_)
+    }
+    OPTIONAL {
+      FILTER (?birth_day_ = "00" && (?birth_month_ = "04" || ?birth_month_ = "06" || ?birth_month_ = "09" || ?birth_month_ = "11"))
+      BIND("01" as ?birth_begin_day_)
+      BIND("30" as ?birth_end_day_)
+    }
+    OPTIONAL {
+      FILTER (?birth_month_ != "" && (!BOUND(?birth_day_) || ?birth_day_ = "00"))
+      BIND("01" as ?birth_begin_day_)
+      BIND("31" as ?birth_end_day_)
+    }
+    OPTIONAL {
+      FILTER (?birth_year_ != "" && !BOUND(?birth_month_) && (!BOUND(?birth_day_) || ?birth_day_ = "00"))
+      BIND("01" as ?birth_begin_month_)
+      BIND("12" as ?birth_end_month_)
+      BIND("01" as ?birth_begin_day_)
+      BIND("31" as ?birth_end_day_)
+    }
+    BIND(COALESCE(?birth_begin_month_, ?birth_month_) as ?birth_begin_month)
+    BIND(COALESCE(?birth_end_month_, ?birth_month_) as ?birth_end_month)
+    BIND(COALESCE(?birth_begin_day_, ?birth_day_) as ?birth_begin_day)
+    BIND(COALESCE(?birth_end_day_, ?birth_day_) as ?birth_end_day)
+
+    BIND(?birth_year_iso + "-" + ?birth_begin_month + "-" + ?birth_begin_day as ?birth_begin)
+    BIND(?birth_year_iso + "-" + ?birth_end_month + "-" + ?birth_end_day as ?birth_end)
+
+    BIND(STRDT(?birth_begin, xsd:date) as ?birth_begin_mmm)
+    BIND(STRDT(?birth_end, xsd:date) as ?birth_end_mmm)
+
+    BIND(IF(?birth_begin = ?birth_end, ?birth_begin, IF(?birth_begin_month = ?birth_end_month, ?birth_begin + " - " + ?birth_end, ?birth_year_iso)) as ?birth_timespan_label)
+
     ?name_id :names_id ?person_local_id .
     BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_birth")) as ?birth_mmm)
     BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_birth_timespan")) as ?birth_timespan_mmm)
@@ -116,6 +162,50 @@ WHERE
   OPTIONAL {
     ?name_id :names_enddate ?death_date .
     FILTER(STR(?death_date) != "")
+
+    BIND(SUBSTR(?death_date, 1, 4) as ?death_year_)
+    BIND(SUBSTR(?death_date, 6, 2) as ?death_month_)
+    BIND(SUBSTR(?death_date, 9) as ?death_day_)
+
+    BIND(IF(STRSTARTS(?death_year_, "-"),
+        CONCAT("-", SUBSTR("0000", STRLEN(?death_year_)), SUBSTR(?death_year_, 2, 4)),
+        CONCAT(SUBSTR("0000", STRLEN(?death_year_) + 1), ?death_year_)) as ?death_year_iso)
+
+    OPTIONAL {
+      FILTER (?death_day_ = "00" && (?death_month_ = "02"))
+      BIND("01" as ?death_begin_day_)
+      BIND("28" as ?death_end_day_)
+    }
+    OPTIONAL {
+      FILTER (?death_day_ = "00" && (?death_month_ = "04" || ?death_month_ = "06" || ?death_month_ = "09" || ?death_month_ = "11"))
+      BIND("01" as ?death_begin_day_)
+      BIND("30" as ?death_end_day_)
+    }
+    OPTIONAL {
+      FILTER (?death_month_ != "" && (!BOUND(?death_day_) || ?death_day_ = "00"))
+      BIND("01" as ?death_begin_day_)
+      BIND("31" as ?death_end_day_)
+    }
+    OPTIONAL {
+      FILTER (?death_year_ != "" && !BOUND(?death_month_) && (!BOUND(?death_day_) || ?death_day_ = "00"))
+      BIND("01" as ?death_begin_month_)
+      BIND("12" as ?death_end_month_)
+      BIND("01" as ?death_begin_day_)
+      BIND("31" as ?death_end_day_)
+    }
+    BIND(COALESCE(?death_begin_month_, ?death_month_) as ?death_begin_month)
+    BIND(COALESCE(?death_end_month_, ?death_month_) as ?death_end_month)
+    BIND(COALESCE(?death_begin_day_, ?death_day_) as ?death_begin_day)
+    BIND(COALESCE(?death_end_day_, ?death_day_) as ?death_end_day)
+
+    BIND(?death_year_iso + "-" + ?death_begin_month + "-" + ?death_begin_day as ?death_begin)
+    BIND(?death_year_iso + "-" + ?death_end_month + "-" + ?death_end_day as ?death_end)
+
+    BIND(STRDT(?death_begin, xsd:date) as ?death_begin_mmm)
+    BIND(STRDT(?death_end, xsd:date) as ?death_end_mmm)
+
+    BIND(IF(?death_begin = ?death_end, ?death_begin, IF(?death_begin_month = ?death_end_month, ?death_begin + " - " + ?death_end, ?death_year_iso)) as ?death_timespan_label)
+
     ?name_id :names_id ?person_local_id .
     BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_death")) as ?death_mmm)
     BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_death_timespan")) as ?death_timespan_mmm)

@@ -206,16 +206,21 @@ WHERE {
     ?entry_date :entry_dates_date_normalized_end ?production_year_end .
     ?entry_date :entry_dates_observed_date ?production_date_observed .
 
-    FILTER(?production_year_start != "")
-    FILTER(?production_year_end != "")
+    OPTIONAL {
+      ?entry_date :entry_dates_date_normalized_start ?production_year_start .
+      FILTER(?production_year_start != "")
+      BIND(IF(STRSTARTS(?production_year_start, "-"),
+          CONCAT("-", SUBSTR("0000", STRLEN(?production_year_start)), SUBSTR(?production_year_start, 2, 4)),
+          CONCAT(SUBSTR("0000", STRLEN(?production_year_start) + 1), ?production_year_start)) as ?production_year_start_iso)
+    }
 
-    BIND(IF(STRSTARTS(?production_year_start, "-"),
-        CONCAT("-", SUBSTR("0000", STRLEN(?production_year_start)), SUBSTR(?production_year_start, 2, 4)),
-        CONCAT(SUBSTR("0000", STRLEN(?production_year_start) + 1), ?production_year_start)) as ?production_year_start_iso)
-
-    BIND(IF(STRSTARTS(?production_year_end, "-"),
-        CONCAT("-", SUBSTR("0000", STRLEN(?production_year_end)), SUBSTR(?production_year_end, 2, 4)),
-        CONCAT(SUBSTR("0000", STRLEN(?production_year_end) + 1), ?production_year_end)) as ?production_year_end_iso)
+    OPTIONAL {
+      ?entry_date :entry_dates_date_normalized_end ?production_year_end .
+      FILTER(?production_year_end != "")
+      BIND(IF(STRSTARTS(?production_year_end, "-"),
+          CONCAT("-", SUBSTR("0000", STRLEN(?production_year_end)), SUBSTR(?production_year_end, 2, 4)),
+          CONCAT(SUBSTR("0000", STRLEN(?production_year_end) + 1), ?production_year_end)) as ?production_year_end_iso)
+    }
 
     BIND(STRDT(?production_year_start_iso + "-01-01", xsd:date) as ?production_date_start_mmm)
     BIND(STRDT(?production_year_end_iso + "-12-31", xsd:date) as ?production_date_end_mmm)
