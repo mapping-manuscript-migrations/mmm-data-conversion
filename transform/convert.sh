@@ -13,6 +13,9 @@ case "$1" in
   "sdbm")
     ./convert_sdbm.sh
   ;;
+  "skip")
+    printf 'Skipping dataset conversions'
+  ;;
   *)
     ./convert_bibale.sh
     ./convert_bodley.sh
