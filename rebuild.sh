@@ -17,3 +17,6 @@ sleep 5
 docker-compose up transform
 docker-compose run --rm crm ./deploy.sh
 docker-compose up -d crm
+
+sleep 5
+./validate.sh
