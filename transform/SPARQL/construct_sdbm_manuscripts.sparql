@@ -16,6 +16,8 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 # TODO: Get last known location from Collection or from last provenance event
 
+# TODO: prefLabels for measurements
+
 CONSTRUCT {
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;

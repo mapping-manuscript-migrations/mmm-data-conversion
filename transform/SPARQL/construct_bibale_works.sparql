@@ -12,7 +12,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 
-# TODO: Combine severed work conceptions from input data, e.g. http://ldf.fi/mmm/work/bibale_39424 
+# TODO: Combine severed work conceptions from input data, e.g. http://ldf.fi/mmm/work/bibale_39424
 
 CONSTRUCT {
   ?work_mmm a frbroo:F1_Work ;
@@ -22,7 +22,7 @@ CONSTRUCT {
     dct:source mmms:Bibale .
 
   ?work_conception_mmm a frbroo:F27_Work_Conception ;
-    skos:prefLabel ?work_conception_pref_label ;
+    # skos:prefLabel ?work_conception_pref_label ;  # TODO
     frbroo:R16_initiated ?work_mmm ;
     mmms:carried_out_by_as_author ?author_mmm ;  # TODO: P14 carried out by
     mmms:carried_out_by_as_translator ?translator_mmm ;

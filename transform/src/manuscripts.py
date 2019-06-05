@@ -31,9 +31,9 @@ def redirect_resource(graph: Graph, old_uri: URIRef, new_uri: URIRef, handle_sko
     return graph
 
 
-def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label: Literal, add_sameas: bool=True):
+def change_resource_uri(graph: Graph, old_uri, new_uri, new_pref_label: Literal, add_sameas: bool=True):
     """
-    Change manuscript URI, redirect links and add new prefLabel
+    Change resource URI, redirect links and add new prefLabel
     """
     if old_uri == new_uri:
         return graph
@@ -44,8 +44,9 @@ def change_manuscript_uri(graph: Graph, old_uri, new_uri, new_pref_label: Litera
 
     graph = redirect_resource(graph, old_uri, new_uri)
 
-    graph.add((new_uri, SKOS.prefLabel, new_pref_label))
-    graph.remove((new_uri, SKOS.altLabel, new_pref_label))
+    if new_pref_label:
+        graph.add((new_uri, SKOS.prefLabel, new_pref_label))
+        graph.remove((new_uri, SKOS.altLabel, new_pref_label))
 
     if add_sameas:
         graph.add((old_uri, OWL.sameAs, new_uri))
@@ -93,20 +94,20 @@ def link_manuscripts(bibale: Graph, bodley: Graph, sdbm: Graph, links: list):
                 format(bib=bib_hit, bod=bod_hit, sdbm=sdbm_hit, new_uri=new_uri, label=new_pref_label))
 
         if bib_hit:
-            change_manuscript_uri(bibale, bib_hit, new_uri, new_pref_label)
+            change_resource_uri(bibale, bib_hit, new_uri, new_pref_label)
 
         if bod_hit:
-            change_manuscript_uri(bodley, bod_hit, new_uri, new_pref_label)
+            change_resource_uri(bodley, bod_hit, new_uri, new_pref_label)
 
         if sdbm_hit:
-            change_manuscript_uri(sdbm, sdbm_hit, new_uri, new_pref_label)
+            change_resource_uri(sdbm, sdbm_hit, new_uri, new_pref_label)
 
     return bibale, bodley, sdbm
 
 
 def read_manual_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
     """
-    Read manuscript links from a CSV file and mash the manuscripts together
+    Read manuscript links from a CSV file
     """
     csv_data = pd.read_csv(csv, header=0, keep_default_na=False,
                            names=["bibale", "bodley", "sdbm_record", "sdbm_entry", "notes"])

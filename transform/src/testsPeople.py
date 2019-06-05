@@ -11,23 +11,28 @@ import unittest
 from io import StringIO
 
 from rdflib import URIRef, RDF, RDFS, OWL, Literal
-from linker_people import PersonLinker
+from linker_people import PersonLinker, read_recon_links
 
 # from linker import PlaceLinker
-from manuscripts import read_manual_links, link_by_shelfmark, link_manuscripts, change_manuscript_uri
+from manuscripts import read_manual_links, link_by_shelfmark, link_manuscripts, change_resource_uri
 from namespaces import *
+
 log = logging.getLogger(__name__)
 
 """TODO : multiple births and deaths ?
 """
-class TestStringMethods(unittest.TestCase):
 
+
+class TestStringMethods(unittest.TestCase):
     def test_person_linkage(self):
         bib = self.read_example_data(self.test_bibale)
         bod = self.read_example_data(self.test_bodley)
         sdbm = self.read_example_data(self.test_sdbm)
 
         p = PersonLinker(sdbm, bod, bib)
+
+        p.find_viaf_links()
+        p.link_people()
 
         #    test that all link tuples have two non-None elements
         for link in p.links:
@@ -57,23 +62,46 @@ class TestStringMethods(unittest.TestCase):
         self.assertIsNone(bib.value(person_xyz, SKOS.prefLabel))
         self.assertIsNone(sdbm.value(URIRef('http://ldf.fi/mmm/actor/sdbm_xyz'), SKOS.prefLabel))
 
-        self.assertEqual(str(bod.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)), "Herodianus, pseudo")
-        self.assertEqual(str(bib.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)), "Herodianus, pseudo")
-        self.assertEqual(str(sdbm.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)), "Herodianus, pseudo")
+        self.assertEqual(str(bod.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)),
+                         "Herodianus, pseudo")
+        self.assertEqual(str(bib.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)),
+                         "Herodianus, pseudo")
+        self.assertEqual(str(sdbm.value(URIRef('http://ldf.fi/mmm/actor/bodley_person_88626271'), SKOS.prefLabel)),
+                         "Herodianus, pseudo")
 
         #    test that unique entry is not linked:
-        self.assertEqual(str(bib.value(URIRef('http://ldf.fi/mmm/actor/bibale_person_unique'), OWL.sameAs)), "https://viaf.org/viaf/123unique")
+        self.assertEqual(str(bib.value(URIRef('http://ldf.fi/mmm/actor/bibale_person_unique'), OWL.sameAs)),
+                         "https://viaf.org/viaf/123unique")
 
         #    test that places are not linked:
         self.assertEqual(sdbm.value(URIRef('http://ldf.fi/mmm/actor/sdbm_nowhere'), RDF.type), MMMS.Place)
         self.assertEqual(bib.value(URIRef('http://ldf.fi/mmm/actor/bibale_nowhere'), RDF.type), MMMS.Place)
         self.assertEqual(bib.value(URIRef('http://ldf.fi/mmm/actor/bibale_nobody'), RDF.type), CRM.E21_Person)
 
+    def test_recon_links(self):
+        bib = self.read_example_data(self.test_bibale)
+        bod = self.read_example_data(self.test_bodley)
+        sdbm = self.read_example_data(self.test_sdbm)
+
+        p = PersonLinker(sdbm, bod, bib)
+
+        # p.find_viaf_links()
+        p.links += read_recon_links(bib, bod, sdbm, StringIO(self.test_csv))
+        p.link_people()
+
+        assert len(p.links) == 1
+        assert p.links[0] == (URIRef('http://ldf.fi/mmm/actor/bibale_30530'), None, URIRef('http://ldf.fi/mmm/actor/sdbm_13159'))
 
     def read_example_data(self, data):
         g = Graph()
-        g.parse(data=self.test_prefices+data, format='turtle')
+        g.parse(data=self.test_prefices + data, format='turtle')
         return g
+
+    test_csv = """Name,Match,Notes,Birth_time,Death_time,Gender,URI,Databases
+Yorkshire Archaeological Society,,,,,,http://ldf.fi/mmm/actor/sdbm_11161,SDBM
+Yolande de Bar,,,,,female,http://ldf.fi/mmm/actor/bibale_2013,Bibale
+"Yéméniz, Nicolas (1783-1871)",http://ldf.fi/mmm/actor/sdbm_13159,,precise 1783,precise 1871,male,http://ldf.fi/mmm/actor/bibale_30530,Bibale
+"""
 
     #    test data produced with query http://yasgui.org/short/QNXAjx5qr
     test_prefices = """
@@ -320,6 +348,7 @@ mmma:bodley_person_165124171
         skos:prefLabel          "Nobody" .
 
         """
+
 
 if __name__ == '__main__':
     unittest.main()

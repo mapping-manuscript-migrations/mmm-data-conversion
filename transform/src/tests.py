@@ -15,7 +15,7 @@ from io import StringIO
 from rdflib import URIRef, RDF, OWL, Literal
 
 from linker import PlaceLinker
-from manuscripts import read_manual_links, link_by_shelfmark, link_manuscripts, change_manuscript_uri
+from manuscripts import read_manual_links, link_by_shelfmark, link_manuscripts, change_resource_uri
 from namespaces import *
 
 
@@ -459,12 +459,12 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
                  SKOS.prefLabel,
                  Literal('Bibale test manuscript')))
 
-        change_manuscript_uri(bib, old_uri, old_uri, Literal('Test'))
+        change_resource_uri(bib, old_uri, old_uri, Literal('Test'))
 
         # Nothing should change if old and new URI are the same
         assert len(list(bib)) == 2
 
-        change_manuscript_uri(bib, old_uri, URIRef('http://example.com/test'), Literal('Test'))
+        change_resource_uri(bib, old_uri, URIRef('http://example.com/test'), Literal('Test'))
 
         # The URI should be changed and a new prefLabel added
         assert len(list(bib.predicate_objects(URIRef('http://example.com/test')))) == 3

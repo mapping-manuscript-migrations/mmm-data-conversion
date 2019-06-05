@@ -14,6 +14,6 @@ SELECT ?resource WHERE {
   ?resource a ?class .
   FILTER (!(
       EXISTS { ?resource skos:prefLabel ?label }
-      || STRSTARTS(STR(?resource), "http://erlangen-crm.org/current/")
+      || STRSTARTS(STR(?resource), "http://erlangen-crm.org/")
     ))
 } ORDER BY ?resource
