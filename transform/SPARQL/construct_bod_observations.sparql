@@ -67,7 +67,7 @@ WHERE
     }
     BIND(SUBSTR(?timespan_bb, 1, 4) as ?begin_year)
     BIND(SUBSTR(?timespan_ee, 1, 4) as ?end_year)
-    BIND(STR(?begin_year) + "-" + STR(?end_year) as ?timespan_label)
+    BIND(STR(?begin_year) + " - " + STR(?end_year) as ?timespan_label)
   }
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_singleton_local_id)

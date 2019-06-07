@@ -131,9 +131,9 @@ WHERE
 
   BIND(SUBSTR(?birth_timespan_begin_begin, 1, 4) as ?birth_begin_year)
   BIND(SUBSTR(?birth_timespan_end_end, 1, 4) as ?birth_end_year)
-  BIND(STR(?birth_begin_year) + "-" + STR(?birth_end_year) as ?birth_timespan_label)
+  BIND(STR(?birth_begin_year) + " - " + STR(?birth_end_year) as ?birth_timespan_label)
 
   BIND(SUBSTR(?death_timespan_begin_begin, 1, 4) as ?death_begin_year)
   BIND(SUBSTR(?death_timespan_end_end, 1, 4) as ?death_end_year)
-  BIND(STR(?death_begin_year) + "-" + STR(?death_end_year) as ?death_timespan_label)
+  BIND(STR(?death_begin_year) + " - " + STR(?death_end_year) as ?death_timespan_label)
 }

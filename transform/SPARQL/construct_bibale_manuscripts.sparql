@@ -82,7 +82,7 @@ WHERE
 {
   # COMPOSITE MANUSCRIPTS EXIST AS F4_Manifestation_Singleton, WHICH ARE SKIPPED FOR NOW
   # ?manifestation_singleton a frbroo2:F4_Manifestation_Singleton .
-  
+
   ?manifestation_singleton a bibale:type:livre .
 
   ?manifestation_singleton rdfs:label ?preflabel .
@@ -118,7 +118,19 @@ WHERE
     OPTIONAL { ?manuscript_timespan crm:P81a_end_of_the_begin ?manuscript_timespan_eb }
     OPTIONAL { ?manuscript_timespan crm:P81b_begin_of_the_end ?manuscript_timespan_be }
     OPTIONAL { ?manuscript_timespan crm:P82b_end_of_the_end ?manuscript_timespan_ee }
-    OPTIONAL { ?manuscript_timespan rdfs:label ?manuscript_timespan_label }
+    OPTIONAL { ?manuscript_timespan rdfs:label ?manuscript_timespan_label_ }
+
+    BIND(SUBSTR(STR(?manuscript_timespan_bb), 6, 10) as ?manuscript_timespan_bb_month_day)
+    BIND(SUBSTR(STR(?manuscript_timespan_ee), 6, 10) as ?manuscript_timespan_ee_month_day)
+    BIND(
+      IF(BOUND(?manuscript_timespan_bb) && BOUND(?manuscript_timespan_ee),
+        IF(STR(?manuscript_timespan_bb) = STR(?manuscript_timespan_ee), STR(?manuscript_timespan_bb),
+          IF(SUBSTR(STR(?manuscript_timespan_bb), 1, 4) = SUBSTR(STR(?manuscript_timespan_ee), 1, 4) && ?manuscript_timespan_bb_month_day = '01-01' && ?manuscript_timespan_ee_month_day = '12-31', SUBSTR(STR(?manuscript_timespan_bb), 1, 4),
+            IF(?manuscript_timespan_bb_month_day = '01-01' && ?manuscript_timespan_ee_month_day = '12-31',
+              CONCAT(SUBSTR(STR(?manuscript_timespan_bb), 1, 4), " - ", SUBSTR(STR(?manuscript_timespan_ee), 1, 4)),
+              CONCAT(STR(?manuscript_timespan_bb), " - ", STR(?manuscript_timespan_ee))
+            ))),
+        ?manuscript_timespan_label_) as ?manuscript_timespan_label)
   }
 
   # PRODUCTION PLACE
@@ -136,7 +148,19 @@ WHERE
       OPTIONAL { ?production_timespan crm:P81a_end_of_the_begin ?production_timespan_eb }
       OPTIONAL { ?production_timespan crm:P81b_begin_of_the_end ?production_timespan_be }
       OPTIONAL { ?production_timespan crm:P82b_end_of_the_end ?production_timespan_ee }
-      OPTIONAL { ?production_timespan rdfs:label ?production_timespan_label }
+      OPTIONAL { ?production_timespan rdfs:label ?production_timespan_label_ }
+
+      BIND(SUBSTR(STR(?production_timespan_bb), 6, 10) as ?production_timespan_bb_month_day)
+      BIND(SUBSTR(STR(?production_timespan_ee), 6, 10) as ?production_timespan_ee_month_day)
+      BIND(
+        IF(BOUND(?production_timespan_bb) && BOUND(?production_timespan_ee),
+          IF(STR(?production_timespan_bb) = STR(?production_timespan_ee), STR(?production_timespan_bb),
+            IF(SUBSTR(STR(?production_timespan_bb), 1, 4) = SUBSTR(STR(?production_timespan_ee), 1, 4) && ?production_timespan_bb_month_day = '01-01' && ?production_timespan_ee_month_day = '12-31', SUBSTR(STR(?production_timespan_bb), 1, 4),
+              IF(?production_timespan_bb_month_day = '01-01' && ?production_timespan_ee_month_day = '12-31',
+                CONCAT(SUBSTR(STR(?production_timespan_bb), 1, 4), " - ", SUBSTR(STR(?production_timespan_ee), 1, 4)),
+                CONCAT(STR(?production_timespan_bb), " - ", STR(?production_timespan_ee))
+              ))),
+          ?production_timespan_label_) as ?production_timespan_label)
     }
     OPTIONAL {
       ?production crm:P7_took_place_at ?production_place .

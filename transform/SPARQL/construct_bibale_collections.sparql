@@ -71,23 +71,47 @@ WHERE
   # COLLECTION CREATION DATE
   OPTIONAL {
     ?collection bibale:type:creation_date/crm:P4_has_time-span ?creation_date .
-    OPTIONAL { ?creation_date rdfs:label ?creation_date_label . }
+    OPTIONAL { ?creation_date rdfs:label ?creation_date_label_ . }
     OPTIONAL { ?creation_date crm:P82a_begin_of_the_begin ?creation_date_bb }
     OPTIONAL { ?creation_date crm:P81a_end_of_the_begin ?creation_date_eb }
     OPTIONAL { ?creation_date crm:P81b_begin_of_the_end ?creation_date_be }
     OPTIONAL { ?creation_date crm:P82b_end_of_the_end ?creation_date_ee }
     BIND("_creation" as ?creation_suffix)
+
+    BIND(SUBSTR(STR(?creation_date_bb), 6, 10) as ?creation_date_bb_month_day)
+    BIND(SUBSTR(STR(?creation_date_ee), 6, 10) as ?creation_date_ee_month_day)
+    BIND(
+      IF(BOUND(?creation_date_bb) && BOUND(?creation_date_ee),
+        IF(STR(?creation_date_bb) = STR(?creation_date_ee), STR(?creation_date_bb),
+          IF(SUBSTR(STR(?creation_date_bb), 1, 4) = SUBSTR(STR(?creation_date_ee), 1, 4) && ?creation_date_bb_month_day = '01-01' && ?creation_date_ee_month_day = '12-31', SUBSTR(STR(?creation_date_bb), 1, 4),
+            IF(?creation_date_bb_month_day = '01-01' && ?creation_date_ee_month_day = '12-31',
+              CONCAT(SUBSTR(STR(?creation_date_bb), 1, 4), " - ", SUBSTR(STR(?creation_date_ee), 1, 4)),
+              CONCAT(STR(?creation_date_bb), " - ", STR(?creation_date_ee))
+            ))),
+        ?creation_date_label_) as ?creation_date_label)
   }
 
   # COLLECTION DISPERSION DATE
   OPTIONAL {
     ?collection bibale:type:dispersion_date/crm:P4_has_time-span ?dispersion_date .
-    OPTIONAL { ?dispersion_date rdfs:label ?dispersion_date_label . }
+    OPTIONAL { ?dispersion_date rdfs:label ?dispersion_date_label_ . }
     OPTIONAL { ?dispersion_date crm:P82a_begin_of_the_begin ?dispersion_date_bb }
     OPTIONAL { ?dispersion_date crm:P81a_end_of_the_begin ?dispersion_date_eb }
     OPTIONAL { ?dispersion_date crm:P81b_begin_of_the_end ?dispersion_date_be }
     OPTIONAL { ?dispersion_date crm:P82b_end_of_the_end ?dispersion_date_ee }
     BIND("_dispersion" as ?dispersion_suffix)
+
+    BIND(SUBSTR(STR(?dispersion_date_bb), 6, 10) as ?dispersion_date_bb_month_day)
+    BIND(SUBSTR(STR(?dispersion_date_ee), 6, 10) as ?dispersion_date_ee_month_day)
+    BIND(
+      IF(BOUND(?dispersion_date_bb) && BOUND(?dispersion_date_ee),
+        IF(STR(?dispersion_date_bb) = STR(?dispersion_date_ee), STR(?dispersion_date_bb),
+          IF(SUBSTR(STR(?dispersion_date_bb), 1, 4) = SUBSTR(STR(?dispersion_date_ee), 1, 4) && ?dispersion_date_bb_month_day = '01-01' && ?dispersion_date_ee_month_day = '12-31', SUBSTR(STR(?dispersion_date_bb), 1, 4),
+            IF(?dispersion_date_bb_month_day = '01-01' && ?dispersion_date_ee_month_day = '12-31',
+              CONCAT(SUBSTR(STR(?dispersion_date_bb), 1, 4), " - ", SUBSTR(STR(?dispersion_date_ee), 1, 4)),
+              CONCAT(STR(?dispersion_date_bb), " - ", STR(?dispersion_date_ee))
+            ))),
+        ?dispersion_date_label_) as ?dispersion_date_label)
   }
 
   BIND(REPLACE(STR(?collection), "^.*\\/(.+)", "$1") as ?collection_local_id)

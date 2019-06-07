@@ -16,7 +16,6 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 # TODO: Get approximate time-span from associated persons life times?
 # TODO: Add ownership helper resources to manuscript (and collection)
 
-
 CONSTRUCT {
   ?transfer_mmm a ecrm:E10_Transfer_of_Custody ;
     ecrm:P30_transferred_custody_of ?manuscript_or_collection_mmm ;
@@ -39,6 +38,7 @@ CONSTRUCT {
 
 }
 WHERE
+#SELECT DISTINCT ?timespan_bb ?timespan_ee ?timespan_label_ ?timespan_label ?timespan_bb_month_day ?timespan_ee_month_day
 {
   ?transfer a crm:E10_Transfer_of_custody .
 
@@ -49,12 +49,24 @@ WHERE
   OPTIONAL {
     ?transfer crm:P4_has_time-span ?timespan .
 
-    ?timespan rdfs:label ?timespan_label ;
-      OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?timespan_bb }
-      OPTIONAL { ?timespan crm:P81a_end_of_the_begin ?timespan_eb }
-      OPTIONAL { ?timespan crm:P81b_begin_of_the_end ?timespan_be }
-      OPTIONAL { ?timespan crm:P82b_end_of_the_end ?timespan_ee }
-   }
+    OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?timespan_bb }
+    OPTIONAL { ?timespan crm:P81a_end_of_the_begin ?timespan_eb }
+    OPTIONAL { ?timespan crm:P81b_begin_of_the_end ?timespan_be }
+    OPTIONAL { ?timespan crm:P82b_end_of_the_end ?timespan_ee }
+    OPTIONAL { ?timespan rdfs:label ?timespan_label_ }
+
+    BIND(SUBSTR(STR(?timespan_bb), 6, 10) as ?timespan_bb_month_day)
+    BIND(SUBSTR(STR(?timespan_ee), 6, 10) as ?timespan_ee_month_day)
+    BIND(
+      IF(BOUND(?timespan_bb) && BOUND(?timespan_ee),
+        IF(STR(?timespan_bb) = STR(?timespan_ee), STR(?timespan_bb),
+          IF(SUBSTR(STR(?timespan_bb), 1, 4) = SUBSTR(STR(?timespan_ee), 1, 4) && ?timespan_bb_month_day = '01-01' && ?timespan_ee_month_day = '12-31', SUBSTR(STR(?timespan_bb), 1, 4),
+            IF(?timespan_bb_month_day = '01-01' && ?timespan_ee_month_day = '12-31',
+              CONCAT(SUBSTR(STR(?timespan_bb), 1, 4), " - ", SUBSTR(STR(?timespan_ee), 1, 4)),
+              CONCAT(STR(?timespan_bb), " - ", STR(?timespan_ee))
+            ))),
+        ?timespan_label_) as ?timespan_label)
+  }
 
   OPTIONAL {
     FILTER EXISTS { ?manuscript_or_collection a bibale:type:livre }

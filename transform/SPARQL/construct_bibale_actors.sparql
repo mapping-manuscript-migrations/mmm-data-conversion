@@ -67,10 +67,10 @@ CONSTRUCT {
 
   ?religion_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?religion_timespan_label ;
-    ecrm:P82a_begin_of_the_begin ?religion_bb ;
-    ecrm:P81a_end_of_the_begin ?religion_eb ;
-    ecrm:P81b_begin_of_the_end ?religion_be ;
-    ecrm:P82b_end_of_the_end ?religion_ee ;
+    ecrm:P82a_begin_of_the_begin ?religion_timespan_bb ;
+    ecrm:P81a_end_of_the_begin ?religion_timespan_eb ;
+    ecrm:P81b_begin_of_the_end ?religion_timespan_be ;
+    ecrm:P82b_end_of_the_end ?religion_timespan_ee ;
     .
 
   ?activity_event_mmm a ecrm:E7_Activity ;
@@ -81,10 +81,10 @@ CONSTRUCT {
 
   ?activity_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?activity_timespan_label ;
-    ecrm:P82a_begin_of_the_begin ?activity_bb ;
-    ecrm:P81a_end_of_the_begin ?activity_eb ;
-    ecrm:P81b_begin_of_the_end ?activity_be ;
-    ecrm:P82b_end_of_the_end ?activity_ee ;
+    ecrm:P82a_begin_of_the_begin ?activity_timespan_bb ;
+    ecrm:P81a_end_of_the_begin ?activity_timespan_eb ;
+    ecrm:P81b_begin_of_the_end ?activity_timespan_be ;
+    ecrm:P82b_end_of_the_end ?activity_timespan_ee ;
     .
 
 }
@@ -125,11 +125,24 @@ WHERE
     OPTIONAL { ?birth crm:P7_took_place_at ?birth_place }
     OPTIONAL {
       ?birth crm:P4_has_time-span ?birth_time .
-      ?birth_time rdfs:label ?birth_time_label .
+
       OPTIONAL { ?birth_time crm:P82a_begin_of_the_begin ?birth_time_bb }
       OPTIONAL { ?birth_time crm:P81a_end_of_the_begin ?birth_time_eb }
       OPTIONAL { ?birth_time crm:P81b_begin_of_the_end ?birth_time_be }
       OPTIONAL { ?birth_time crm:P82b_end_of_the_end ?birth_time_ee }
+      OPTIONAL { ?birth_time rdfs:label ?birth_time_label_ }
+
+      BIND(SUBSTR(STR(?birth_time_bb), 6, 10) as ?birth_time_bb_month_day)
+      BIND(SUBSTR(STR(?birth_time_ee), 6, 10) as ?birth_time_ee_month_day)
+      BIND(
+        IF(BOUND(?birth_time_bb) && BOUND(?birth_time_ee),
+          IF(STR(?birth_time_bb) = STR(?birth_time_ee), STR(?birth_time_bb),
+            IF(SUBSTR(STR(?birth_time_bb), 1, 4) = SUBSTR(STR(?birth_time_ee), 1, 4) && ?birth_time_bb_month_day = '01-01' && ?birth_time_ee_month_day = '12-31', SUBSTR(STR(?birth_time_bb), 1, 4),
+              IF(?birth_time_bb_month_day = '01-01' && ?birth_time_ee_month_day = '12-31',
+                CONCAT(SUBSTR(STR(?birth_time_bb), 1, 4), " - ", SUBSTR(STR(?birth_time_ee), 1, 4)),
+                CONCAT(STR(?birth_time_bb), " - ", STR(?birth_time_ee))
+              ))),
+          ?birth_time_label_) as ?birth_time_label)
     }
     BIND("Birth of " + COALESCE(?person_pref_label, "an actor") as ?birth_label)
     BIND(ecrm:E67_Birth as ?birth_class)
@@ -149,11 +162,23 @@ WHERE
     OPTIONAL { ?death crm:P7_took_place_at ?death_place }
     OPTIONAL {
       ?death crm:P4_has_time-span ?death_time .
-      ?death_time rdfs:label ?death_time_label .
       OPTIONAL { ?death_time crm:P82a_begin_of_the_begin ?death_time_bb }
       OPTIONAL { ?death_time crm:P81a_end_of_the_begin ?death_time_eb }
       OPTIONAL { ?death_time crm:P81b_begin_of_the_end ?death_time_be }
       OPTIONAL { ?death_time crm:P82b_end_of_the_end ?death_time_ee }
+      OPTIONAL { ?death_time rdfs:label ?death_time_label_ }
+
+      BIND(SUBSTR(STR(?death_time_bb), 6, 10) as ?death_time_bb_month_day)
+      BIND(SUBSTR(STR(?death_time_ee), 6, 10) as ?death_time_ee_month_day)
+      BIND(
+        IF(BOUND(?death_time_bb) && BOUND(?death_time_ee),
+          IF(STR(?death_time_bb) = STR(?death_time_ee), STR(?death_time_bb),
+            IF(SUBSTR(STR(?death_time_bb), 1, 4) = SUBSTR(STR(?death_time_ee), 1, 4) && ?death_time_bb_month_day = '01-01' && ?death_time_ee_month_day = '12-31', SUBSTR(STR(?death_time_bb), 1, 4),
+              IF(?death_time_bb_month_day = '01-01' && ?death_time_ee_month_day = '12-31',
+                CONCAT(SUBSTR(STR(?death_time_bb), 1, 4), " - ", SUBSTR(STR(?death_time_ee), 1, 4)),
+                CONCAT(STR(?death_time_bb), " - ", STR(?death_time_ee))
+              ))),
+          ?death_time_label_) as ?death_time_label)
     }
     FILTER(BOUND(?death_time) || BOUND(?death_place))
     BIND("Death of " + COALESCE(?person_pref_label, "an actor") as ?death_label)
@@ -180,22 +205,46 @@ WHERE
     OPTIONAL {
       ?religion bibale:type:religion_date ?religion_event .
       ?religion_event crm:P4_has_time-span ?religion_timespan .
-      ?religion_timespan rdfs:label ?religion_timespan_label .
-      OPTIONAL { ?religion_timespan crm:P82a_begin_of_the_begin ?religion_bb }
-      OPTIONAL { ?religion_timespan crm:P81a_end_of_the_begin ?religion_eb }
-      OPTIONAL { ?religion_timespan crm:P81b_begin_of_the_end ?religion_be }
-      OPTIONAL { ?religion_timespan crm:P82b_end_of_the_end ?religion_ee }
+      OPTIONAL { ?religion_timespan crm:P82a_begin_of_the_begin ?religion_timespan_bb }
+      OPTIONAL { ?religion_timespan crm:P81a_end_of_the_begin ?religion_timespan_eb }
+      OPTIONAL { ?religion_timespan crm:P81b_begin_of_the_end ?religion_timespan_be }
+      OPTIONAL { ?religion_timespan crm:P82b_end_of_the_end ?religion_timespan_ee }
+      OPTIONAL { ?religion_timespan rdfs:label ?religion_timespan_label_ }
+
+      BIND(SUBSTR(STR(?religion_timespan_bb), 6, 10) as ?religion_timespan_bb_month_day)
+      BIND(SUBSTR(STR(?religion_timespan_ee), 6, 10) as ?religion_timespan_ee_month_day)
+      BIND(
+        IF(BOUND(?religion_timespan_bb) && BOUND(?religion_timespan_ee),
+          IF(STR(?religion_timespan_bb) = STR(?religion_timespan_ee), STR(?religion_timespan_bb),
+            IF(SUBSTR(STR(?religion_timespan_bb), 1, 4) = SUBSTR(STR(?religion_timespan_ee), 1, 4) && ?religion_timespan_bb_month_day = '01-01' && ?religion_timespan_ee_month_day = '12-31', SUBSTR(STR(?religion_timespan_bb), 1, 4),
+              IF(?religion_timespan_bb_month_day = '01-01' && ?religion_timespan_ee_month_day = '12-31',
+                CONCAT(SUBSTR(STR(?religion_timespan_bb), 1, 4), " - ", SUBSTR(STR(?religion_timespan_ee), 1, 4)),
+                CONCAT(STR(?religion_timespan_bb), " - ", STR(?religion_timespan_ee))
+              ))),
+          ?religion_timespan_label_) as ?religion_timespan_label)
     }
   }
 
   OPTIONAL {
     ?bibale_actor_uri bibale:type:activity_date ?activity .
     ?activity crm:P4_has_time-span ?activity_timespan .
-    ?activity_timespan rdfs:label ?activity_timespan_label .
-    OPTIONAL { ?activity_timespan crm:P82a_begin_of_the_begin ?activity_bb }
-    OPTIONAL { ?activity_timespan crm:P81a_end_of_the_begin ?activity_eb }
-    OPTIONAL { ?activity_timespan crm:P81b_begin_of_the_end ?activity_be }
-    OPTIONAL { ?activity_timespan crm:P82b_end_of_the_end ?activity_ee }
+    OPTIONAL { ?activity_timespan crm:P82a_begin_of_the_begin ?activity_timespan_bb }
+    OPTIONAL { ?activity_timespan crm:P81a_end_of_the_begin ?activity_timespan_eb }
+    OPTIONAL { ?activity_timespan crm:P81b_begin_of_the_end ?activity_timespan_be }
+    OPTIONAL { ?activity_timespan crm:P82b_end_of_the_end ?activity_timespan_ee }
+    OPTIONAL { ?activity_timespan rdfs:label ?activity_timespan_label_ }
+
+    BIND(SUBSTR(STR(?activity_timespan_bb), 6, 10) as ?activity_timespan_bb_month_day)
+    BIND(SUBSTR(STR(?activity_timespan_ee), 6, 10) as ?activity_timespan_ee_month_day)
+    BIND(
+      IF(BOUND(?activity_timespan_bb) && BOUND(?activity_timespan_ee),
+        IF(STR(?activity_timespan_bb) = STR(?activity_timespan_ee), STR(?activity_timespan_bb),
+          IF(SUBSTR(STR(?activity_timespan_bb), 1, 4) = SUBSTR(STR(?activity_timespan_ee), 1, 4) && ?activity_timespan_bb_month_day = '01-01' && ?activity_timespan_ee_month_day = '12-31', SUBSTR(STR(?activity_timespan_bb), 1, 4),
+            IF(?activity_timespan_bb_month_day = '01-01' && ?activity_timespan_ee_month_day = '12-31',
+              CONCAT(SUBSTR(STR(?activity_timespan_bb), 1, 4), " - ", SUBSTR(STR(?activity_timespan_ee), 1, 4)),
+              CONCAT(STR(?activity_timespan_bb), " - ", STR(?activity_timespan_ee))
+            ))),
+        ?activity_timespan_label_) as ?activity_timespan_label)
   }
 
   BIND(REPLACE(STR(?bibale_actor_uri), "^.*\\/(.+)", "$1") as ?actor_local_id)

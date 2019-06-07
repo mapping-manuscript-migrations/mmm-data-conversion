@@ -8,7 +8,7 @@ curl -f -H "Accept: text/csv" --data-urlencode "query=$(cat validation/unknown_o
 printf '\nMissing skos:prefLabel\n\n'
 curl -f -H "Accept: text/csv" --data-urlencode "query=$(cat validation/missing_preflabel.sparql)" http://localhost:3050/ds/sparql -v > output/validation_missing_preflabel.csv
 
-printf '\Multiple skos:prefLabels\n\n'
+printf '\nMultiple skos:prefLabels\n\n'
 curl -f -H "Accept: text/csv" --data-urlencode "query=$(cat validation/multiple_preflabels.sparql)" http://localhost:3050/ds/sparql -v > output/validation_multiple_preflabels.csv
 
 # TODO: Resources missing class annotation

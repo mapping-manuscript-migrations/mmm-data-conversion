@@ -99,7 +99,7 @@ WHERE
 
       BIND(SUBSTR(?production_timespan_begin, 1, 4) as ?begin_year)
       BIND(SUBSTR(?production_timespan_end, 1, 4) as ?end_year)
-      BIND(STR(?begin_year) + "-" + STR(?end_year) as ?production_timespan_label)
+      BIND(STR(?begin_year) + " - " + STR(?end_year) as ?production_timespan_label)
     }
     OPTIONAL { ?production crm:P7_took_place_at ?production_place }
     OPTIONAL {
