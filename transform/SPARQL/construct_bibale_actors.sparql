@@ -14,8 +14,6 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bibale: <http://bibale.irht.cnrs.fr/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-# TODO: Use E66_Formation, E68_Dissolution, E63_Beginning_of_Existence, E64_End_of_Existence
-
 CONSTRUCT {
   ?actor_mmm a ?actor_class ;
     skos:prefLabel ?pref_label ;
@@ -102,12 +100,33 @@ WHERE
   # ORGANIZATION
   OPTIONAL {
     ?bibale_actor_uri bibale:type:person_type/rdfs:label* "morale" .
+    BIND(ecrm:E66_Formation as ?birth_class)
+    BIND(ecrm:E68_Dissolution as ?death_class)
     BIND(IRI(ecrm:E74_Group) as ?actor_class)
+    OPTIONAL { ?bibale_actor_uri rdfs:label ?actor_pref_label }
+    BIND("Formation of " + COALESCE(?actor_pref_label, "a group") as ?birth_label)
+    BIND("Dissolution of " + COALESCE(?actor_pref_label, "a group") as ?death_label)
   }
 
   # PERSON
   OPTIONAL {
+    ?bibale_actor_uri bibale:type:person_type/rdfs:label* "physique" .
     BIND(IRI(ecrm:E21_Person) as ?actor_class)
+    BIND(ecrm:E67_Birth as ?birth_class)
+    BIND(ecrm:E69_Death as ?death_class)
+    OPTIONAL { ?bibale_actor_uri rdfs:label ?actor_pref_label }
+    BIND("Birth of " + COALESCE(?actor_pref_label, "a person") as ?birth_label)
+    BIND("Death of " + COALESCE(?actor_pref_label, "an actor") as ?death_label)
+  }
+
+  # ACTOR
+  OPTIONAL {
+    BIND(IRI(ecrm:E39_Actor) as ?actor_class)
+    BIND(ecrm:E63_Beginning_of_Existence as ?birth_class)
+    BIND(ecrm:E64_End_of_Existence as ?death_class)
+    OPTIONAL { ?bibale_actor_uri rdfs:label ?actor_pref_label }
+    BIND("Beginning of existence of " + COALESCE(?actor_pref_label, "an actor") as ?birth_label)
+    BIND("End of existence of " + COALESCE(?actor_pref_label, "an actor") as ?death_label)
   }
 
   OPTIONAL {
@@ -144,8 +163,6 @@ WHERE
               ))),
           ?birth_time_label_) as ?birth_time_label)
     }
-    BIND("Birth of " + COALESCE(?person_pref_label, "an actor") as ?birth_label)
-    BIND(ecrm:E67_Birth as ?birth_class)
 
     # Must mint URI based on actor ID to combine place and time-span
     BIND(REPLACE(STR(?bibale_actor_uri), "^.*[\\/:]([0-9]+)", "$1") as ?actor_local_id_)
@@ -181,8 +198,6 @@ WHERE
           ?death_time_label_) as ?death_time_label)
     }
     FILTER(BOUND(?death_time) || BOUND(?death_place))
-    BIND("Death of " + COALESCE(?person_pref_label, "an actor") as ?death_label)
-    BIND(ecrm:E69_Death as ?death_class)
 
     # Must mint URI based on actor ID to combine place and time-span
     BIND(REPLACE(STR(?bibale_actor_uri), "^.*[\\/:]([0-9]+)", "$1") as ?actor_local_id_)
