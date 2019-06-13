@@ -18,6 +18,7 @@ CONSTRUCT {
   ?collection_mmm a ecrm:E78_Collection ;
     skos:prefLabel ?label ;
     crm:P46i_forms_part_of ?collection2_mmm ;
+    mmms:collection_location <http://ldf.fi/mmm/place/bodley_place_7011931> ;
     dct:source mmms:Bodley ;
     .
 }
