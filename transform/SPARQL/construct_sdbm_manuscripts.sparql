@@ -18,6 +18,8 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 # TODO: prefLabels for measurements
 
+# TODO: Separate production events for each time-span (manuscript date in SDBM), see e.g. http://ldf.fi/mmm/manifestation_singleton/sdbm_orphan_254076
+
 CONSTRUCT {
 
   ?manifestation_singleton a frbroo:F4_Manifestation_Singleton ;

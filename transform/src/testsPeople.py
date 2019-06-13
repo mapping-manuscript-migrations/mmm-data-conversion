@@ -10,6 +10,7 @@ import logging
 import unittest
 from io import StringIO
 
+from datetime import date
 from rdflib import URIRef, RDF, RDFS, OWL, Literal
 from linker_people import PersonLinker, read_recon_links
 
@@ -86,11 +87,13 @@ class TestStringMethods(unittest.TestCase):
         p = PersonLinker(sdbm, bod, bib)
 
         # p.find_viaf_links()
-        p.links += read_recon_links(bib, bod, sdbm, StringIO(self.test_csv))
+        p.links += read_recon_links(bib, bod, sdbm, StringIO(self.test_csv), date(2019, 6, 13))
         p.link_people()
 
         assert len(p.links) == 1
-        assert p.links[0] == (URIRef('http://ldf.fi/mmm/actor/bibale_30530'), None, URIRef('http://ldf.fi/mmm/actor/sdbm_13159'))
+        assert p.links[0] == (URIRef('http://ldf.fi/mmm/actor/bibale_30530'),
+                                  None,
+                                  URIRef('http://ldf.fi/mmm/actor/sdbm_13159')), p.links
 
     def read_example_data(self, data):
         g = Graph()

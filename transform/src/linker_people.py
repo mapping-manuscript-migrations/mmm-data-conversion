@@ -6,6 +6,8 @@ import argparse
 import logging
 import os
 import re
+from datetime import date, datetime
+from glob import glob
 
 import pandas as pd
 from rdflib import URIRef, Literal, RDF, OWL
@@ -16,6 +18,7 @@ from namespaces import *
 log = logging.getLogger(__name__)
 
 # TODO: Leave OWL:sameAs links from old resources to new ones
+
 
 class PersonLinker:
     ACTOR_CLASSES = [CRM.E21_Person, CRM.E74_Group, CRM.E39_Actor]
@@ -28,11 +31,19 @@ class PersonLinker:
         self.bibale = bibale
 
     def get_links(self):
+        """Get all person links"""
         self.find_viaf_links()
-        for letter in 'ABCDEFGHIJKLMNOPQRSTUVWYZ':
-            self.links += read_recon_links(self.bibale, self.bodley, self.sdbm, '/data/recon_actors_{x}.csv'.format(x=letter))
+        # for letter in 'ABCDEFGHIJKLMNOPQRSTUVWYZ':
+        for f in glob('/data/recon_actors_*.csv'):
+
+            # Get date from filename
+            date_match = re.match(r'recon_actors_._(\d{4,}-\d\d-\d\d)\.csv', str(f))
+            parsed_date = datetime.strptime(date_match.groups()[0], '%Y-%m-%d').date() if date_match else None
+
+            self.links += read_recon_links(self.bibale, self.bodley, self.sdbm, f, parsed_date)
 
     def find_viaf_links(self):
+        """Find links with VIAF identifiers"""
         links = self.links
         sdbm = self.sdbm
         bodley = self.bodley
@@ -44,6 +55,7 @@ class PersonLinker:
                 for s2, _, _ in bibale.triples((None, OWL.sameAs, o)):
                     if self.qualify_class(bibale, s2):
                         links.append((s2, None, s1))
+
                 for s2, _, _ in bodley.triples((None, OWL.sameAs, o)):
                     if self.qualify_class(bodley, s2):
                         links.append((None, s2, s1))
@@ -72,37 +84,23 @@ class PersonLinker:
 
         for (bib_hit, bod_hit, sdbm_hit) in self.links:
 
-            if bib_hit is None:
+            assert bool(bib_hit) + bool(bod_hit) + bool(sdbm_hit) == 2  # Refactor if need to link all
 
-                new_uri = bod_hit
-                new_pref_label = self.bodley.value(bod_hit, SKOS.prefLabel)
-                change_resource_uri(self.sdbm, sdbm_hit, new_uri, new_pref_label,
-                                    add_sameas=True)
-            elif sdbm_hit is None:
+            # Prioritize hits in order: Bodley, Bibale, SDBM
+            hit_order = [bod_hit, bib_hit, sdbm_hit]
+            graph_order = [self.bodley, self.bibale, self.sdbm]
 
-                new_uri = bod_hit
-                new_pref_label = self.bodley.value(bod_hit, SKOS.prefLabel)
-                change_resource_uri(self.bibale, bib_hit, new_uri, new_pref_label,
-                                    add_sameas=True)
-            elif bod_hit is None:
+            new_uri = hit_order[0] or hit_order[1]
+            redirected_uri = hit_order[2] or hit_order[1]
+            redirected_graph = graph_order[2] if hit_order[2] else graph_order[1]
 
-                new_uri = bib_hit
-                new_pref_label = self.bibale.value(bib_hit, SKOS.prefLabel)
-                change_resource_uri(self.sdbm, sdbm_hit, new_uri, new_pref_label,
-                                    add_sameas=True)
+            new_pref_label = graph_order[0].value(hit_order[0], SKOS.prefLabel) if hit_order[0] else \
+                graph_order[1].value(hit_order[1], SKOS.prefLabel)
 
-            """
-            elif bod_hit is None:
-                change_manuscript_uri(bodley, bod_hit, new_uri, new_pref_label)
+            log.info('Harmonizing actor {bib} , {bod} , {sdbm} --> {new_uri} {label}'.
+                     format(bib=bib_hit, bod=bod_hit, sdbm=sdbm_hit, new_uri=new_uri, label=new_pref_label))
 
-            if sdbm_hit:
-                change_manuscript_uri(sdbm, sdbm_hit, new_uri, new_pref_label)
-
-            """
-
-            log.info(
-                'Harmonizing actor {bib} , {bod} , {sdbm} --> {new_uri} {label}'.
-                    format(bib=bib_hit, bod=bod_hit, sdbm=sdbm_hit, new_uri=new_uri, label=new_pref_label))
+            change_resource_uri(redirected_graph, redirected_uri, new_uri, new_pref_label, add_sameas=True)
 
     def datasets(self):
         return self.bibale, self.bodley, self.sdbm
@@ -123,7 +121,7 @@ def is_sdbm_uri(uri: {str, URIRef}):
         return True
 
 
-def read_recon_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
+def read_recon_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv, csv_date: date):
     """
     Read manuscript links from a CSV file
     """
@@ -140,32 +138,39 @@ def read_recon_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv):
             if not match:
                 continue
 
-            bib = None
-            bod = None
-            sdbm = None
+            bib_uri = None
+            bod_uri = None
+            sdbm_uri = None
 
             if is_bibale_uri(uri):
-                bib = uri
+                bib_uri = uri
+                bibale.add((URIRef(uri), MMMS.recon_date, Literal(csv_date)))
             elif is_bodley_uri(uri):
-                bod = uri
+                bod_uri = uri
+                bodley.add((URIRef(uri), MMMS.recon_date, Literal(csv_date)))
             elif is_sdbm_uri(uri):
-                sdbm = uri
+                sdbm_uri = uri
+                sdbm.add((URIRef(uri), MMMS.recon_date, Literal(csv_date)))
             else:
                 log.error('Unidentified URI %s' % uri)
                 continue
 
             if is_bibale_uri(match):
-                bib = match
+                bib_uri = match
             elif is_bodley_uri(match):
-                bod = match
+                bod_uri = match
             elif is_sdbm_uri(match):
-                sdbm = match
+                sdbm_uri = match
             else:
                 log.error('Unidentified URI %s' % match)
                 continue
 
-            if bool(bib) + bool(bod) + bool(sdbm) >= 2:
-                links.append((URIRef(bib) if bib else None, URIRef(bod) if bod else None, URIRef(sdbm) if sdbm else None))
+            if bool(bib_uri) + bool(bod_uri) + bool(sdbm_uri) >= 2:
+                links.append((URIRef(bib_uri) if bib_uri else None,
+                              URIRef(bod_uri) if bod_uri else None,
+                              URIRef(sdbm_uri) if sdbm_uri else None))
+            else:
+                log.error('Source database internal hit: %s  -  %s' % (uri, match))
 
     log.info('Found {num} links'.format(num=len(links)))
 
