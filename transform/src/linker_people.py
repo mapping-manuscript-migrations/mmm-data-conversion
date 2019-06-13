@@ -17,8 +17,6 @@ from namespaces import *
 
 log = logging.getLogger(__name__)
 
-# TODO: Leave OWL:sameAs links from old resources to new ones
-
 
 class PersonLinker:
     ACTOR_CLASSES = [CRM.E21_Person, CRM.E74_Group, CRM.E39_Actor]
@@ -101,6 +99,11 @@ class PersonLinker:
             hit_order = [bod_hit, bib_hit, sdbm_hit]
             graph_order = [self.bodley, self.bibale, self.sdbm]
 
+            # TODO: Follow sameAs links to merged MMM resources
+            # followed_hits = [filter(is_mmm_uri, [graph_order[0].value(hit_order[0], OWL.sameAs, any=False)]),
+            #                  filter(is_mmm_uri, [graph_order[1].value(hit_order[1], OWL.sameAs, any=False)]),
+            #                  ]
+
             new_uri = hit_order[0] or hit_order[1]
             redirected_uri = hit_order[2] or hit_order[1]
             redirected_graph = graph_order[2] if hit_order[2] else graph_order[1]
@@ -117,18 +120,22 @@ class PersonLinker:
         return self.bibale, self.bodley, self.sdbm
 
 
+def is_mmm_uri(uri: {str, URIRef}):
+    return str(uri).startswith('^http://ldf\.fi/mmm/')
+
+
 def is_bibale_uri(uri: {str, URIRef}):
-    if re.match('^http://ldf.fi/mmm/.*bibale', str(uri)):
+    if re.match('^http://ldf\.fi/mmm/.*bibale', str(uri)):
         return True
 
 
 def is_bodley_uri(uri: {str, URIRef}):
-    if re.match('^http://ldf.fi/mmm/.*bodley', str(uri)):
+    if re.match('^http://ldf\.fi/mmm/.*bodley', str(uri)):
         return True
 
 
 def is_sdbm_uri(uri: {str, URIRef}):
-    if re.match('^http://ldf.fi/mmm/.*sdbm', str(uri)):
+    if re.match('^http://ldf\.fi/mmm/.*sdbm', str(uri)):
         return True
 
 

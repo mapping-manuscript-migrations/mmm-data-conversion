@@ -49,7 +49,6 @@ WHERE {
 
   # title
   ?entry_title :entry_titles_entry_id ?entry .
-  ?entry_title :entry_titles_id ?title_id .
   OPTIONAL {
     ?entry_title :entry_titles_title ?title .
     FILTER(STR(?title) != "")
@@ -64,7 +63,6 @@ WHERE {
     ?entry_author :entry_authors_entry_id ?entry .
     ?entry_author :entry_authors_author_id ?author .
     FILTER NOT EXISTS { ?author :names_deleted true }
-    ?author :names_id ?author_id .
     OPTIONAL {
       ?entry_author :entry_authors_observed_name ?observed_author .
     }
@@ -74,17 +72,18 @@ WHERE {
   OPTIONAL {
     ?entry_language :entry_languages_entry_id ?entry .
     ?entry_language :entry_languages_language_id ?language .
-    # ?entry_language :entry_languages_language_id/:languages_id ?language_id .
-    # ?entry_language :entry_languages_language_id/:languages_name ?language .
   }
 
   BIND(REPLACE(STR(?entry), "^.*\\/(.+)", "$1") as ?entry_id)
 
   # generate IRIs in LDF.fi namespace
+  BIND(REPLACE(STR(?entry_title), "^.*\\/(.+)", "$1") as ?title_id)
   BIND(IRI(CONCAT(STR(mmm:), "work/", STR(?title_id))) as ?work)
   BIND(IRI(CONCAT(STR(mmm:), "work_conception/", STR(?title_id))) as ?work_conception)
   BIND(IRI(CONCAT(STR(mmm:), "expression/", STR(?title_id))) as ?expression)
   BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
+
+  BIND(REPLACE(STR(?author), "^.*\\/(.+)", "$1") as ?author_id)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author_mmm)
 
   BIND(COALESCE(?common_title, ?title, ?manuscript_id) as ?work_preflabel)

@@ -54,20 +54,17 @@ WHERE
       ?entry_manuscript :entry_manuscripts_relation_type "is" .
       ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
       ?manuscript a :manuscripts .
-      ?manuscript :manuscripts_id ?manuscript_id_int .
     }
     OPTIONAL {
       ?entry_manuscript :entry_manuscripts_relation_type "partial" .
       ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript_parent .
       ?entry_manuscript :entry_manuscripts_entry_id ?entry_partial_uri .
       ?manuscript_parent a :manuscripts .
-      ?manuscript_parent :manuscripts_id ?manuscript_parent_id_int .
     }
     OPTIONAL {
       ?entry_manuscript :entry_manuscripts_relation_type "possible" .
       ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
       ?manuscript a :manuscripts .
-      ?manuscript :manuscripts_id ?manuscript_id_int .
     }
   }
 
@@ -76,7 +73,7 @@ WHERE
   OPTIONAL {
     # ?entry :entries_transaction_type "sale" or "gift"
     ?sales_entry :sales_entry_id ?entry .
-    ?sales_entry :sales_id ?sales_id .
+
     OPTIONAL { ?sales_entry :sales_price ?sales_price }
     OPTIONAL { ?sales_entry :sales_currency ?sales_currency }
     OPTIONAL { ?sales_entry :sales_other_currency ?sales_other_currency }
@@ -91,14 +88,13 @@ WHERE
       ?seller_agent :sale_agents_role "seller_or_holder" .
       ?seller_agent :sale_agents_agent_id ?seller_agent_ .
       FILTER NOT EXISTS { ?seller_agent_ :names_deleted true }
-      ?seller_agent_ :names_id ?seller_id .
     }
     OPTIONAL {
       ?buyer_agent :sale_agents_sale_id ?sales_entry .
       ?buyer_agent :sale_agents_role "buyer" .
       ?buyer_agent :sale_agents_agent_id ?buyer_agent_ .
       FILTER NOT EXISTS { ?buyer_agent_ :names_deleted true }
-      ?buyer_agent_ :names_id ?buyer_id .
+      # ?buyer_agent_ :names_id ?buyer_id .
       BIND(ecrm:E10_Transfer_of_Custody as ?event_type)
       BIND(ecrm:P30_transferred_custody_of as ?event_property)
       BIND(ecrm:P28_custody_surrendered_by as ?event_seller_or_holder_property)
@@ -108,7 +104,7 @@ WHERE
       ?selling_agent_agent :sale_agents_role "selling_agent" .
       ?selling_agent_agent :sale_agents_agent_id ?selling_agent_name .
       FILTER NOT EXISTS { ?selling_agent_name :names_deleted true }
-      ?selling_agent_name :names_id ?selling_agent_id .
+      # ?selling_agent_name :names_id ?selling_agent_id .
       # ?selling_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?place_local_id .
       # BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?place_local_id))) as ?selling_agent_location)
     }
@@ -122,7 +118,6 @@ WHERE
   ## SOURCE ##
   OPTIONAL {
     ?entry :entries_source_id ?entry_source .
-    OPTIONAL{ ?entry_source :sources_id ?source_id }
 
     OPTIONAL {
       # Collection catalogs
@@ -144,12 +139,12 @@ WHERE
       ?entry_source :sources_date ?source_date_raw
       FILTER(STR(?source_date_raw) != "")
     }
-    #OPTIONAL{ ?entry_source :sources_link ?cat_link }
     OPTIONAL{
       ?source_agent :source_agents_source_id ?entry_source .
       ?source_agent :source_agents_agent_id ?source_agent_name .
-      ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
-      BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?source_place_local_id))) as ?source_agent_location)
+      ?source_agent_name (^:name_places_name_id)/:name_places_place_id ?source_place .
+      BIND(REPLACE(STR(?source_place), "^.*\\/(.+)", "$1") as ?source_place_id)
+      BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?source_place_id))) as ?source_agent_location)
     }
   }
 
@@ -197,14 +192,27 @@ WHERE
   BIND(REPLACE(STR(?entry_partial_uri), "^.*\\/(.+)", "$1") as ?entry_partial_id)
 
   # GENERATE IRIS IN LDF.FI NAMESPACE
-  BIND(STR(?manuscript_id_int) AS ?manuscript_id_)
-  BIND(COALESCE(?manuscript_id_, "part_" + STR(?entry_partial_id), "orphan_" + STR(?entry_id)) AS ?manuscript_id)
+  BIND(REPLACE(STR(?manuscript), "^.*\\/(.+)", "$1") as ?manuscript_id_)
+  BIND(COALESCE(?manuscript_id_, "part_" + ?entry_partial_id, "orphan_" + ?entry_id) AS ?manuscript_id)
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", ?manuscript_id)) as ?manifestation_singleton)
-  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
-  BIND(IRI(CONCAT(?source_namespace, STR(?source_id))) as ?source_mmm)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?seller_id))) as ?seller)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?buyer_id))) as ?buyer)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?selling_agent_id))) as ?selling_agent_mmm)
+
+  BIND(REPLACE(STR(?manuscript_parent), "^.*\\/(.+)", "$1") as ?manuscript_parent_id)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", ?manuscript_parent_id)) as ?parent_manifestation_singleton)
+
+  BIND(REPLACE(STR(?entry_source), "^.*\\/(.+)", "$1") as ?source_id)
+  BIND(IRI(CONCAT(?source_namespace, ?source_id)) as ?source_mmm)
+
+  BIND(REPLACE(STR(?seller_agent_), "^.*\\/(.+)", "$1") as ?seller_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?seller_id)) as ?seller)
+
+  BIND(REPLACE(STR(?buyer_agent_), "^.*\\/(.+)", "$1") as ?buyer_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?buyer_id)) as ?buyer)
+
+  BIND(REPLACE(STR(?selling_agent_name), "^.*\\/(.+)", "$1") as ?selling_agent_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?selling_agent_id)) as ?selling_agent_mmm)
+
   BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_source_observation_", ?entry_id)) as ?acquisition_uri)
-  BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/sdbm_", ?sales_id)) as ?monetary_amount_uri)
+
+  BIND(REPLACE(STR(?sales_entry), "^.*\\/(.+)", "$1") as ?sales_entry_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/sdbm_", ?sales_entry_local_id, SUBSTR(STR(COALESCE(?sales_currency, ?sales_price, ?sales_other_currency)), 0, 0))) as ?monetary_amount_uri)  # Bind only if related information
 }

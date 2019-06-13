@@ -38,7 +38,6 @@ CONSTRUCT {
 WHERE {
   ?source a :sources .
   FILTER(NOT EXISTS { ?source :sources_deleted true })
-  ?source :sources_id ?source_id .
 
   OPTIONAL{
     ?source :sources_title ?source_title
@@ -87,21 +86,22 @@ WHERE {
   OPTIONAL{
     ?source_agent :source_agents_source_id ?source .
     ?source_agent :source_agents_agent_id ?source_agent_name .
-    ?source_agent_name :names_id ?source_agent_id .
-    ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
-
-    BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?source_place_local_id))) as ?source_agent_location)
+    ?source_agent_name (^:name_places_name_id)/:name_places_place_id ?source_place .
+    BIND(REPLACE(STR(?source_place), "^.*\\/(.+)", "$1") as ?source_place_id)
+    BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?source_place_id))) as ?source_agent_location)
 
     OPTIONAL {
       ?source_agent :source_agents_role "institution" .
-      ?source_agent :source_agents_agent_id/:names_id ?source_agent_id .
-      BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_id))) as ?mmm_source_owner)
+      ?source_agent :source_agents_agent_id ?source_agent_i .
+      FILTER NOT EXISTS { ?source_agent_i :names_deleted true }
+      BIND(REPLACE(STR(?source_agent_i), "^.*\\/(.+)", "$1") as ?source_agent_i_id)
+      BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_i_id))) as ?mmm_source_owner)
     }
     OPTIONAL {
       FILTER NOT EXISTS { ?source_agent :source_agents_role "institution" }
       ?source_agent :source_agents_agent_id ?source_agent_ .
       FILTER NOT EXISTS { ?source_agent_ :names_deleted true }
-      ?source_agent_ :names_id ?source_agent_id .
+      BIND(REPLACE(STR(?source_agent_), "^.*\\/(.+)", "$1") as ?source_agent_id)
       BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?source_agent_id))) as ?mmm_source_actor)
     }
   }
@@ -152,7 +152,8 @@ WHERE {
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/sdbm_sources_", ?source_date_raw)) as ?source_timespan_mmm)
 
   BIND(IRI(CONCAT(STR(mmms:), "source_types/", STR(?source_type_local_name))) as ?mmm_source_type)
-  BIND(IRI(CONCAT(?source_namespace, STR(?source_id))) as ?mmm_source)
+  BIND(REPLACE(STR(?source), "^.*\\/(.+)", "$1") as ?source_local_id)
+  BIND(IRI(CONCAT(?source_namespace, STR(?source_local_id))) as ?mmm_source)
 
-  BIND(COALESCE(?source_title, "SDBM source " + STR(?source_id)) as ?source_preflabel)
+  BIND(COALESCE(?source_title, "SDBM source " + STR(?source_local_id)) as ?source_preflabel)
 }

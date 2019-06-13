@@ -26,7 +26,6 @@ CONSTRUCT {
 }
 WHERE {
   ?place_id a :places ;
-            :places_id ?local_id ;
             :places_name ?name .
   OPTIONAL {
     ?place_id :places_parent_id ?parent_id .
@@ -48,5 +47,7 @@ WHERE {
     FILTER(STR(?long_) != "")
     ?place_id :places_longitude ?long .
   }
-  BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?local_id))) as ?place)
+
+  BIND(REPLACE(STR(?place_id), "^.*\\/(.+)", "$1") as ?place_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?place_local_id))) as ?place)
 }

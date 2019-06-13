@@ -54,7 +54,6 @@ CONSTRUCT {
 WHERE
 {
   ?name_id a :names ;
-           :names_id ?person_local_id .
   FILTER(NOT EXISTS { ?name_id :names_deleted true })
 
   # LABEL
@@ -101,7 +100,7 @@ WHERE
   OPTIONAL {
     ?name_id :names_viaf_id ?viaf_id .
     FILTER(STR(?viaf_id) != "") .
-    BIND(URI(CONCAT("https://viaf.org/viaf/", REPLACE(?viaf_id, " ", ""))) as ?viaf_uri)
+    BIND(IRI(CONCAT("https://viaf.org/viaf/", REPLACE(?viaf_id, " ", ""))) as ?viaf_uri)
   }
 
   # BIRTH DATE
@@ -153,9 +152,9 @@ WHERE
 
     BIND(IF(?birth_begin = ?birth_end, ?birth_begin, IF(?birth_begin_month = ?birth_end_month, ?birth_begin + " - " + ?birth_end, ?birth_year_iso)) as ?birth_timespan_label)
 
-    ?name_id :names_id ?person_local_id .
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_birth")) as ?birth_mmm)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_birth_timespan")) as ?birth_timespan_mmm)
+    BIND(REPLACE(STR(?name_id), "^.*\\/(.+)", "$1") as ?person_local_birth_id)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", ?person_local_birth_id, "_birth")) as ?birth_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", ?person_local_birth_id, "_birth_timespan")) as ?birth_timespan_mmm)
   }
 
   # DEATH DATE
@@ -206,9 +205,9 @@ WHERE
 
     BIND(IF(?death_begin = ?death_end, ?death_begin, IF(?death_begin_month = ?death_end_month, ?death_begin + " - " + ?death_end, ?death_year_iso)) as ?death_timespan_label)
 
-    ?name_id :names_id ?person_local_id .
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_death")) as ?death_mmm)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", STR(?person_local_id), "_death_timespan")) as ?death_timespan_mmm)
+    BIND(REPLACE(STR(?name_id), "^.*\\/(.+)", "$1") as ?person_local_death_id)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", ?person_local_death_id, "_death")) as ?death_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", ?person_local_death_id, "_death_timespan")) as ?death_timespan_mmm)
   }
 
   # OTHER INFO
@@ -222,12 +221,15 @@ WHERE
     ?name_place_id :name_places_name_id ?name_id ;
                    :name_places_place_id ?place_id ;
                    a :name_places .
-    ?place_id :places_id ?place_local_id .
+    # ?place_id :places_id ?place_local_id .
   }
 
   BIND(?birth_prefix + ?name as ?birth_label)
   BIND(?death_prefix + ?name as ?death_label)
 
+  BIND(REPLACE(STR(?place_id), "^.*\\/(.+)", "$1") as ?place_local_id)
   BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?place_local_id))) as ?mmm_place)
+
+  BIND(REPLACE(STR(?name_id), "^.*\\/(.+)", "$1") as ?person_local_id)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?person_local_id))) as ?mmm_actor_uri)
 }

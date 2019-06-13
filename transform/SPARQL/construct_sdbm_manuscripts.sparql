@@ -68,10 +68,10 @@ CONSTRUCT {
     # skos:prefLabel # TODO
     ecrm:P108_has_produced ?manifestation_singleton ;
     ecrm:P4_has_time-span ?production_timespan ;
-    ecrm:P7_took_place_at ?production_place ;
+    ecrm:P7_took_place_at ?production_place_mmm ;
     # mmms:carried_out_by_as_artist ?production_artist ;
     # mmms:carried_out_by_as_scribe ?production_scribe ;
-    # dct:source mmms:SDBM .
+    dct:source mmms:SDBM ;
     .
 
   ?production_timespan a ecrm:E52_Time-Span ;
@@ -145,20 +145,17 @@ WHERE {
       ?entry_manuscript :entry_manuscripts_relation_type "is" .
       ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
       ?manuscript a :manuscripts .
-      ?manuscript :manuscripts_id ?manuscript_id_int .
     }
     OPTIONAL {
       ?entry_manuscript :entry_manuscripts_relation_type "partial" .
       ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript_parent .
       ?entry_manuscript :entry_manuscripts_entry_id ?entry_partial_uri .
       ?manuscript_parent a :manuscripts .
-      ?manuscript_parent :manuscripts_id ?manuscript_parent_id_int .
     }
     OPTIONAL {
       ?entry_manuscript :entry_manuscripts_relation_type "possible" .
       ?entry_manuscript :entry_manuscripts_manuscript_id ?manuscript .
       ?manuscript a :manuscripts .
-      ?manuscript :manuscripts_id ?manuscript_id_int .
       BIND("Possible match of manuscript" as ?entry_comment)
       # TODO: Adjust model to fit ?entry_comment (add observation event or add to transaction information)
     }
@@ -171,10 +168,8 @@ WHERE {
   OPTIONAL {
     ?provenance_entry :provenance_entry_id ?entry ;
                       :provenance_provenance_agent_id ?prov_agent_ ;
-                      :provenance_order ?prov_order ;
-                      :provenance_id ?prov_id .
+                      :provenance_order ?prov_order .
     FILTER NOT EXISTS { ?prov_agent_ :names_deleted true }
-    ?prov_agent_ :names_id ?prov_agent_id ;
     FILTER(STR(?prov_order) != "")
     OPTIONAL { ?provenance_entry :provenance_comment ?prov_comment . }
   }
@@ -182,7 +177,6 @@ WHERE {
   # title
   OPTIONAL {
     ?entry_title :entry_titles_entry_id ?entry .
-    ?entry_title :entry_titles_id ?title_id .
     OPTIONAL {
       ?entry_title :entry_titles_title|:entry_titles_common_title ?title .
       FILTER(STR(?title) != "")
@@ -198,14 +192,12 @@ WHERE {
     ?entry_author :entry_authors_entry_id ?entry .
     ?entry_author :entry_authors_author_id ?author_ .
     FILTER NOT EXISTS { ?author_ :names_deleted true }
-    ?author_ :names_id ?author_id .
     ?entry_author :entry_authors_observed_name ?observed_author .
   }
 
   # production date
   OPTIONAL {
     ?entry_date :entry_dates_entry_id ?entry .
-    ?entry_date :entry_dates_id ?production_date_id .
     ?entry_date :entry_dates_date_normalized_start ?production_year_start .
     ?entry_date :entry_dates_date_normalized_end ?production_year_end .
     ?entry_date :entry_dates_observed_date ?production_date_observed .
@@ -237,13 +229,12 @@ WHERE {
   # place
   OPTIONAL {
     ?entry_place :entry_places_entry_id ?entry .
-    ?entry_place :entry_places_place_id/:places_id ?production_place_id .
+    ?entry_place :entry_places_place_id ?production_place .
   }
 
   # material
   OPTIONAL {
     ?entry_material :entry_materials_entry_id ?entry .
-    ?entry_material :entry_materials_id ?material_id .
     ?entry_material :entry_materials_material ?material_label .
   }
 
@@ -346,7 +337,6 @@ WHERE {
   ## SOURCE ##
   OPTIONAL {
     ?entry :entries_source_id ?entry_source .
-    ?entry_source :sources_id ?source_id .
 
     OPTIONAL {
       # Collection catalogs
@@ -383,23 +373,6 @@ WHERE {
       ?entry :entries_catalog_or_lot_number ?cat_lot_number .
       BIND(?cat_lot_number as ?shelfmark_barocci)
     }
-
-    # # TODO: if source has no title, generate one for acquisition/observation prefLabel
-    # OPTIONAL{
-    #   ?entry_source :sources_title ?cat_title
-    #   FILTER(STR(?cat_title) != "")
-    # }
-    # OPTIONAL{
-    #   ?entry_source :sources_date ?cat_date_raw
-    #   FILTER(STR(?cat_date_raw) != "")
-    # }
-    #OPTIONAL{ ?entry_source :sources_link ?cat_link }
-    # OPTIONAL{
-    #   ?source_agent :source_agents_source_id ?entry_source .
-    #   ?source_agent :source_agents_agent_id ?source_agent_name .
-    #   ?source_agent_name (^:name_places_name_id)/:name_places_place_id/:places_id ?source_place_local_id .
-    #   BIND(IRI(CONCAT(STR(mmm:), "place/", STR(?source_place_local_id))) as ?source_agent_location)
-    # }
   }
 
   OPTIONAL {
@@ -451,49 +424,43 @@ WHERE {
   BIND(REPLACE(STR(?entry_partial_uri), "^.*\\/(.+)", "$1") as ?entry_partial_id)
 
   # generate IRIs in LDF.fi namespace
-  BIND(STR(?manuscript_id_int) AS ?manuscript_id_)
+  BIND(REPLACE(STR(?manuscript), "^.*\\/(.+)", "$1") as ?manuscript_id_)
   BIND(COALESCE(?manuscript_id_, "part_" + STR(?entry_partial_id), "orphan_" + STR(?entry_id)) AS ?manuscript_id)
-  BIND(IRI(CONCAT(STR(mmm:), "work/", STR(?title_id))) as ?work)
-  BIND(IRI(CONCAT(STR(mmm:), "work_conception/", STR(?title_id))) as ?work_conception)
-  BIND(IRI(CONCAT(STR(mmm:), "expression/", STR(?title_id))) as ?expression)
-  BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
+
+  BIND(REPLACE(STR(?entry_title), "^.*\\/(.+)", "$1") as ?title_id)
+  BIND(IRI(CONCAT(STR(mmm:), "work/", ?title_id)) as ?work)
+  BIND(IRI(CONCAT(STR(mmm:), "work_conception/", ?title_id)) as ?work_conception)
+  BIND(IRI(CONCAT(STR(mmm:), "expression/", ?title_id)) as ?expression)
+  BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", ?title_id)) as ?expression_creation)
+
   BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", ?manuscript_id)) as ?manifestation_singleton)
-  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", STR(?manuscript_parent_id_int))) as ?parent_manifestation_singleton)
+
+  BIND(REPLACE(STR(?manuscript_parent), "^.*\\/(.+)", "$1") as ?manuscript_parent_id)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/sdbm_", ?manuscript_parent_id)) as ?parent_manifestation_singleton)
   BIND(IRI(CONCAT(STR(mmm:), "production/", ?manuscript_id)) as ?production)
-  BIND(IRI(CONCAT(?source_namespace, STR(?source_id))) as ?source_mmm)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author)
-  #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?seller_id))) as ?seller)
-  #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?buyer_id))) as ?buyer)
-  #BIND(IRI(CONCAT(STR(mmm:), "actor/", STR(?selling_agent_id))) as ?selling_agent)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?prov_agent_id))) as ?prov_agent)
-  BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", STR(?production_place_id))) as ?production_place)
-  BIND(IRI(CONCAT(STR(mmm:), "time/production_", STR(?production_date_id))) as ?production_timespan)
-  #BIND(IRI(CONCAT(STR(mmm:), "observation/", ?entry_id)) as ?acquisition_uri)
-  #BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/", ?sales_id)) as ?monetary_amount_uri)
+
+  BIND(REPLACE(STR(?entry_source), "^.*\\/(.+)", "$1") as ?source_id)
+  BIND(IRI(CONCAT(?source_namespace, ?source_id)) as ?source_mmm)
+
+  BIND(REPLACE(STR(?author_), "^.*\\/(.+)", "$1") as ?author_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?author_id)) as ?author)
+
+  BIND(REPLACE(STR(?prov_agent_), "^.*\\/(.+)", "$1") as ?prov_agent_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?prov_agent_id)) as ?prov_agent)
+
+  BIND(REPLACE(STR(?production_place), "^.*\\/(.+)", "$1") as ?production_place_id)
+  BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", ?production_place_id)) as ?production_place_mmm)
+
+  BIND(IRI(CONCAT(STR(mmm:), "time/production_", ?entry_id)) as ?production_timespan)
 
   BIND(CONCAT(STR(?production_year_start_iso)," - ",STR(?production_year_end_iso)) as ?production_timespan_label)
-  BIND("SDBM_MS_" + STR(?manuscript_id) as ?manuscript_preflabel)
-  BIND("SDBM_MS_" + STR(?manuscript_parent_id_int) as ?parent_preflabel)
+  BIND("SDBM_MS_" + ?manuscript_id as ?manuscript_preflabel)
+  BIND("SDBM_MS_" + ?manuscript_parent_id as ?parent_preflabel)
 
   BIND(COALESCE(?manuscript, ?entry) as ?provider_url)
 
   BIND(IRI(CONCAT(STR(mmm:), "material/", LCASE(REPLACE(?material_label, "[ \\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-")))) as ?material_uri_mmm)
 
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_author_", STR(?author_id))) as ?reification_author_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_owner_", STR(?prov_agent_id))) as ?reification_owner_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_production_place_", STR(?place_id))) as ?reification_production_place_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_production_time_", STR(?production_date_id))) as ?reification_production_time_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_identifier_", ?manuscript_id)) as ?reification_id_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_material_", ?material_id)) as ?reification_material_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_folios_", STR(?folios_value))) as ?reification_folios_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_lines_", STR(?lines_value))) as ?reification_lines_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_columns_", STR(?columns_value))) as ?reification_columns_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_height_", STR(?height_value))) as ?reification_height_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_width_", STR(?width_value))) as ?reification_width_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_miniatures_", STR(?miniatures_value))) as ?reification_miniatures_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_language_", REPLACE(?language, " ", "-"))) as ?reification_language_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id))) as ?reification_label_uri)
-  # BIND(IRI(CONCAT(STR(mmm:), "reification/", ?manuscript_id, "_label_", STR(?title_id), "_", SUBSTR(REPLACE(?title, "[\\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\#\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-"), 0, 21))) as ?reification_label_uri)
-
-  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_provenance_", STR(?prov_id))) as ?observation_mmm)
+  BIND(REPLACE(STR(?provenance_entry), "^.*\\/(.+)", "$1") as ?provenance_entry_id)
+  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_provenance_", ?provenance_entry_id)) as ?observation_mmm)
 }
