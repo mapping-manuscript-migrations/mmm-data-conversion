@@ -228,3 +228,6 @@
 
 :bibale_type_region a :Bibale_place_type ;
   skos:prefLabel "Region" .
+
+:recon_date a rdfs:Property ;
+  skos:prefLabel "Date when the resources has been last reconciled with the Recon tool"

@@ -1,0 +1,50 @@
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmma: <http://ldf.fi/mmm/actor/>
+PREFIX mmms: <http://ldf.fi/mmm/schema/>
+PREFIX mmmt: <http://ldf.fi/mmm/time/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX bibale: <http://bibale.irht.cnrs.fr/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+CONSTRUCT {
+  ?provenance_event_mmm a ecrm:E7_Activity ;
+    skos:prefLabel ?label ;
+    mmms:observed_manuscript ?manifestation_singleton_mmm ;
+    mmms:ownership_attributed_to ?actor_mmm ;
+    ecrm:P3_has_note ?identifier ;
+    dct:source mmms:Bibale ;
+    .
+
+  ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
+    ecrm:P51_has_former_or_current_owner ?prov_agent ;
+    dct:source mmms:Bibale ;
+    .
+}
+#SELECT *
+WHERE {
+  ?provenance a <http://bibale.irht.cnrs.fr/type:provenance> ;
+              crm:P1_is_identified_by/rdfs:label ?identifier ;
+                                     crm:P70_documents ?manuscript ;
+                                     crm:P62_depicted ?actor .
+
+  VALUES ?actor_class { crm:E39_Actor crm:E21_Person crm:E74_Group }
+  ?actor a ?actor_class .
+
+  BIND(REPLACE(STR(?provenance), "^.*\\/(.+)", "$1") as ?provenance_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "observation/bibale_", ?provenance_local_id)) as ?provenance_event_mmm)
+
+  BIND(REPLACE(STR(?manuscript), "^.*\\/(.+)", "$1") as ?manuscript_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?manuscript_local_id)) as ?manifestation_singleton_mmm)
+
+  BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?actor_local_id)) as ?actor_mmm)
+}
