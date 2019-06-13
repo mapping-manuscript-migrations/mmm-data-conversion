@@ -23,18 +23,29 @@ log = logging.getLogger(__name__)
 class PersonLinker:
     ACTOR_CLASSES = [CRM.E21_Person, CRM.E74_Group, CRM.E39_Actor]
 
-    def __init__(self, sdbm: Graph, bodley: Graph, bibale: Graph):
+    def __init__(self, sdbm: Graph, bodley: Graph, bibale: Graph, recon_file_path='/data/recon_actors_*.csv'):
 
-        self.links = []
         self.sdbm = sdbm
         self.bodley = bodley
         self.bibale = bibale
 
-    def get_links(self):
-        """Get all person links"""
+        self.links = []
+        self.recon_file_path = recon_file_path
+
+    def link(self):
+        """Initiate the full linking process"""
         self.find_viaf_links()
-        # for letter in 'ABCDEFGHIJKLMNOPQRSTUVWYZ':
-        for f in glob('/data/recon_actors_*.csv'):
+        self.get_recon_links()
+        self.link_people()
+
+    def get_recon_links(self):
+        """Get all recon links for persons"""
+
+        if not self.recon_file_path:
+            return
+
+        # Get Recon links
+        for f in glob(self.recon_file_path):
 
             # Get date from filename
             date_match = re.match(r'recon_actors_._(\d{4,}-\d\d-\d\d)\.csv', str(f))
@@ -209,12 +220,9 @@ def main():
     log.info('Linking people of three graphs')
     p = PersonLinker(sdbm, bodley, bibale)
 
-    p.get_links()
-    p.link_people()
+    p.link()
 
     if p.links:
-        log.info('Linking actors using found links')
-
         bibale, bodley, sdbm = p.datasets()
 
         log.info('Serializing output files...')

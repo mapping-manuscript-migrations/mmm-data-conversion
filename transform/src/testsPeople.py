@@ -95,6 +95,14 @@ class TestStringMethods(unittest.TestCase):
                                   None,
                                   URIRef('http://ldf.fi/mmm/actor/sdbm_13159')), p.links
 
+    def test_linking_process(self):
+        bib = self.read_example_data(self.test_bibale)
+        bod = self.read_example_data(self.test_bodley)
+        sdbm = self.read_example_data(self.test_sdbm)
+
+        p = PersonLinker(sdbm, bod, bib, recon_file_path=None)
+        p.link()
+
     def read_example_data(self, data):
         g = Graph()
         g.parse(data=self.test_prefices + data, format='turtle')
