@@ -59,6 +59,7 @@ WHERE {
 
   OPTIONAL {
     BIND(CONCAT(STR(mmm:), "source/sdbm_") as ?source_namespace)
+    BIND(mmms:source_location as ?location_property)
   }
 
   OPTIONAL {
