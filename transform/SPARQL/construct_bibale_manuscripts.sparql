@@ -87,7 +87,10 @@ WHERE
 
   ?manifestation_singleton rdfs:label ?preflabel .
 
-  OPTIONAL { ?manifestation_singleton crm:P46i_forms_part_of ?collection }
+  OPTIONAL {
+    ?manifestation_singleton crm:P46i_forms_part_of ?collection .
+    ?collection a crm:E78_Collection .
+  }
 
   OPTIONAL { ?manifestation_singleton  crm:P46_is_composed_of ?manifestation_singleton_child }
 
