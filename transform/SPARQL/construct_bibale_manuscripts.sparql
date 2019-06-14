@@ -209,7 +209,7 @@ WHERE
     UNION
     { ?expression ^crm:P128_carries ?manifestation_singleton }
     OPTIONAL { ?expression rdfs:label ?expression_label }
-    OPTIONAL { ?expression crm:P102_has_title ?expression_title }
+    OPTIONAL { ?expression crm:P102_has_title/rdfs:label ?expression_title }
     OPTIONAL {
       ?expression_creation a frbroo2:F28_Expression_Creation ;
                            frbroo2:R17_created ?expression ;
