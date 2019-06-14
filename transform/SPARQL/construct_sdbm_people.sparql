@@ -13,19 +13,17 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-# TODO: Format dates
 
 CONSTRUCT {
   ?mmm_actor_uri a ?actor_class ;
     skos:prefLabel ?name ;
     owl:sameAs ?viaf_uri ;
-    mmms:person_place ?mmm_place ;  # Place/nationality
     ecrm:P98i_was_born ?birth_mmm ;
     ecrm:P100i_died_in ?death_mmm ;
     mmms:data_provider_url ?name_id ;
-    dct:source mmms:SDBM ;
     ecrm:P3_has_note ?other_info ;
     ecrm:P3_has_note ?name_type_literal ;
+    dct:source mmms:SDBM ;
     .
 
   ?birth_mmm a ?birth_class ;
@@ -50,11 +48,26 @@ CONSTRUCT {
     ecrm:P82b_end_of_the_end ?death_end ;
     .
 
+  ?activity_event_mmm a ecrm:E7_Activity ;
+    ecrm:P11_had_participant ?mmm_actor_uri ;
+    skos:prefLabel "Activity event" ;
+    ecrm:P4_has_time-span ?activity_timespan_mmm ;
+    ecrm:P7_took_place_at ?mmm_place ;  # Place/nationality
+    dct:source mmms:SDBM ;
+    .
+
+  ?activity_timespan_mmm a ecrm:E52_Time-Span ;
+    skos:prefLabel ?activity_timespan_label ;
+    ecrm:P82a_begin_of_the_begin ?activity_begin_begin_mmm ;
+    ecrm:P82b_end_of_the_end ?activity_end_end_mmm ;
+    .
+
 }
+#SELECT ?name ?activity_event_mmm ?activity_timespan_mmm ?activity_timespan_label ?activity_begin_begin_mmm ?activity_end_end_mmm ?mmm_place
 WHERE
 {
   ?name_id a :names ;
-  FILTER(NOT EXISTS { ?name_id :names_deleted true })
+           FILTER(NOT EXISTS { ?name_id :names_deleted true })
 
   # LABEL
   OPTIONAL {
@@ -221,7 +234,124 @@ WHERE
     ?name_place_id :name_places_name_id ?name_id ;
                    :name_places_place_id ?place_id ;
                    a :name_places .
-    # ?place_id :places_id ?place_local_id .
+
+    # PARSE PLACE ACTIVITY TIME-SPANS BEGINS
+    OPTIONAL {
+      OPTIONAL {
+        ?name_place_id :name_places_notbefore ?place_activity_begin_ .
+        FILTER (?place_activity_begin_ != "")
+        BIND(STR(?place_activity_begin_) as ?place_activity_begin)
+
+        BIND(SUBSTR(?place_activity_begin, 1, 4) as ?place_activity_begin_year_)
+        BIND(SUBSTR(?place_activity_begin, 6, 2) as ?place_activity_begin_month_)
+        BIND(SUBSTR(?place_activity_begin, 9) as ?place_activity_begin_day_)
+
+        BIND(IF(STRSTARTS(?place_activity_begin_year_, "-"),
+            CONCAT("-", SUBSTR("0000", STRLEN(?place_activity_begin_year_)), SUBSTR(?place_activity_begin_year_, 2, 4)),
+            CONCAT(SUBSTR("0000", STRLEN(?place_activity_begin_year_) + 1), ?place_activity_begin_year_)) as ?place_activity_begin_year_iso)
+      }
+
+      OPTIONAL {
+        FILTER (?place_activity_begin_day_ = "00" && (?place_activity_begin_month_ = "02"))
+        BIND("01" as ?activity_begin_begin_day_)
+#        BIND("28" as ?activity_begin_end_day_)
+      }
+      OPTIONAL {
+        FILTER (?place_activity_begin_day_ = "00" && (?place_activity_begin_month_ = "04" || ?place_activity_begin_month_ = "06" || ?place_activity_begin_month_ = "09" || ?place_activity_begin_month_ = "11"))
+        BIND("01" as ?activity_begin_begin_day_)
+#        BIND("30" as ?activity_begin_end_day_)
+      }
+      OPTIONAL {
+        FILTER (?place_activity_begin_month_ != "" && (!BOUND(?place_activity_begin_day_) || ?place_activity_begin_day_ = "00"))
+        BIND("01" as ?activity_begin_begin_day_)
+#        BIND("31" as ?activity_begin_end_day_)
+      }
+      OPTIONAL {
+        FILTER (?place_activity_begin_year_ != "" && !BOUND(?place_activity_begin_month_) && (!BOUND(?place_activity_begin_day_) || ?place_activity_begin_day_ = "00"))
+        BIND("01" as ?activity_begin_begin_month_)
+#        BIND("12" as ?activity_begin_end_month_)
+        BIND("01" as ?activity_begin_begin_day_)
+#        BIND("31" as ?activity_begin_end_day_)
+      }
+      BIND(COALESCE(?activity_begin_begin_month_, ?place_activity_begin_month_) as ?activity_begin_begin_month)
+#      BIND(COALESCE(?activity_begin_end_month_, ?place_activity_begin_month_) as ?activity_begin_end_month)
+      BIND(COALESCE(?activity_begin_begin_day_, ?place_activity_begin_day_) as ?activity_begin_begin_day)
+#      BIND(COALESCE(?activity_begin_end_day_, ?place_activity_begin_day_) as ?activity_begin_end_day)
+
+      BIND(?place_activity_begin_year_iso + "-" + ?activity_begin_begin_month_ + "-" + ?activity_begin_begin_day as ?activity_begin_begin)
+#      BIND(?place_activity_begin_year_iso + "-" + ?activity_begin_end_month_ + "-" + ?activity_begin_end_day as ?activity_begin_end)
+
+      BIND(STRDT(?activity_begin_begin, xsd:date) as ?activity_begin_begin_mmm)
+#      BIND(STRDT(?activity_begin_end, xsd:date) as ?activity_begin_end_mmm)
+    }
+
+    # PARSE PLACE ACTIVITY TIME-SPAN ENDS
+    OPTIONAL {
+      OPTIONAL {
+        ?name_place_id :name_places_notafter ?place_activity_end_ .
+        FILTER (?place_activity_end_ != "")
+        BIND(STR(?place_activity_end_) as ?place_activity_end)
+
+        BIND(SUBSTR(?place_activity_end, 1, 4) as ?place_activity_end_year_)
+        BIND(SUBSTR(?place_activity_end, 6, 2) as ?place_activity_end_month_)
+        BIND(SUBSTR(?place_activity_end, 9) as ?place_activity_end_day_)
+
+        BIND(IF(STRSTARTS(?place_activity_end_year_, "-"),
+            CONCAT("-", SUBSTR("0000", STRLEN(?place_activity_end_year_)), SUBSTR(?place_activity_end_year_, 2, 4)),
+            CONCAT(SUBSTR("0000", STRLEN(?place_activity_end_year_) + 1), ?place_activity_end_year_)) as ?place_activity_end_year_iso)
+      }
+
+      OPTIONAL {
+        FILTER (?place_activity_end_day_ = "00" && (?place_activity_end_month_ = "02"))
+#        BIND("01" as ?activity_end_begin_day_)
+        BIND("28" as ?activity_end_end_day_)
+      }
+      OPTIONAL {
+        FILTER (?place_activity_end_day_ = "00" && (?place_activity_end_month_ = "04" || ?place_activity_end_month_ = "06" || ?place_activity_end_month_ = "09" || ?place_activity_end_month_ = "11"))
+#        BIND("01" as ?activity_end_begin_day_)
+        BIND("30" as ?activity_end_end_day_)
+      }
+      OPTIONAL {
+        FILTER (?place_activity_end_month_ != "" && (!BOUND(?place_activity_end_day_) || ?place_activity_end_day_ = "00"))
+#        BIND("01" as ?activity_end_begin_day_)
+        BIND("31" as ?activity_end_end_day_)
+      }
+      OPTIONAL {
+        FILTER (?place_activity_end_year_ != "" && !BOUND(?place_activity_end_month_) && (!BOUND(?place_activity_end_day_) || ?place_activity_end_day_ = "00"))
+#        BIND("01" as ?activity_end_begin_month_)
+        BIND("12" as ?activity_end_end_month_)
+#        BIND("01" as ?activity_end_begin_day_)
+        BIND("31" as ?activity_end_end_day_)
+      }
+#      BIND(COALESCE(?activity_end_begin_month_, ?place_activity_end_month_) as ?activity_end_begin_month)
+      BIND(COALESCE(?activity_end_end_month_, ?place_activity_end_month_) as ?activity_end_end_month)
+#      BIND(COALESCE(?activity_end_begin_day_, ?place_activity_end_day_) as ?activity_end_begin_day)
+      BIND(COALESCE(?activity_end_end_day_, ?place_activity_end_day_) as ?activity_end_end_day)
+
+#      BIND(?place_activity_end_year_iso + "-" + ?activity_end_begin_month_ + "-" + ?activity_end_begin_day as ?activity_end_begin)
+      BIND(?place_activity_end_year_iso + "-" + ?activity_end_end_month_ + "-" + ?activity_end_end_day as ?activity_end_end)
+
+#      BIND(STRDT(?activity_end_begin, xsd:date) as ?activity_end_begin_mmm)
+      BIND(STRDT(?activity_end_end, xsd:date) as ?activity_end_end_mmm)
+    }
+
+    BIND(SUBSTR(STR(?activity_begin_begin), 6, 10) as ?activity_begin_begin_month_day)  # TODO: Use REGEX to take leading - into account
+    BIND(SUBSTR(STR(?activity_end_end), 6, 10) as ?activity_end_end_month_day)  # TODO: Use REGEX to take leading - into account
+
+    BIND(
+      IF(BOUND(?activity_begin_begin) && BOUND(?activity_end_end),
+        IF(STR(?activity_begin_begin) = STR(?activity_end_end), STR(?activity_begin_begin),
+          IF(SUBSTR(STR(?activity_begin_begin), 1, 4) = SUBSTR(STR(?activity_end_end), 1, 4) && ?activity_begin_begin_month_day = '01-01' && ?activity_end_end_month_day = '12-31', SUBSTR(STR(?activity_begin_begin), 1, 4),
+            IF(?activity_begin_begin_month_day = '01-01' && ?activity_end_end_month_day = '12-31',
+              CONCAT(SUBSTR(STR(?activity_begin_begin), 1, 4), " - ", SUBSTR(STR(?activity_end_end), 1, 4)),
+              CONCAT(STR(?activity_begin_begin), " - ", STR(?activity_end_end))
+            ))),
+        CONCAT(COALESCE(?activity_begin_begin, "?"), " - ", COALESCE(?activity_end_end, "?"))) as ?activity_timespan_label)
+
+    BIND(REPLACE(STR(?name_place_id), "^.*\\/(.+)", "$1") as ?person_local_activity_id)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_actor_activity_", ?person_local_activity_id)) as ?activity_event_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_actor_activity_timespan_", ?person_local_activity_id, SUBSTR(COALESCE(?activity_begin_begin, ?activity_end_end), 0, 0))) as ?activity_timespan_mmm)
+
   }
 
   BIND(?birth_prefix + ?name as ?birth_label)

@@ -26,7 +26,8 @@ CONSTRUCT {
     owl:sameAs ?external_uri ;
     mmms:biblissima_id ?biblissima_id ;
     mmms:religion ?religion_text, ?religious_order ;
-    dct:source mmms:Bibale .
+    dct:source mmms:Bibale ;
+    .
 
   ?birth_mmm a ?birth_class ;
     skos:prefLabel ?birth_label ;
@@ -75,6 +76,7 @@ CONSTRUCT {
     ecrm:P11_had_participant ?actor_mmm ;
     skos:prefLabel "Activity event" ;
     ecrm:P4_has_time-span ?activity_timespan_mmm ;
+    dct:source mmms:Bibale ;
     .
 
   ?activity_timespan_mmm a ecrm:E52_Time-Span ;
@@ -226,8 +228,8 @@ WHERE
       OPTIONAL { ?religion_timespan crm:P82b_end_of_the_end ?religion_timespan_ee }
       OPTIONAL { ?religion_timespan rdfs:label ?religion_timespan_label_ }
 
-      BIND(SUBSTR(STR(?religion_timespan_bb), 6, 10) as ?religion_timespan_bb_month_day)
-      BIND(SUBSTR(STR(?religion_timespan_ee), 6, 10) as ?religion_timespan_ee_month_day)
+      BIND(SUBSTR(STR(?religion_timespan_bb), 6, 10) as ?religion_timespan_bb_month_day)  # TODO: Use REGEX to take leading - into account
+      BIND(SUBSTR(STR(?religion_timespan_ee), 6, 10) as ?religion_timespan_ee_month_day)  # TODO: Use REGEX to take leading - into account
       BIND(
         IF(BOUND(?religion_timespan_bb) && BOUND(?religion_timespan_ee),
           IF(STR(?religion_timespan_bb) = STR(?religion_timespan_ee), STR(?religion_timespan_bb),
@@ -249,8 +251,8 @@ WHERE
     OPTIONAL { ?activity_timespan crm:P82b_end_of_the_end ?activity_timespan_ee }
     OPTIONAL { ?activity_timespan rdfs:label ?activity_timespan_label_ }
 
-    BIND(SUBSTR(STR(?activity_timespan_bb), 6, 10) as ?activity_timespan_bb_month_day)
-    BIND(SUBSTR(STR(?activity_timespan_ee), 6, 10) as ?activity_timespan_ee_month_day)
+    BIND(SUBSTR(STR(?activity_timespan_bb), 6, 10) as ?activity_timespan_bb_month_day)  # TODO: Use REGEX to take leading - into account
+    BIND(SUBSTR(STR(?activity_timespan_ee), 6, 10) as ?activity_timespan_ee_month_day)  # TODO: Use REGEX to take leading - into account
     BIND(
       IF(BOUND(?activity_timespan_bb) && BOUND(?activity_timespan_ee),
         IF(STR(?activity_timespan_bb) = STR(?activity_timespan_ee), STR(?activity_timespan_bb),
