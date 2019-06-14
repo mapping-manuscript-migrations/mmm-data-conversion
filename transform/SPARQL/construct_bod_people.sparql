@@ -118,8 +118,13 @@ WHERE
 
   OPTIONAL {
     ?actor crm:P1_is_identified_by ?appellation .
-    ?appellation rdfs:label ?preflabel .
-    OPTIONAL { ?appellation crm:P139_has_alternative_form/rdfs:label ?altlabel  }
+    ?appellation rdfs:label ?preflabel_ .
+    OPTIONAL {
+      ?appellation crm:P139_has_alternative_form/rdfs:label ?altlabel_
+      FILTER(?altlabel_ != "")
+    }
+    BIND(COALESCE(?preflabel_, ?altlabel_) as ?preflabel)
+    BIND(CONCAT(SUBSTR(?preflabel_, 0, 0), ?altlabel_) as ?altlabel)
   }
 
   OPTIONAL {

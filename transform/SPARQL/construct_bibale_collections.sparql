@@ -29,7 +29,8 @@ CONSTRUCT {
 
   ?creation_event a ecrm:E63_Beginning_of_Existence ;
     ecrm:P4_has_time-span ?creation_date_mmm ;
-    # TODO: prefLabel
+    skos:prefLabel "Beginning of existence of a collection" ;
+    dct:source mmms:Bibale ;
     .
 
   ?creation_date_mmm a ecrm:E52_Time-Span ;
@@ -42,7 +43,8 @@ CONSTRUCT {
 
   ?dispersion_event a ecrm:E64_End_of_Existence ;
     ecrm:P4_has_time-span ?dispersion_date_mmm ;
-    # TODO: prefLabel
+    skos:prefLabel "End of existence of a collection" ;
+    dct:source mmms:Bibale ;
     .
 
   ?dispersion_date_mmm a ecrm:E52_Time-Span ;

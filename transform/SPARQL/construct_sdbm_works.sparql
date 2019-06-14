@@ -22,23 +22,23 @@ CONSTRUCT {
     dct:source mmms:SDBM .
 
   ?work_conception a frbroo:F27_Work_Conception ;
-    # skos:prefLabel # TODO
+    skos:prefLabel "Work conception"
     frbroo:R16_initiated ?work ;
     mmms:carried_out_by_as_possible_author ?author_mmm ;
     # ecrm:P4_has_time-span  # TODO: author life dates
-    # dct:source mmms:SDBM .
+    dct:source mmms:SDBM .
     .
 
   ?expression a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
-    # skos:prefLabel # TODO
+    skos:prefLabel ?work_preflabel ;
     ecrm:P72_has_language ?language_mmm ;
     dct:source mmms:SDBM .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
-    # skos:prefLabel # TODO
+    skos:prefLabel "Expression creation"
     frbroo:R17_created ?expression ;
     frbroo:R19_created_a_realisation_of ?work ;
-    # dct:source mmms:SDBM .
+    dct:source mmms:SDBM .
     .
 
   ?author_mmm skos:altLabel ?observed_author
