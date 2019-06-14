@@ -68,7 +68,7 @@ CONSTRUCT {
    mmms:manuscript_author ?expression_author_mmm ;  # shortcut
    mmms:manuscript_author ?production_author_mmm ;  # shortcut
    ecrm:P46i_forms_part_of ?collection_mmm ;
-   ecrm:P46_is_composed_of ?manifestation_singleton_child ;
+   ecrm:P46_is_composed_of ?manifestation_singleton_child_mmm ;
    ecrm:P3_has_note ?note ;
    mmms:shelfmark_bnf_latin ?bnf_latin ;
    mmms:shelfmark_bnf_hebreu ?bnf_hebreu ;
@@ -294,6 +294,9 @@ WHERE
 
   BIND(REPLACE(STR(?manifestation_singleton), "^.*\\/(.+)", "$1") as ?manifestation_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?manifestation_local_id)) as ?manifestation_singleton_mmm)
+
+  BIND(REPLACE(STR(?manifestation_singleton_child), "^.*\\/(.+)", "$1") as ?manifestation_child_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?manifestation_child_local_id)) as ?manifestation_singleton_child_mmm)
 
   BIND(REPLACE(STR(?collection), "^.*\\/(.+)", "$1") as ?collection_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/collection/bibale_", ?collection_local_id)) as ?collection_mmm)
