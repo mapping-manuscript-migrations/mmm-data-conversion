@@ -119,6 +119,8 @@ WHERE
   OPTIONAL {
     ?entry :entries_source_id ?entry_source .
 
+    FILTER(NOT EXISTS { ?entry_source :sources_deleted true })
+
     OPTIONAL {
       # Collection catalogs
       ?entry_source :sources_source_type_id <https://sdbm.library.upenn.edu/source_types/2> .
