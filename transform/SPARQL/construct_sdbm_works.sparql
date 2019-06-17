@@ -22,11 +22,11 @@ CONSTRUCT {
     dct:source mmms:SDBM .
 
   ?work_conception a frbroo:F27_Work_Conception ;
-    skos:prefLabel "Work conception"
+    skos:prefLabel "Work conception" ;
     frbroo:R16_initiated ?work ;
     mmms:carried_out_by_as_possible_author ?author_mmm ;
     # ecrm:P4_has_time-span  # TODO: author life dates
-    dct:source mmms:SDBM .
+    dct:source mmms:SDBM ;
     .
 
   ?expression a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
@@ -35,10 +35,10 @@ CONSTRUCT {
     dct:source mmms:SDBM .
 
   ?expression_creation a frbroo:F28_Expression_Creation ;
-    skos:prefLabel "Expression creation"
+    skos:prefLabel "Expression creation" ;
     frbroo:R17_created ?expression ;
     frbroo:R19_created_a_realisation_of ?work ;
-    dct:source mmms:SDBM .
+    dct:source mmms:SDBM ;
     .
 
   ?author_mmm skos:altLabel ?observed_author
@@ -91,5 +91,4 @@ WHERE {
 
   BIND(REPLACE(STR(?language), "^.*\\/(.+)", "$1") as ?language_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/language/sdbm_", ?language_local_id)) as ?language_mmm)
-
 }
