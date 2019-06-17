@@ -31,4 +31,6 @@ python linker.py sdbm_places /output/_sdbm_combined.ttl /output/_sdbm_linked_pla
 
 cat /output/_sdbm_works.ttl /output/_sdbm_linked_places.ttl > /output/_sdbm_linked.ttl
 
+chmod a+r $OUTPUT/*
+
 exec "$@"

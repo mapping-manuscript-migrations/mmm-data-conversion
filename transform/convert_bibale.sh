@@ -4,6 +4,7 @@ set -eo pipefail
 
 rm -f /output/_bibale*
 rm -f /output/mmm_bibale.ttl
+rm -f /output/mmm_places.ttl
 
 printf '\nConverting Phillipps numbers\n\n'
 python phillipps_csv.py /data/bibale_phillipps.csv /output/_bibale_phillipps.ttl bibale_
@@ -28,5 +29,7 @@ cat /output/_bibale_phillipps.ttl /output/_bibale_manuscripts.ttl /output/_bibal
 
 printf '\nLinking Bibale places\n\n'
 python linker.py bibale_places /output/_bibale_combined.ttl /output/_bibale_linked.ttl --logfile /output/logs/bibale_linking.log
+
+chmod a+r $OUTPUT/*
 
 exec "$@"
