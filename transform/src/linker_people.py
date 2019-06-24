@@ -42,11 +42,13 @@ class PersonLinker:
         if not self.recon_file_path:
             return
 
+        log.info('Finding recon files from %s' % self.recon_file_path)
+
         # Get Recon links
         for f in glob(self.recon_file_path):
 
             # Get date from filename
-            date_match = re.match(r'recon_actors_._(\d{4,}-\d\d-\d\d)\.csv', str(f))
+            date_match = re.match(r'.*recon_actors_._(\d{4,}-\d\d-\d\d)\.csv', str(f))
             parsed_date = datetime.strptime(date_match.groups()[0], '%Y-%m-%d').date() if date_match else None
 
             self.links += read_recon_links(self.bibale, self.bodley, self.sdbm, f, parsed_date)
@@ -139,6 +141,11 @@ def is_sdbm_uri(uri: {str, URIRef}):
         return True
 
 
+def _add_recon_date(graph: Graph, uri: str, recon_date: date):
+    if recon_date:
+        graph.add((URIRef(uri), MMMS.recon_date, Literal(recon_date)))
+
+
 def read_recon_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv, csv_date: date):
     """
     Read manuscript links from a CSV file
@@ -162,13 +169,13 @@ def read_recon_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv, csv_date: d
 
             if is_bibale_uri(uri):
                 bib_uri = uri
-                bibale.add((URIRef(uri), MMMS.recon_date, Literal(csv_date)))
+                _add_recon_date(bibale, uri, csv_date)
             elif is_bodley_uri(uri):
                 bod_uri = uri
-                bodley.add((URIRef(uri), MMMS.recon_date, Literal(csv_date)))
+                _add_recon_date(bodley, uri, csv_date)
             elif is_sdbm_uri(uri):
                 sdbm_uri = uri
-                sdbm.add((URIRef(uri), MMMS.recon_date, Literal(csv_date)))
+                _add_recon_date(sdbm, uri, csv_date)
             else:
                 log.error('Unidentified URI %s' % uri)
                 continue
@@ -190,7 +197,7 @@ def read_recon_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv, csv_date: d
             else:
                 log.error('Source database internal hit: %s  -  %s' % (uri, match))
 
-    log.info('Found {num} links'.format(num=len(links)))
+    log.info('Found {num} links with date {date}'.format(num=len(links), date=csv_date))
 
     return links
 
