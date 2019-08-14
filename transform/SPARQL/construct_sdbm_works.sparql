@@ -79,9 +79,9 @@ WHERE {
   # generate IRIs in LDF.fi namespace
   BIND(REPLACE(STR(?entry_title), "^.*\\/(.+)", "$1") as ?title_id)
   BIND(IRI(CONCAT(STR(mmm:), "work/", STR(?title_id))) as ?work)
-  BIND(IRI(CONCAT(STR(mmm:), "work_conception/", STR(?title_id))) as ?work_conception)
+  BIND(IRI(CONCAT(STR(mmm:), "event/sdbm_work_conception_", STR(?title_id))) as ?work_conception)
   BIND(IRI(CONCAT(STR(mmm:), "expression/", STR(?title_id))) as ?expression)
-  BIND(IRI(CONCAT(STR(mmm:), "expression_creation/", STR(?title_id))) as ?expression_creation)
+  BIND(IRI(CONCAT(STR(mmm:), "event/sdbm_expression_creation_", STR(?title_id))) as ?expression_creation)
 
   BIND(REPLACE(STR(?author), "^.*\\/(.+)", "$1") as ?author_id)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author_mmm)

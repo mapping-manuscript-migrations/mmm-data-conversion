@@ -213,7 +213,7 @@ WHERE
   BIND(REPLACE(STR(?selling_agent_name), "^.*\\/(.+)", "$1") as ?selling_agent_id)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?selling_agent_id)) as ?selling_agent_mmm)
 
-  BIND(IRI(CONCAT(STR(mmm:), "observation/sdbm_source_observation_", ?entry_id)) as ?acquisition_uri)
+  BIND(IRI(CONCAT(STR(mmm:), "event/sdbm_source_observation_", ?entry_id)) as ?acquisition_uri)
 
   BIND(REPLACE(STR(?sales_entry), "^.*\\/(.+)", "$1") as ?sales_entry_local_id)
   BIND(IRI(CONCAT(STR(mmm:), "monetary_amounts/sdbm_", ?sales_entry_local_id, SUBSTR(STR(COALESCE(?sales_currency, ?sales_price, ?sales_other_currency)), 0, 0))) as ?monetary_amount_uri)  # Bind only if related information

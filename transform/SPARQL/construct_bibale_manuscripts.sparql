@@ -18,7 +18,8 @@ CONSTRUCT {
    skos:altLabel ?expression_title ;
    mmms:data_provider_url ?expression ;
    # ecrm:P72_has_language ?manifestation_work_language ;
-   dct:source mmms:Bibale .
+   dct:source mmms:Bibale ;
+   .
 
  ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
    frbroo:R17_created ?expression_mmm ;
@@ -27,7 +28,7 @@ CONSTRUCT {
    mmms:carried_out_by_as_author ?expression_author_mmm ;
    mmms:carried_out_by_as_scribe ?expression_scribe_mmm ;
    ecrm:P7_took_place_at ?expression_place_mmm ;
-   # dct:source mmms:Bibale .
+   dct:source mmms:Bibale ;
    .
 
  ?production_mmm a ecrm:E12_Production ;
@@ -43,21 +44,26 @@ CONSTRUCT {
    mmms:carried_out_by_as_illuminator ?production_illuminator_mmm ;
    mmms:carried_out_by_as_printer ?production_printer_mmm ;
    mmms:carried_out_by_as_scribe ?production_scribe_mmm ;
-   dct:source mmms:Bibale .
+   dct:source mmms:Bibale ;
+   .
 
  ?manuscript_timespan_mmm a ecrm:E52_Time-Span ;
    skos:prefLabel ?manuscript_timespan_label ;
    ecrm:P82a_begin_of_the_begin ?manuscript_timespan_bb ;
    ecrm:P81a_end_of_the_begin ?manuscript_timespan_eb ;
    ecrm:P81b_begin_of_the_end ?manuscript_timespan_be ;
-   ecrm:P82b_end_of_the_end ?manuscript_timespan_ee .
+   ecrm:P82b_end_of_the_end ?manuscript_timespan_ee ;
+   dct:source mmms:Bibale ;
+   .
 
  ?production_timespan_mmm a ecrm:E52_Time-Span ;
    skos:prefLabel ?production_timespan_label ;
    ecrm:P82a_begin_of_the_begin ?production_timespan_bb ;
    ecrm:P81a_end_of_the_begin ?production_timespan_eb ;
    ecrm:P81b_begin_of_the_end ?production_timespan_be ;
-   ecrm:P82b_end_of_the_end ?production_timespan_ee .
+   ecrm:P82b_end_of_the_end ?production_timespan_ee ;
+   dct:source mmms:Bibale ;
+   .
 
  ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
    ecrm:P128_carries ?expression_mmm ;
@@ -309,7 +315,7 @@ WHERE
   BIND(REPLACE(STR(?manuscript_place), "^.*\\/(.+)", "$1") as ?manuscript_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?manuscript_place_local_id, ":", "_"))) as ?manuscript_place_mmm)
 
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/production/bibale_", ?manifestation_local_id, "_production")) as ?production_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bibale_production_", ?manifestation_local_id)) as ?production_mmm)
   BIND(REPLACE(STR(?production_timespan), "^.*\\/(.+)", "$1") as ?production_timespan_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", ?production_timespan_local_id)) as ?production_timespan_mmm)
   BIND(REPLACE(STR(?production_place), "^.*\\/(.+)", "$1") as ?production_place_local_id)
@@ -333,7 +339,7 @@ WHERE
   BIND(REPLACE(STR(?expression), "^.*\\/(.+)", "$1") as ?expression_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bibale_", ?expression_local_id)) as ?expression_mmm)
   BIND(REPLACE(STR(?expression_creation), "^.*\\/(.+)", "$1") as ?expression_creation_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/expression_creation/bibale_", ?expression_creation_local_id)) as ?expression_creation_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bibale_expression_creation", ?expression_creation_local_id)) as ?expression_creation_mmm)
   BIND(REPLACE(STR(?expression_place), "^.*\\/(.+)", "$1") as ?expression_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?expression_place_local_id, ":", "_"))) as ?expression_place_mmm)
   BIND(REPLACE(STR(?expression_work), "^.*\\/(.+)", "$1") as ?expression_work_local_id)

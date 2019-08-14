@@ -29,23 +29,27 @@ CONSTRUCT {
   ?birth_mmm a ?birth_class ;
     skos:prefLabel ?birth_label ;
     ecrm:P4_has_time-span ?birth_timespan_mmm ;
+    dct:source mmms:SDBM ;
     .
 
   ?birth_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?birth_timespan_label ;
     ecrm:P82a_begin_of_the_begin ?birth_begin_mmm ;
     ecrm:P82b_end_of_the_end ?birth_end_mmm ;
+    dct:source mmms:SDBM ;
     .
 
   ?death_mmm a ?death_class ;
     skos:prefLabel ?death_label ;
     ecrm:P4_has_time-span ?death_timespan_mmm ;
+    dct:source mmms:SDBM ;
     .
 
   ?death_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?death_timespan_label ;
     ecrm:P82a_begin_of_the_begin ?death_begin ;
     ecrm:P82b_end_of_the_end ?death_end ;
+    dct:source mmms:SDBM ;
     .
 
   ?activity_event_mmm a ecrm:E7_Activity ;
@@ -60,6 +64,7 @@ CONSTRUCT {
     skos:prefLabel ?activity_timespan_label ;
     ecrm:P82a_begin_of_the_begin ?activity_begin_begin_mmm ;
     ecrm:P82b_end_of_the_end ?activity_end_end_mmm ;
+    dct:source mmms:SDBM ;
     .
 
 }
@@ -67,7 +72,7 @@ CONSTRUCT {
 WHERE
 {
   ?name_id a :names ;
-           FILTER(NOT EXISTS { ?name_id :names_deleted true })
+  FILTER(NOT EXISTS { ?name_id :names_deleted true })
 
   # LABEL
   OPTIONAL {
@@ -166,8 +171,8 @@ WHERE
     BIND(IF(?birth_begin = ?birth_end, ?birth_begin, IF(?birth_begin_month = ?birth_end_month, ?birth_begin + " - " + ?birth_end, ?birth_year_iso)) as ?birth_timespan_label)
 
     BIND(REPLACE(STR(?name_id), "^.*\\/(.+)", "$1") as ?person_local_birth_id)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", ?person_local_birth_id, "_birth")) as ?birth_mmm)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", ?person_local_birth_id, "_birth_timespan")) as ?birth_timespan_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/event/sdbm_", ?person_local_birth_id, "_birth")) as ?birth_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/time/sdbm_", ?person_local_birth_id, "_birth_timespan")) as ?birth_timespan_mmm)
   }
 
   # DEATH DATE
@@ -219,8 +224,8 @@ WHERE
     BIND(IF(?death_begin = ?death_end, ?death_begin, IF(?death_begin_month = ?death_end_month, ?death_begin + " - " + ?death_end, ?death_year_iso)) as ?death_timespan_label)
 
     BIND(REPLACE(STR(?name_id), "^.*\\/(.+)", "$1") as ?person_local_death_id)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", ?person_local_death_id, "_death")) as ?death_mmm)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_", ?person_local_death_id, "_death_timespan")) as ?death_timespan_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/event/sdbm_", ?person_local_death_id, "_death")) as ?death_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/time/sdbm_", ?person_local_death_id, "_death_timespan")) as ?death_timespan_mmm)
   }
 
   # OTHER INFO
@@ -349,8 +354,8 @@ WHERE
         CONCAT(COALESCE(?activity_begin_begin, "?"), " - ", COALESCE(?activity_end_end, "?"))) as ?activity_timespan_label)
 
     BIND(REPLACE(STR(?name_place_id), "^.*\\/(.+)", "$1") as ?person_local_activity_id)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_actor_activity_", ?person_local_activity_id)) as ?activity_event_mmm)
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/sdbm_actor_activity_timespan_", ?person_local_activity_id, SUBSTR(COALESCE(?activity_begin_begin, ?activity_end_end), 0, 0))) as ?activity_timespan_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/event/sdbm_actor_activity_", ?person_local_activity_id)) as ?activity_event_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_", ?person_local_activity_id, SUBSTR(COALESCE(?activity_begin_begin, ?activity_end_end), 0, 0))) as ?activity_timespan_mmm)
 
   }
 

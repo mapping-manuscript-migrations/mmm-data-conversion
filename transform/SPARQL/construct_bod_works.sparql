@@ -14,12 +14,14 @@ CONSTRUCT {
   ?work_mmm a frbroo:F1_Work  ;
     skos:prefLabel ?work_preflabel ;
     mmms:data_provider_url ?work ;
-    dct:source mmms:Bodley .
+    dct:source mmms:Bodley ;
+    .
 
   ?work_conception_mmm a frbroo:F27_Work_Conception ;
     skos:prefLabel ?work_conception_pref_label ;
     frbroo:R16_initiated ?work_mmm ;
     mmms:carried_out_by_as_author ?work_conception_author_mmm ;  # TODO: P14 carried out by
+    dct:source mmms:Bodley ;
     .
 }
 WHERE
@@ -36,7 +38,7 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bodley_", ?work_local_id)) as ?work_mmm)
 
   BIND(REPLACE(REPLACE(STR(?work_conception), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?work_conception_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/work_conception/bodley_", ?work_conception_local_id)) as ?work_conception_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bodley_work_conception", ?work_conception_local_id)) as ?work_conception_mmm)
 
   BIND(REPLACE(STR(?work_conception_author), "^.*\\/(.+)", "$1") as ?actor_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id)) as ?work_conception_author_mmm)

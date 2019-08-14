@@ -39,6 +39,7 @@ CONSTRUCT {
     ecrm:P81a_end_of_the_begin ?creation_date_eb ;
     ecrm:P81b_begin_of_the_end ?creation_date_be ;
     ecrm:P82b_end_of_the_end ?creation_date_ee ;
+    dct:source mmms:Bibale ;
     .
 
   ?dispersion_event a ecrm:E64_End_of_Existence ;
@@ -53,6 +54,7 @@ CONSTRUCT {
     ecrm:P81a_end_of_the_begin ?dispersion_date_eb ;
     ecrm:P81b_begin_of_the_end ?dispersion_date_be ;
     ecrm:P82b_end_of_the_end ?dispersion_date_ee ;
+    dct:source mmms:Bibale ;
     .
 
 }
@@ -119,8 +121,8 @@ WHERE
   BIND(REPLACE(STR(?collection), "^.*\\/(.+)", "$1") as ?collection_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/collection/bibale_", ?collection_local_id)) as ?collection_mmm)
 
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/collection/bibale_", ?collection_local_id, ?creation_suffix)) as ?creation_event)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/collection/bibale_", ?collection_local_id, ?dispersion_suffix)) as ?dispersion_event)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bibale_", ?collection_local_id, ?creation_suffix)) as ?creation_event)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bibale_", ?collection_local_id, ?dispersion_suffix)) as ?dispersion_event)
 
   BIND(REPLACE(STR(?collection_place), "^.*\\/(.+)", "$1") as ?collection_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?collection_place_local_id, ":", "_"))) as ?collection_place_mmm)

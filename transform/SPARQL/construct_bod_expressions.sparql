@@ -14,12 +14,14 @@ CONSTRUCT {
   ?expression_mmm a frbroo:F2_Expression , ecrm:E33_Linguistic_Object;
     skos:prefLabel ?expression_label ;
     skos:altLabel ?work_title ;
-    dct:source mmms:Bodley .
+    dct:source mmms:Bodley ;
+    .
 
   ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
     skos:prefLabel ?expression_creation_label ;
     frbroo:R17_created ?expression_mmm ;
     frbroo:R19_created_a_realisation_of ?work_mmm ;
+    dct:source mmms:Bodley ;
     .
 
 }
@@ -36,7 +38,7 @@ WHERE
   BIND(REPLACE(REPLACE(STR(?expression), "^.+catalog\\/(.+)", "$1"), "\\/|:|#|%", "-") as ?expression_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bodley_", ?expression_local_id)) as ?expression_mmm)
 
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/expression_creation/bodley_", ?expression_local_id)) as ?expression_creation_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bodley_expression_creation", ?expression_local_id)) as ?expression_creation_mmm)
 
   BIND(CONCAT("Expression creation of ", ?expression_label) as ?expression_creation_label)
 

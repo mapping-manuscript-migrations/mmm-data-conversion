@@ -29,23 +29,27 @@ CONSTRUCT {
   ?birth_mmm a ?birth_class ;
     ecrm:P4_has_time-span ?birth_timespan_mmm ;
     skos:prefLabel ?birth_label ;
+    dct:source mmms:Bodley ;
     .
 
   ?birth_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?birth_timespan_label ;
     ecrm:P82a_begin_of_the_begin ?birth_timespan_begin_begin_mmm ;
     ecrm:P82b_end_of_the_end ?birth_timespan_end_end_mmm ;
+    dct:source mmms:Bodley ;
     .
 
   ?death_mmm a ?death_class ;
     ecrm:P4_has_time-span ?death_timespan_mmm ;
     skos:prefLabel ?death_label ;
+    dct:source mmms:Bodley ;
     .
 
   ?death_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?death_timespan_label ;
     ecrm:P82a_begin_of_the_begin ?death_timespan_begin_begin_mmm ;
     ecrm:P82b_end_of_the_end ?death_timespan_end_end_mmm ;
+    dct:source mmms:Bodley ;
     .
 }
 #SELECT *
@@ -93,7 +97,7 @@ WHERE
       }
       BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_birth_timespan")) as ?birth_timespan_mmm)
     }
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_birth")) as ?birth_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_birth")) as ?birth_mmm)
   }
 
   OPTIONAL {
@@ -113,7 +117,7 @@ WHERE
       }
       BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_death_timespan")) as ?death_timespan_mmm)
     }
-    BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_death")) as ?death_mmm)
+    BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_death")) as ?death_mmm)
   }
 
   OPTIONAL {

@@ -30,6 +30,7 @@ CONSTRUCT {
     skos:prefLabel ?source_date_label ;
     ecrm:P82a_begin_of_the_begin ?source_date_begin_mmm ;
     ecrm:P82b_end_of_the_end ?source_date_end_mmm ;
+    dct:source mmms:SDBM ;
     .
 
   ?mmm_source_type a mmms:Source_Type ;

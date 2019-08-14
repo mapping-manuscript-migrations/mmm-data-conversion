@@ -40,7 +40,7 @@ WHERE {
   ?actor a ?actor_class .
 
   BIND(REPLACE(STR(?provenance), "^.*\\/(.+)", "$1") as ?provenance_local_id)
-  BIND(IRI(CONCAT(STR(mmm:), "observation/bibale_", ?provenance_local_id)) as ?provenance_event_mmm)
+  BIND(IRI(CONCAT(STR(mmm:), "event/bibale_provenance_", ?provenance_local_id)) as ?provenance_event_mmm)
 
   BIND(REPLACE(STR(?manuscript), "^.*\\/(.+)", "$1") as ?manuscript_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bibale_", ?manuscript_local_id)) as ?manifestation_singleton_mmm)

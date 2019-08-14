@@ -30,6 +30,7 @@ CONSTRUCT
     ecrm:P82a_begin_of_the_begin ?timespan_bb_mmm ;
     ecrm:P82b_end_of_the_end ?timespan_ee_mmm ;
     skos:prefLabel ?timespan_label ;
+    dct:source mmms:Bodley ;
     .
 
   ?manifestation_singleton_mmm mmms:phillipps_number ?phillipps ;
@@ -83,6 +84,6 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(?timespan_local_id, ":", "_"))) as ?timespan_mmm)
 
   BIND(REPLACE(STR(?provenance_event), "^.*\\/(.+)", "$1") as ?provenance_event_local_id)
-  BIND(IRI(CONCAT(STR(mmm:), "observation/bodley_", ?provenance_event_local_id)) as ?provenance_event_mmm)
+  BIND(IRI(CONCAT(STR(mmm:), "event/bodley_", ?provenance_event_local_id, "_provenance")) as ?provenance_event_mmm)
 
 }

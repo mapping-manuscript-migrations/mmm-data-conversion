@@ -19,10 +19,11 @@ CONSTRUCT {
     skos:prefLabel ?work_pref_label ;
     skos:altLabel ?work_alt_label ;
     mmms:data_provider_url ?work ;
-    dct:source mmms:Bibale .
+    dct:source mmms:Bibale ;
+    .
 
   ?work_conception_mmm a frbroo:F27_Work_Conception ;
-    # skos:prefLabel ?work_conception_pref_label ;  # TODO
+    skos:prefLabel ?work_conception_pref_label ;
     frbroo:R16_initiated ?work_mmm ;
     mmms:carried_out_by_as_author ?author_mmm ;  # TODO: P14 carried out by
     mmms:carried_out_by_as_translator ?translator_mmm ;
@@ -30,6 +31,7 @@ CONSTRUCT {
     mmms:carried_out_by_as_commissioner ?commissioner_mmm ;
     mmms:carried_out_by_as_recipient ?recipient_mmm ;
     ecrm:P7_took_place_at ?place_mmm ;
+    dct:source mmms:Bibale ;
     .
 }
 WHERE
@@ -79,11 +81,14 @@ WHERE
       ] ;
     }
   }
+
+  BIND(CONCAT("Work conception of ", ?work_pref_label) as ?work_conception_pref_label)
+
   BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bibale_", ?work_local_id)) as ?work_mmm)
 
   BIND(REPLACE(STR(?work_conception), "^.*\\/(.+)", "$1") as ?work_conception_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/work_conception/bibale_", ?work_conception_local_id)) as ?work_conception_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bibale_work_conception_", ?work_conception_local_id)) as ?work_conception_mmm)
 
   BIND(REPLACE(STR(?work_place), "^.*\\/(.+)", "$1") as ?place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
