@@ -55,6 +55,38 @@
   rdfs:subClassOf crm:E54_Dimension ;
   skos:prefLabel "Number of historiated initials" .
 
+:width a rdf:Property;
+  rdfs:subPropertyOf crm:P43_has_dimension ;
+  skos:prefLabel "Width" .
+
+:height a rdf:Property;
+  rdfs:subPropertyOf crm:P43_has_dimension ;
+  skos:prefLabel "Height" .
+
+:folios a rdf:Property;
+  rdfs:subPropertyOf crm:P43_has_dimension ;
+  skos:prefLabel "Folios" .
+
+:lines a rdf:Property;
+  rdfs:subPropertyOf crm:P43_has_dimension ;
+  skos:prefLabel "Lines" .
+
+:columns a rdf:Property;
+  rdfs:subPropertyOf crm:P43_has_dimension ;
+  skos:prefLabel "Columns" .
+
+:miniatures a rdf:Property;
+  rdfs:subPropertyOf crm:P43_has_dimension ;
+  skos:prefLabel "Miniatures" .
+
+:decorated_initials a rdf:Property;
+  rdfs:subPropertyOf crm:P43_has_dimension ;
+  skos:prefLabel "Decorated initials" .
+
+:historiated_initials a rdf:Property;
+  rdfs:subPropertyOf crm:P43_has_dimension ;
+  skos:prefLabel "Historiated initials" .        
+
 :binding a rdf:Property ;
   skos:prefLabel "Description of manuscript binding" .
 
