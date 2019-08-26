@@ -13,6 +13,7 @@ import pandas as pd
 from rdflib import URIRef, Literal, RDF, OWL
 from rdflib.util import guess_format
 from manuscripts import change_resource_uri  # form_preflabel,
+from mmm import is_bibale_uri, is_bodley_uri, is_sdbm_uri, get_mmm_resource_uri
 from namespaces import *
 
 log = logging.getLogger(__name__)
@@ -97,14 +98,12 @@ class PersonLinker:
 
             assert bool(bib_hit) + bool(bod_hit) + bool(sdbm_hit) == 2  # Refactor if need to link all
 
-            # Prioritize hits in order: Bodley, Bibale, SDBM
-            hit_order = [bod_hit, bib_hit, sdbm_hit]
-            graph_order = [self.bodley, self.bibale, self.sdbm]
+            # Prioritize hits in order: Bodley, Bibale, SDBM. Follow sameAs links to newest URIs
+            hit_order = [get_mmm_resource_uri(self.bibale, self.bodley, self.sdbm, bod_hit),
+                         get_mmm_resource_uri(self.bibale, self.bodley, self.sdbm, bib_hit),
+                         get_mmm_resource_uri(self.bibale, self.bodley, self.sdbm, sdbm_hit)]
 
-            # TODO: Follow sameAs links to merged MMM resources
-            # followed_hits = [filter(is_mmm_uri, [graph_order[0].value(hit_order[0], OWL.sameAs, any=False)]),
-            #                  filter(is_mmm_uri, [graph_order[1].value(hit_order[1], OWL.sameAs, any=False)]),
-            #                  ]
+            graph_order = [self.bodley, self.bibale, self.sdbm]
 
             new_uri = hit_order[0] or hit_order[1]
             redirected_uri = hit_order[2] or hit_order[1]
@@ -120,25 +119,6 @@ class PersonLinker:
 
     def datasets(self):
         return self.bibale, self.bodley, self.sdbm
-
-
-def is_mmm_uri(uri: {str, URIRef}):
-    return str(uri).startswith('^http://ldf\.fi/mmm/')
-
-
-def is_bibale_uri(uri: {str, URIRef}):
-    if re.match('^http://ldf\.fi/mmm/.*bibale', str(uri)):
-        return True
-
-
-def is_bodley_uri(uri: {str, URIRef}):
-    if re.match('^http://ldf\.fi/mmm/.*bodley', str(uri)):
-        return True
-
-
-def is_sdbm_uri(uri: {str, URIRef}):
-    if re.match('^http://ldf\.fi/mmm/.*sdbm', str(uri)):
-        return True
 
 
 def _add_recon_date(graph: Graph, uri: str, recon_date: date):

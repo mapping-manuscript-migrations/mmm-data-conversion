@@ -16,6 +16,7 @@ from linker_people import PersonLinker, read_recon_links
 
 # from linker import PlaceLinker
 from manuscripts import read_manual_links, link_by_shelfmark, link_manuscripts, change_resource_uri
+from mmm import get_mmm_resource_uri
 from namespaces import *
 
 log = logging.getLogger(__name__)
@@ -359,6 +360,20 @@ mmma:bodley_person_165124171
         skos:prefLabel          "Nobody" .
 
         """
+
+    def get_mmm_resource_uri(self):
+        bib = self.read_example_data(self.test_bibale)
+        bod = self.read_example_data(self.test_bodley)
+        sdbm = self.read_example_data(self.test_sdbm)
+
+        self.assertEqual(get_mmm_resource_uri(bib, bod, sdbm, URIRef('http://ldf.fi/mmm/actor/bibale_person_XYZ')),
+                         URIRef('http://ldf.fi/mmm/actor/bibale_person_XYZ'))
+
+        sdbm.add((URIRef('http://ldf.fi/mmm/actor/bibale_person_XYZ'), OWL.sameAs,
+                  URIRef('http://ldf.fi/mmm/actor/bodley_person_165124171')))
+
+        self.assertEqual(get_mmm_resource_uri(bib, bod, sdbm, URIRef('http://ldf.fi/mmm/actor/bibale_person_XYZ')),
+                         URIRef('http://ldf.fi/mmm/actor/bodley_person_165124171'))
 
 
 if __name__ == '__main__':
