@@ -7,7 +7,8 @@ rm -f /output/mmm_bibale.ttl
 rm -f /output/mmm_places.ttl
 
 printf '\nConverting Phillipps numbers\n\n'
-python phillipps_csv.py /data/bibale_phillipps.csv /output/_bibale_phillipps.ttl bibale_
+grep "bibale" /data/phillipps_numbers.csv > /output/bibale_phillipps.csv
+python phillipps_csv.py /output/bibale_phillipps.csv /output/_bibale_phillipps.ttl bibale_
 
 # run the SPARQL construct query
 printf '\nConstructing Bibale manuscripts\n\n'

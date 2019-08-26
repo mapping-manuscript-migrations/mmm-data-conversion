@@ -6,7 +6,8 @@ rm -f /output/_bodley*
 rm -f /output/mmm_bodley.ttl
 
 printf '\nConverting Phillipps numbers\n\n'
-python phillipps_csv.py /data/bodley_phillipps.csv /output/_bodley_phillipps.ttl bodley_
+grep "bodleian" /data/phillipps_numbers.csv > /output/bodley_phillipps.csv
+python phillipps_csv.py /output/bodley_phillipps.csv /output/_bodley_phillipps.ttl bodley_
 
 # run the SPARQL construct query
 printf '\nConstructing Bodley manuscripts\n\n'
