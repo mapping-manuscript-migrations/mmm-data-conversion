@@ -23,7 +23,6 @@ CONSTRUCT {
 
  ?expression_creation_mmm a frbroo:F28_Expression_Creation ;
    frbroo:R17_created ?expression_mmm ;
-   frbroo:R18_created ?manifestation_singleton_mmm ;
    frbroo:R19_created_a_realisation_of ?expression_work_mmm ;
    mmms:carried_out_by_as_author ?expression_author_mmm ;
    mmms:carried_out_by_as_scribe ?expression_scribe_mmm ;
