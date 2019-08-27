@@ -54,9 +54,9 @@ CONSTRUCT {
 
   ?activity_event_mmm a ecrm:E7_Activity ;
     ecrm:P11_had_participant ?mmm_actor_uri ;
-    skos:prefLabel "Activity event" ;
+    skos:prefLabel "Place/nationality activity event" ;
     ecrm:P4_has_time-span ?activity_timespan_mmm ;
-    ecrm:P7_took_place_at ?mmm_place ;  # Place/nationality
+    ecrm:P7_took_place_at ?mmm_place ;
     dct:source mmms:SDBM ;
     .
 
