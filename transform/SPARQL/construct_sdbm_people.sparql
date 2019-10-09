@@ -47,8 +47,8 @@ CONSTRUCT {
 
   ?death_timespan_mmm a ecrm:E52_Time-Span ;
     skos:prefLabel ?death_timespan_label ;
-    ecrm:P82a_begin_of_the_begin ?death_begin ;
-    ecrm:P82b_end_of_the_end ?death_end ;
+    ecrm:P82a_begin_of_the_begin ?death_begin_mmm ;
+    ecrm:P82b_end_of_the_end ?death_end_mmm ;
     dct:source mmms:SDBM ;
     .
 
