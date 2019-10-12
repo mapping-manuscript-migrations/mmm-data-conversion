@@ -4,16 +4,14 @@
 
 import argparse
 import logging
-import os
 import re
-from datetime import date, datetime
+from datetime import datetime
 from glob import glob
 
-import pandas as pd
-from rdflib import URIRef, Literal, RDF, OWL
+from rdflib import RDF, OWL
 from rdflib.util import guess_format
-from manuscripts import change_resource_uri  # form_preflabel,
-from mmm import is_bibale_uri, is_bodley_uri, is_sdbm_uri, get_mmm_resource_uri
+from linker import change_resource_uri  # form_preflabel,
+from mmm import get_mmm_resource_uri, read_recon_links, change_resource_uri
 from namespaces import *
 
 log = logging.getLogger(__name__)
@@ -119,67 +117,6 @@ class PersonLinker:
 
     def datasets(self):
         return self.bibale, self.bodley, self.sdbm
-
-
-def _add_recon_date(graph: Graph, uri: str, recon_date: date):
-    if recon_date:
-        graph.add((URIRef(uri), MMMS.recon_date, Literal(recon_date)))
-
-
-def read_recon_links(bibale: Graph, bodley: Graph, sdbm: Graph, csv, csv_date: date):
-    """
-    Read manuscript links from a CSV file
-    """
-    csv_data = pd.read_csv(csv, header=0, keep_default_na=False, usecols=["Match", "URI"])
-
-    links = []
-
-    for row in csv_data.itertuples(index=True):
-
-        uri = row.URI
-        matches = row.Match  # type: str
-        for match in matches.split(", "):
-
-            if not match:
-                continue
-
-            bib_uri = None
-            bod_uri = None
-            sdbm_uri = None
-
-            if is_bibale_uri(uri):
-                bib_uri = uri
-                _add_recon_date(bibale, uri, csv_date)
-            elif is_bodley_uri(uri):
-                bod_uri = uri
-                _add_recon_date(bodley, uri, csv_date)
-            elif is_sdbm_uri(uri):
-                sdbm_uri = uri
-                _add_recon_date(sdbm, uri, csv_date)
-            else:
-                log.error('Unidentified URI %s' % uri)
-                continue
-
-            if is_bibale_uri(match):
-                bib_uri = match
-            elif is_bodley_uri(match):
-                bod_uri = match
-            elif is_sdbm_uri(match):
-                sdbm_uri = match
-            else:
-                log.error('Unidentified URI %s' % match)
-                continue
-
-            if bool(bib_uri) + bool(bod_uri) + bool(sdbm_uri) >= 2:
-                links.append((URIRef(bib_uri) if bib_uri else None,
-                              URIRef(bod_uri) if bod_uri else None,
-                              URIRef(sdbm_uri) if sdbm_uri else None))
-            else:
-                log.error('Source database internal hit: %s  -  %s' % (uri, match))
-
-    log.info('Found {num} links with date {date}'.format(num=len(links), date=csv_date))
-
-    return links
 
 
 def main():

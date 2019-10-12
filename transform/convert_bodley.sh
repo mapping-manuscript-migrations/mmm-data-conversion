@@ -31,7 +31,7 @@ cat /output/_bodley_phillipps.ttl /output/_bodley_manuscripts.ttl /output/_bodle
 
 printf '\nLinking Bodley places\n\n'
 
-python linker.py bodley_places /output/_bodley_combined.ttl /output/_bodley_linked.ttl --logfile /output/logs/bodley_linking.log
+python linker_places.py bodley_places /output/_bodley_combined.ttl /output/_bodley_linked.ttl --logfile /output/logs/bodley_linking.log
 
 chmod a+r $OUTPUT/*
 

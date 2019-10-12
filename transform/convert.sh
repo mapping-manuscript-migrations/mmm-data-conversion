@@ -23,8 +23,8 @@ case "$1" in
   ;;
 esac
 
-printf '\nAdding manual manuscript links and shelfmark links\n\n'
-python manuscripts.py all /output/_bibale_linked.ttl /output/_bodley_linked.ttl /output/_sdbm_linked.ttl --input_csv /data/manuscript_links.csv --logfile /output/logs/manuscript_linking.log
+printf '\nAdding manuscript & work links\n\n'
+python linker.py /output/_bibale_linked.ttl /output/_bodley_linked.ttl /output/_sdbm_linked.ttl --input_csv /data/manuscript_links.csv --logfile /output/logs/linker.log
 
 printf '\nLinking people\n\n'
 python linker_people.py /output/_bibale_linked_all.ttl /output/_bodley_linked_all.ttl /output/_sdbm_linked_all.ttl --logfile /output/logs/person_linking.log

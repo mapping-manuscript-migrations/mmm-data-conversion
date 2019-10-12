@@ -27,7 +27,7 @@ curl -f --data-urlencode "query=$(cat /app/construct_sdbm_languages.sparql)" $IN
 cat /output/_sdbm_manuscripts_transactions.ttl /output/_sdbm_manuscripts.ttl /output/_sdbm_people.ttl /output/_sdbm_places.ttl /output/_sdbm_sources.ttl /output/_sdbm_languages.ttl > /output/_sdbm_combined.ttl
 
 printf '\nLinking SDBM places\n\n'
-python linker.py sdbm_places /output/_sdbm_combined.ttl /output/_sdbm_linked_places.ttl --logfile /output/logs/sdbm_linking.log
+python linker_places.py sdbm_places /output/_sdbm_combined.ttl /output/_sdbm_linked_places.ttl --logfile /output/logs/sdbm_linking.log
 
 cat /output/_sdbm_works.ttl /output/_sdbm_linked_places.ttl > /output/_sdbm_linked.ttl
 

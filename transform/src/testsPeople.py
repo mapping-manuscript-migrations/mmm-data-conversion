@@ -15,8 +15,8 @@ from rdflib import URIRef, RDF, RDFS, OWL, Literal
 from linker_people import PersonLinker, read_recon_links
 
 # from linker import PlaceLinker
-from manuscripts import read_manual_links, link_by_shelfmark, link_manuscripts, change_resource_uri
-from mmm import get_mmm_resource_uri
+from linker import read_manuscript_links, link_by_shelfmark, link_manuscripts, change_resource_uri
+from mmm import get_mmm_resource_uri, change_resource_uri
 from namespaces import *
 
 log = logging.getLogger(__name__)

@@ -14,8 +14,9 @@ from io import StringIO
 
 from rdflib import URIRef, RDF, OWL, Literal
 
-from linker import PlaceLinker
-from manuscripts import read_manual_links, link_by_shelfmark, link_manuscripts, change_resource_uri
+from linker_places import PlaceLinker
+from linker import read_manuscript_links, link_by_shelfmark, link_manuscripts
+from mmm import change_resource_uri
 from namespaces import *
 
 
@@ -433,7 +434,7 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
 
         sdbm.parse(data=self.test_sdbm, format='turtle')
 
-        links = read_manual_links(bib, bod, sdbm, StringIO(self.test_csv))
+        links = read_manuscript_links(bib, bod, sdbm, StringIO(self.test_csv))
 
         bib, bod, sdbm = link_manuscripts(bib, bod, sdbm, links)
 

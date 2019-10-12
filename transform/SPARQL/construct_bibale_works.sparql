@@ -32,6 +32,7 @@ CONSTRUCT {
     mmms:carried_out_by_as_recipient ?recipient_mmm ;
     ecrm:P7_took_place_at ?place_mmm ;
     dct:source mmms:Bibale ;
+    # TODO: ADD CREATION TIME-SPANS (here or to expression creation)
     .
 }
 WHERE
