@@ -18,12 +18,14 @@ Currently the pipeline includes the following steps:
 
 4. Load the final result into `http://localhost:3050/ds/sparql`
 
-## Build fuseki-docker image
-`docker build https://github.com/SemanticComputing/fuseki-docker.git#master:. -t fuseki-docker`
-
 ## Build, convert, and run
 
 `./rebuild.sh`
+
+
+## Deploy new output files without data conversion
+
+`./deploy.sh`
 
 
 ## Rebuild after updating CONSTRUCT queries
