@@ -4,7 +4,13 @@ Currently the pipeline includes the following steps:
 
 1. Create a directory called `data` with a subdirectory for each of the source databases and download the input RDF data as follows: (manual)
     * Schoenberg Database of Manuscripts (sdbm): https://sdbm.library.upenn.edu/downloads (you have to be logged in)
-    * Medieval Manuscripts in Oxford Libraries (bodley): https://github.com/oerc-music/BodleianMedievalMSS-RDF
+    * Medieval Manuscripts in Oxford Libraries (bodley): https://github.com/mapping-manuscript-migrations/bodleian-RDF
+        * To combine files into `input.ttl`:
+
+          `for f in *.rdf; do (rapper $f -i rdfxml -o turtle) > $f.ttl; done; `
+
+          `cat *.ttl| rapper - "https://medieval.bodleian.ox.ac.uk/catalog/" -i turtle -o turtle > input.ttl`
+
     * Bibale Database (bibale): http://bibale.irht.cnrs.fr/export/rdf/get
     * CSV of manual manuscript links to `data/additional/manuscript_links.csv`
 
