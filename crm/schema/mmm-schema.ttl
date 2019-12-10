@@ -262,4 +262,10 @@
   skos:prefLabel "Region" .
 
 :recon_date a rdfs:Property ;
-  skos:prefLabel "Date when the resources has been last reconciled with the Recon tool"
+  skos:prefLabel "Date when the resources has been last reconciled with the Recon tool" ;
+  .
+
+:PlaceNationality a rdfs:Class ;
+  rdfs:subClassOf crm:E7_Activity ;
+  skos:prefLabel "Nationality / residence / permanent location" ;
+  .

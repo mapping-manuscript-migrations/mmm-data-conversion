@@ -74,6 +74,39 @@ class PlaceLinker:
         self.tgn = TGN()
         self.places = places if places is not None else Graph()
 
+    def link_geonames_place_to_tgn(self, geonames_uri=None, country=None, region=None, settlement=None):
+        """
+        Link a GeoNames place to TGN based on GeoNames URI or structured place name
+
+        :param geonames_uri: GeoNames URI
+        :param country: GeoNames country
+        :param region: GeoNames region
+        :param settlement: GeoNames settlement
+        """
+        geo_match = None
+        tgn_match = None
+        if geonames_uri:
+            geo_match = self.geonames.get_place_data(str(geonames_uri).split('/')[-1])
+
+        if not geo_match:
+            geo_match = self.geonames.search_place(country, region, settlement)
+            if not geo_match and country and region:
+                geo_match = self.geonames.search_place(country, region, '')
+
+        if geo_match:
+            place_label = geo_match.get('name') or settlement or region or country
+
+            # Try to find the place from TGN
+            tgn_match = self.tgn.search_tgn_place(place_label, geo_match['lat'], geo_match['lon'])
+        else:
+            log.error('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
+
+        return tgn_match, geo_match
+
+    # TODO: Add function for getting parents
+
+    # TODO: Add function for creating place triples from structured data
+
     def handle_bibale_places(self, bibale: Graph):
         """Modify places, link them to GeoNames and TGN, and create a new place ontology"""
         places = group_places(bibale)
@@ -90,36 +123,20 @@ class PlaceLinker:
             authority_uri_set = set(authority_uris) - {None}
             geonames_uri = max(authority_uri_set, key=authority_uris.count) if authority_uri_set else None
 
-            place_label = settlement or region or country
             place_type = bibale.value(old_uris[0], MMMS.place_type)
 
             # Fetch GeoNames data based on GeoNames id
 
-            geo_match = None
-            tgn_match = None
-            if geonames_uri:
-                geo_match = self.geonames.get_place_data(str(geonames_uri).split('/')[-1])
-
-            if not geo_match:
-                geo_match = self.geonames.search_place(country, region, settlement)
-                if not geo_match and country and region:
-                    geo_match = self.geonames.search_place(country, region, '')
+            tgn_match, geo_match = self.link_geonames_place_to_tgn(geonames_uri, country, region, settlement)
+            # Modify graph
 
             if geo_match:
-                place_label = geo_match.get('name') or place_label
                 geonames_uri = geo_match['uri']
-
-                # Try to find the place from TGN
-                tgn_match = self.tgn.search_tgn_place(place_label, geo_match['lat'], geo_match['lon'])
-            else:
-                log.error('No GeoNames ID found for %s, %s, %s' % (country, region, settlement))
 
             if tgn_match:
                 uri = self.tgn.mint_mmm_tgn_uri(tgn_match['uri'])
             else:
                 uri = self.tgn.mint_mmm_uri(str(sorted(old_uris)[0]).split('/')[-1])
-
-            # Modify graph
 
             bibale = redirect_refs(bibale, old_uris, uri)
 

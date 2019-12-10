@@ -4,12 +4,16 @@
 
 import argparse
 import logging
-from typing import Iterable
+import re
+from itertools import chain
+from typing import Iterable, DefaultDict
 
+import os
 import pandas as pd
 from rdflib import URIRef, Literal, RDF, OWL
 from rdflib.util import guess_format
 
+from linker_places import PlaceLinker
 from linker_works import WorkLinker
 from mmm import change_resource_uri
 from namespaces import *
@@ -139,6 +143,126 @@ def link_by_shelfmark(bibale: Graph, bodley: Graph, sdbm: Graph, prop: URIRef, n
     return links
 
 
+def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_linker,
+                             csv='/data/bibale_locations.csv'):
+    """
+    Estimate last known location for each manuscripts based on the datasets
+    """
+
+    # BODLEIAN
+
+    for manuscript in bodley.subjects(RDF.type, FRBR.F4_Manifestation_Singleton):
+        bodley.add((manuscript, MMMS.last_known_location_bodley, MMMP.tgn_7011931))
+
+    csv_data = pd.read_csv(csv, header=0, keep_default_na=False, names=["pays", "ville_id", "ville", "geonames_id"])
+
+    cities = DefaultDict(dict)
+    for row in csv_data.itertuples(index=True):
+        city = str(row.ville).strip().lower()
+        geonames_id = str(row.geonames_id).strip()
+        if not geonames_id:
+            continue
+
+        cities[city]['geonames'] = geonames_id
+        cities[city]['country'] = str(row.pays).strip().lower()
+
+        log.debug('Got a Bibale shelfmark city link for %s: %s' % (city, geonames_id))
+
+    # BIBALE
+
+    for manuscript in bibale.subjects(RDF.type, FRBR.F4_Manifestation_Singleton):
+        label = bibale.value(manuscript, SKOS.prefLabel)
+        shelfmark_city = str(label).split(',')[0].strip().lower() if ',' in label else None
+
+        tgn_uri = cities.get(shelfmark_city, {}).get('tgn')
+        geonames_uri = cities.get(shelfmark_city, {}).get('geonames')
+        country = cities.get(shelfmark_city, {}).get('country')
+
+        if not tgn_uri:
+            if geonames_uri:
+                log.debug('Matching to TGN with GeoNames URI %s' % geonames_uri)
+                tgn_match, geo_match = place_linker.link_geonames_place_to_tgn(geonames_uri)
+            else:
+                log.info('Matching to TGN with place name %s, %s' % (country, shelfmark_city))
+                tgn_match, geo_match = place_linker.link_geonames_place_to_tgn(
+                    country=country, settlement=shelfmark_city)
+
+        if tgn_match and tgn_match['uri']:
+            tgn_uri = place_linker.tgn.mint_mmm_tgn_uri(tgn_match['uri'])
+            cities[shelfmark_city]['tgn'] = tgn_match['uri']
+        else:
+            log.warning('No TGN match for %s (%s)' % (shelfmark_city, geonames_uri))
+
+        if tgn_uri:
+            log.info('Adding manuscript %s last known location %s' % (manuscript, tgn_uri))
+            bibale.add((manuscript, MMMS.last_known_location_bibale, URIRef(tgn_uri)))
+
+    # SDBM
+
+    for manuscript in sdbm.subjects(RDF.type, FRBR.F4_Manifestation_Singleton):
+
+        sources = chain(sdbm.objects(manuscript, CRM.P46i_forms_part_of),
+                        sdbm.objects(manuscript, CRM.P70i_is_documented_in))
+
+        # events = chain(sdbm.subjects(CRM.P30_transferred_custody_of, manuscript),
+        #                sdbm.subjects(MMMS.observed_manuscript, manuscript))
+
+        valid_places = []
+
+        for source in sources:
+            actors = chain(sdbm.objects(source, CRM.P51_has_former_or_current_owner),
+                           sdbm.objects(source, MMMS.source_agent))
+
+            source_timespan = sdbm.value(source, MMMS.source_date)
+            source_time_begin = sdbm.value(source_timespan, CRM.P82a_begin_of_the_begin)
+            source_time_end = sdbm.value(source_timespan, CRM.P82b_end_of_the_end)
+
+            log.debug('SDBM source %s times %s - %s' % (source, source_time_begin, source_time_end))
+
+            for actor in actors:
+                events = sdbm.subjects(CRM.P11_had_participant, actor)
+                for event in events:
+                    if not sdbm.triples((event, RDF.type, MMMS.PlaceNationality)):
+                        continue
+
+                    event_timespan = sdbm.value(event, CRM['P4_has_time-span'])
+                    event_time_begin = sdbm.value(event_timespan, CRM.P82a_begin_of_the_begin)
+                    event_time_end = sdbm.value(event_timespan, CRM.P82b_end_of_the_end)
+
+                    log.debug('SDBM domicile event %s times %s - %s' % (event, event_time_begin, event_time_end))
+
+                    if source_time_begin < event_time_begin or source_time_end > event_time_end:
+                        continue
+
+                    place_triples = sdbm.triples((event, CRM.P7_took_place_at, None))
+
+                    for (_, _, place) in place_triples:
+                        valid_places.append(place)
+
+        log.info('SDBM last known locations for %s are %s' % (manuscript, valid_places))
+        for place in valid_places:
+            sdbm.add((manuscript, MMMS.last_known_location_sdbm, URIRef(place)))
+
+    # Get a last known location with a priority list
+
+    manuscripts = set(chain(bodley.subjects(RDF.type, FRBR.F4_Manifestation_Singleton),
+                            bibale.subjects(RDF.type, FRBR.F4_Manifestation_Singleton),
+                            sdbm.subjects(RDF.type, FRBR.F4_Manifestation_Singleton)))
+
+    for manu in manuscripts:
+        location = bodley.value(manu, MMMS.last_known_location_bodley, any=False) or \
+                   bibale.value(manu, MMMS.last_known_location_bibale, any=False) or \
+                   sdbm.value(manu, MMMS.last_known_location_sdbm, any=False)
+
+        if location:
+            sdbm.add((manu, MMMS.last_known_location, location))  # Note: Adding all to SDBM graph
+            log.debug('Manuscript %s last known location is %s' % (manu, location))
+        else:
+            log.warning('No last known location for %s' % manu)
+
+    return bibale, bodley, sdbm
+
+
 def main():
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
@@ -193,6 +317,22 @@ def main():
     work_linker = WorkLinker(sdbm, bodley, bibale)
     work_linker.get_recon_links()
     work_linker.link_works()
+
+    log.info('Getting last known locations')
+
+    geonames_apikeys = [os.environ['GEONAMES_KEY']]
+    try:
+        geonames_apikeys.append(os.environ['GEONAMES_KEY2'])
+        geonames_apikeys.append(os.environ['GEONAMES_KEY3'])
+        geonames_apikeys.append(os.environ['GEONAMES_KEY4'])
+        geonames_apikeys.append(os.environ['GEONAMES_KEY5'])
+        geonames_apikeys.append(os.environ['GEONAMES_KEY6'])
+    except KeyError:
+        pass
+
+    linker = PlaceLinker(geonames_apikeys)
+
+    bibale, bodley, sdbm = get_last_known_locations(bibale, bodley, sdbm, linker)
 
     log.info('Serializing output files...')
     filename_suffix = '_all.ttl'

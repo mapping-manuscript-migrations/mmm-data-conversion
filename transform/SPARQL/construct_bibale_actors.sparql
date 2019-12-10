@@ -78,7 +78,7 @@ CONSTRUCT {
     dct:source mmms:Bibale ;
     .
 
-  ?domicile_activity_event_mmm a ecrm:E7_Activity ;
+  ?domicile_activity_event_mmm a ecrm:E7_Activity , mmms:PlaceNationality ;
     ecrm:P11_had_participant ?actor_mmm ;
     skos:prefLabel "Domicile activity event" ;
     ecrm:P7_took_place_at ?place_mmm ;

@@ -15,7 +15,7 @@ from io import StringIO
 from rdflib import URIRef, RDF, OWL, Literal
 
 from linker_places import PlaceLinker
-from linker import read_manuscript_links, link_by_shelfmark, link_manuscripts
+from linker import read_manuscript_links, link_by_shelfmark, link_manuscripts, get_last_known_locations
 from mmm import change_resource_uri
 from namespaces import *
 
@@ -70,7 +70,7 @@ class TestLinkerSDBM(unittest.TestCase):
             owl:sameAs                    <http://vocab.getty.edu/tgn/7024079> ;
             wgs:lat                       "32"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
             wgs:long                      "56"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
-            skos:prefLabel                "Persia" .
+            skos:prefLabel                "Persia" .       
     """
 
     def test_handle_tgn_places_sdbm(self):
@@ -493,3 +493,165 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
 
         assert len(list(bib.predicate_objects(URIRef('http://ldf.fi/mmm/manifestation_singleton/bibale_007')))) > 1
         assert len(list(sdbm.predicate_objects(URIRef('http://ldf.fi/mmm/manifestation_singleton/bibale_007')))) > 1
+
+
+class TestLinker(unittest.TestCase):
+    test_csv = """PAYS,VILLE_ID MEDIUM,VILLE,ID_GEONAMES
+Allemagne,5,Aachen,3247449
+Suisse,120,Aarau,2661881
+Italie,1551,Abbadia san Salvatore,3183581
+France,652,Paris,2988507
+"""
+
+    extra_sdbm = """
+        @prefix :      <https://sdbm.library.upenn.edu/> .
+        @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+        @prefix mmms: <http://ldf.fi/mmm/schema/> .
+        @prefix dct:   <http://purl.org/dc/terms/> .
+        @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+        @prefix owl:   <http://www.w3.org/2002/07/owl#> .
+        @prefix afn:   <http://jena.hpl.hp.com/ARQ/function#> .
+        @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+        @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+        @prefix mmm:   <http://ldf.fi/mmm/> .
+        @prefix ecrm:   <http://erlangen-crm.org/current/> .
+        @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
+
+        <http://ldf.fi/mmm/manifestation_singleton/18044> 
+            ecrm:P46i_forms_part_of <http://ldf.fi/mmm/source/sdbm_34056> .
+        
+        <http://ldf.fi/mmm/event/sdbm_source_observation_11348>
+            a                           ecrm:E7_Activity ;
+            ecrm:P4_has_time-span       <http://ldf.fi/mmm/time/sdbm_sources_19640000> ;
+            ecrm:P70i_is_documented_in  <http://ldf.fi/mmm/source/sdbm_34056> ;
+            ecrm:P7_took_place_at       <http://ldf.fi/mmm/place/2121> , <http://ldf.fi/mmm/place/1012> , <http://ldf.fi/mmm/place/847> ;
+            mmms:carried_out_by_as_selling_agent
+                    <http://ldf.fi/mmm/actor/sdbm_11674> ;
+            mmms:data_provider_url      <https://sdbm.library.upenn.edu/entries/11348> ;
+            mmms:had_sales_price        <http://ldf.fi/mmm/monetary_amounts/sdbm_11338> ;
+            mmms:observed_manuscript    <http://ldf.fi/mmm/manifestation_singleton/18044> ;
+            <http://purl.org/dc/terms/source>
+                    mmms:SDBM ;
+            skos:prefLabel              "15" .
+
+    <http://ldf.fi/mmm/source/sdbm_34056>
+            a       <http://ldf.fi/mmm/schema/Source> ;
+            <http://ldf.fi/mmm/schema/data_provider_url>
+                    <https://sdbm.library.upenn.edu/sources/34056> ;
+            <http://ldf.fi/mmm/schema/source_agent>
+                    <http://ldf.fi/mmm/actor/sdbm_11674> ;
+            <http://ldf.fi/mmm/schema/source_date>
+                    <http://ldf.fi/mmm/time/sdbm_sources_19640000> ;
+            <http://ldf.fi/mmm/schema/source_location>
+                    <http://ldf.fi/mmm/place/tgn_7004333> , <http://ldf.fi/mmm/place/tgn_7014456> , <http://ldf.fi/mmm/place/tgn_7003765> , <http://ldf.fi/mmm/place/tgn_7007567> ;
+            <http://purl.org/dc/terms/source>
+                    <http://ldf.fi/mmm/schema/SDBM> ;
+            <http://www.w3.org/2004/02/skos/core#prefLabel>
+                    "15" .
+                        
+    <http://ldf.fi/mmm/time/sdbm_sources_19640000>
+            a                             ecrm:E52_Time-Span ;
+            ecrm:P82a_begin_of_the_begin  "1964-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+            ecrm:P82b_end_of_the_end      "1964-12-31"^^<http://www.w3.org/2001/XMLSchema#date> ;
+            <http://purl.org/dc/terms/source>
+                    mmms:SDBM ;
+            skos:prefLabel                "1964" .     
+
+    <http://ldf.fi/mmm/event/sdbm_actor_activity_8780>
+            a                         ecrm:E7_Activity , mmms:PlaceNationality ;
+            ecrm:P11_had_participant  <http://ldf.fi/mmm/actor/sdbm_11674> ;
+            ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8780> ;
+            ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7003765> ;
+            <http://purl.org/dc/terms/source>
+                    <http://ldf.fi/mmm/schema/SDBM> ;
+            <http://www.w3.org/2004/02/skos/core#prefLabel>
+                    "Place/nationality activity event" .
+
+    <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8780>
+            a                             ecrm:E52_Time-Span ;
+            ecrm:P82a_begin_of_the_begin  "1949-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+            ecrm:P82b_end_of_the_end      "1951-12-31"^^<http://www.w3.org/2001/XMLSchema#date> ;
+            <http://purl.org/dc/terms/source>
+                    <http://ldf.fi/mmm/schema/SDBM> ;
+            <http://www.w3.org/2004/02/skos/core#prefLabel>
+                    "1949 - 1951" .
+
+    <http://ldf.fi/mmm/event/sdbm_actor_activity_3143>
+            a                         ecrm:E7_Activity , mmms:PlaceNationality ;
+            ecrm:P11_had_participant  <http://ldf.fi/mmm/actor/sdbm_11674> ;
+            ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_3143> ;
+            ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7004333> ;
+            <http://purl.org/dc/terms/source>
+                    <http://ldf.fi/mmm/schema/SDBM> ;
+            <http://www.w3.org/2004/02/skos/core#prefLabel>
+                    "Place/nationality activity event" .
+    
+    <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_3143>
+            a                             ecrm:E52_Time-Span ;
+            ecrm:P82a_begin_of_the_begin  "1920-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+            ecrm:P82b_end_of_the_end      "1939-12-31"^^<http://www.w3.org/2001/XMLSchema#date> ;
+            <http://purl.org/dc/terms/source>
+                    <http://ldf.fi/mmm/schema/SDBM> ;
+            <http://www.w3.org/2004/02/skos/core#prefLabel>
+                    "1920 - 1939" .
+
+    <http://ldf.fi/mmm/event/sdbm_actor_activity_8486>
+            a                         ecrm:E7_Activity , mmms:PlaceNationality ;
+            ecrm:P11_had_participant  <http://ldf.fi/mmm/actor/sdbm_11674> ;
+            ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8486> ;
+            ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7007567> ;
+            <http://purl.org/dc/terms/source>
+                    <http://ldf.fi/mmm/schema/SDBM> ;
+            <http://www.w3.org/2004/02/skos/core#prefLabel>
+                    "Place/nationality activity event" .
+    
+    <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8486>
+            a                             ecrm:E52_Time-Span ;
+            ecrm:P82a_begin_of_the_begin  "1951-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+            ecrm:P82b_end_of_the_end      "1970-12-31"^^<http://www.w3.org/2001/XMLSchema#date> ;
+            <http://purl.org/dc/terms/source>
+                    <http://ldf.fi/mmm/schema/SDBM> ;
+            <http://www.w3.org/2004/02/skos/core#prefLabel>
+                    "1951 - 1970" .
+    """
+
+    test_sdbm_data = TestLinkerSDBM.test_sdbm_data + TestManuscriptLinking.test_sdbm + extra_sdbm
+    test_bodley_data = TestLinkerBodley.test_bodley_data
+    test_bibale_data = '''
+    @prefix mmms: <http://ldf.fi/mmm/schema/> .
+    @prefix dct:   <http://purl.org/dc/terms/> .
+    @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix owl:   <http://www.w3.org/2002/07/owl#> .
+    @prefix afn:   <http://jena.hpl.hp.com/ARQ/function#> .
+    @prefix frbroo2: <http://www.cidoc-crm.org/frbroo/> .
+    @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+    @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix mmm:   <http://ldf.fi/mmm/> .
+    @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
+    @prefix ecrm:   <http://erlangen-crm.org/current/> .
+    @prefix bibale: <http://bibale.irht.cnrs.fr/> .
+
+    <http://ldf.fi/mmm/manifestation_singleton/bibale_11267>
+        a                        frbroo:F4_Manifestation_Singleton ;
+        dct:source               mmms:Bibale ;
+        skos:prefLabel           "PARIS, Bibliothèque nationale de France, Manuscrits, ital. 2080" .
+
+    '''
+
+    def test_get_last_known_locations(self):
+        bib = Graph()
+        bib.parse(data=self.test_bibale_data, format='turtle')
+        bod = Graph()
+        bod.parse(data=self.test_bodley_data, format='turtle')
+        sdbm = Graph()
+        sdbm.parse(data=self.test_sdbm_data, format='turtle')
+
+        GEONAMES_APIKEYS = [os.environ['GEONAMES_KEY']]
+        linker = PlaceLinker(GEONAMES_APIKEYS)
+
+        bib, bod, sdbm = get_last_known_locations(bib, bod, sdbm, linker, csv=StringIO(self.test_csv))
+
+        self.assertEqual(len(list(bib.triples((None, MMMS.last_known_location_bibale, None)))), 1)
+        self.assertEqual(len(list(bod.triples((None, MMMS.last_known_location_bodley, None)))), 1)
+        self.assertEqual(len(list(sdbm.triples((None, MMMS.last_known_location_sdbm, None)))), 1)
+        self.assertEqual(len(list(sdbm.triples((None, MMMS.last_known_location, None)))), 3)

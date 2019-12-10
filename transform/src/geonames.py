@@ -196,6 +196,9 @@ class GeoNames:
         if (not region) or (not settlement):
             self.log.info('Place search with lacking information: %s - %s' % (country, region or settlement or ''))
 
+        if not country:
+            return None
+
         if country.startswith('USA (') and not region:
             country, region = self._usa_state(country)
 

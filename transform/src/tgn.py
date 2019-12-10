@@ -4,10 +4,12 @@
 
 import logging
 from decimal import Decimal
+from time import sleep
 from typing import Union
 
 import requests
 from rdflib import URIRef, Literal, RDF, OWL
+from requests import ReadTimeout, ConnectionError
 
 from namespaces import *
 
@@ -64,13 +66,21 @@ class TGN:
     def query_tgn(self, query, retries=3):
         results = None
         while (not results) and retries:
-            # TODO: Handle timeout exception
-            results = requests.post(self.endpoint,
-                                    {'query': query},
-                                    timeout=55).json()
+            try:
+                results = requests.post(self.endpoint,
+                                        {'query': query},
+                                        timeout=55).json()
+            except ReadTimeout:
+                self.log.error('HTTP request from TGN timed out %s' % ('(retrying)' if retries > 1 else ''))
+            except ConnectionError:
+                self.log.error('Connection error in HTTP request from TGN %s' % ('(retrying)' if retries > 1 else ''))
+
             retries -= 1
 
-        return results['results']['bindings']
+            if not results:
+                sleep(3)
+
+        return results['results']['bindings'] if results else []
 
     def search_tgn_place(self, place_name: str, lat: str, lon: str, radius='50km'):
         """
