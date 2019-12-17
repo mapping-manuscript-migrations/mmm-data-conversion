@@ -171,8 +171,8 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
     # BIBALE
 
     for manuscript in bibale.subjects(RDF.type, FRBR.F4_Manifestation_Singleton):
-        label = bibale.value(manuscript, SKOS.prefLabel)
-        shelfmark_city = str(label).split(',')[0].strip().lower() if ',' in label else None
+        label = str(bibale.value(manuscript, SKOS.prefLabel))
+        shelfmark_city = label.split(',')[0].strip().lower() if ',' in label else None
 
         tgn_uri = cities.get(shelfmark_city, {}).get('tgn')
         geonames_uri = cities.get(shelfmark_city, {}).get('geonames')
@@ -189,7 +189,7 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
         if tgn_match and tgn_match['uri']:
             tgn_uri = place_linker.tgn.mint_mmm_tgn_uri(tgn_match['uri'])
-            cities[shelfmark_city]['tgn'] = tgn_match['uri']
+            cities[shelfmark_city]['tgn'] = tgn_uri
         else:
             log.warning('No TGN match for %s (%s)' % (shelfmark_city, geonames_uri))
 
@@ -231,11 +231,11 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
                     log.debug('SDBM domicile event %s times %s - %s' % (event, event_time_begin, event_time_end))
 
-                    if source_time_begin < event_time_begin or source_time_end > event_time_end:
+                    if ((source_time_begin and event_time_begin) and (source_time_begin < event_time_begin)) or \
+                            ((source_time_begin and event_time_begin) and (source_time_end > event_time_end)):
                         continue
 
                     place_triples = sdbm.triples((event, CRM.P7_took_place_at, None))
-
                     for (_, _, place) in place_triples:
                         valid_places.append(place)
 
@@ -252,7 +252,7 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
     for manu in manuscripts:
         location = bodley.value(manu, MMMS.last_known_location_bodley, any=False) or \
                    bibale.value(manu, MMMS.last_known_location_bibale, any=False) or \
-                   sdbm.value(manu, MMMS.last_known_location_sdbm, any=False)
+                   sdbm.value(manu, MMMS.last_known_location_sdbm)  # NOTE: Can contain multiple values, now picking one
 
         if location:
             sdbm.add((manu, MMMS.last_known_location, location))  # Note: Adding all to SDBM graph
@@ -331,7 +331,6 @@ def main():
         pass
 
     linker = PlaceLinker(geonames_apikeys)
-
     bibale, bodley, sdbm = get_last_known_locations(bibale, bodley, sdbm, linker)
 
     log.info('Serializing output files...')
