@@ -6,6 +6,7 @@ import argparse
 import logging
 import re
 from itertools import chain
+from operator import itemgetter
 from typing import Iterable, DefaultDict
 
 import os
@@ -211,7 +212,8 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
         # events = chain(sdbm.subjects(CRM.P30_transferred_custody_of, manuscript),
         #                sdbm.subjects(MMMS.observed_manuscript, manuscript))
 
-        valid_places = []
+        valid_undated_places = []
+        valid_date_places = []
 
         for source in sources:
             actors = chain(sdbm.objects(source, CRM.P51_has_former_or_current_owner),
@@ -223,6 +225,7 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
             log.debug('SDBM source %s times %s - %s' % (source, source_time_begin, source_time_end))
 
+            # Get location from actors place/nationality events
             for actor in actors:
                 events = sdbm.subjects(CRM.P11_had_participant, actor)
                 for event in events:
@@ -241,11 +244,19 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
                     place_triples = sdbm.triples((event, CRM.P7_took_place_at, None))
                     for (_, _, place) in place_triples:
-                        valid_places.append(place)
+                        source_date = event_time_end or source_time_end or event_time_begin or source_time_begin or None
+                        if source_date:
+                            valid_date_places.append((place, source_date))
+                        else:
+                            valid_undated_places.append(place)
 
-        log.info('SDBM last known locations for %s are %s' % (manuscript, valid_places))
-        for place in valid_places:
+        log.info('SDBM last known locations for %s are %s' % (manuscript, valid_undated_places + valid_date_places))
+        if valid_date_places:
+            place = sorted(valid_date_places, key=itemgetter(1), reverse=True)[0]
             sdbm.add((manuscript, MMMS.last_known_location_sdbm, URIRef(place)))
+        else:
+            for place in valid_undated_places:
+                sdbm.add((manuscript, MMMS.last_known_location_sdbm, URIRef(place)))
 
     # Get a last known location with a priority list
 
