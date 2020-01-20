@@ -69,8 +69,8 @@ CONSTRUCT {
     ecrm:P108_has_produced ?manifestation_singleton ;
     ecrm:P4_has_time-span ?production_timespan ;
     ecrm:P7_took_place_at ?production_place_mmm ;
-    # mmms:carried_out_by_as_artist ?production_artist ;
-    # mmms:carried_out_by_as_scribe ?production_scribe ;
+    mmms:carried_out_by_as_artist ?artist ;
+    mmms:carried_out_by_as_scribe ?scribe ;
     dct:source mmms:SDBM ;
     .
 
@@ -194,7 +194,7 @@ WHERE {
     ?entry_author :entry_authors_entry_id ?entry .
     ?entry_author :entry_authors_author_id ?author_ .
     FILTER NOT EXISTS { ?author_ :names_deleted true }
-    ?entry_author :entry_authors_observed_name ?observed_author .
+    # ?entry_author :entry_authors_observed_name ?observed_author .
   }
 
   # production date
@@ -225,8 +225,18 @@ WHERE {
   }
 
   # TODO: artist
+  OPTIONAL {
+    ?entry_artists :entry_artists_entry_id ?entry .
+    ?entry_artists :entry_artists_artist_id ?artist_ .
+    FILTER NOT EXISTS { ?artist_ :names_deleted true }
+  }
 
   # TODO: scribe
+  OPTIONAL {
+    ?entry_scribes :entry_scribes_entry_id ?entry .
+    ?entry_scribes :entry_scribes_scribe_id ?scribe_ .
+    FILTER NOT EXISTS { ?scribe_ :names_deleted true }
+  }
 
   # place
   OPTIONAL {
@@ -448,6 +458,12 @@ WHERE {
 
   BIND(REPLACE(STR(?author_), "^.*\\/(.+)", "$1") as ?author_id)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?author_id)) as ?author)
+
+  BIND(REPLACE(STR(?artist_), "^.*\\/(.+)", "$1") as ?artist_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?artist_id)) as ?artist)
+
+  BIND(REPLACE(STR(?scribe_), "^.*\\/(.+)", "$1") as ?scribe_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?scribe_id)) as ?scribe)
 
   BIND(REPLACE(STR(?prov_agent_), "^.*\\/(.+)", "$1") as ?prov_agent_id)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?prov_agent_id)) as ?prov_agent)
