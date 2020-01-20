@@ -110,7 +110,7 @@ WHERE
     }
   }
   OPTIONAL {
-    BIND(ecrm:E7_Activity as ?event_type)
+    BIND(mmms:ManuscriptActivity as ?event_type)
     BIND(mmms:observed_manuscript as ?event_property)
     BIND(mmms:ownership_attributed_to as ?event_seller_or_holder_property)
   }

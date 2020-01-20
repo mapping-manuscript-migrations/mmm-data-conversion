@@ -16,7 +16,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT
 {
-  ?provenance_event_mmm a ecrm:E7_Activity ;  # Data contains only observations of manifestation singletons
+  ?provenance_event_mmm a mmms:ManuscriptActivity ;  # Data contains only observations of manifestation singletons
     skos:prefLabel ?label ;
     mmms:observed_manuscript ?manifestation_singleton_mmm ;
     mmms:ownership_attributed_to ?actor_mmm ;

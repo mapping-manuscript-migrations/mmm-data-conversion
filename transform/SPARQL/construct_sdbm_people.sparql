@@ -52,7 +52,7 @@ CONSTRUCT {
     dct:source mmms:SDBM ;
     .
 
-  ?activity_event_mmm a ecrm:E7_Activity , mmms:PlaceNationality ;
+  ?activity_event_mmm a mmms:PlaceNationality ;
     ecrm:P11_had_participant ?mmm_actor_uri ;
     skos:prefLabel "Place/nationality activity event" ;
     ecrm:P4_has_time-span ?activity_timespan_mmm ;

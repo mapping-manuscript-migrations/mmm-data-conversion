@@ -266,6 +266,17 @@
   .
 
 :PlaceNationality a rdfs:Class ;
-  rdfs:subClassOf crm:E7_Activity ;
+  rdfs:subClassOf :ActorActivity ;
   skos:prefLabel "Nationality / residence / permanent location" ;
   .
+
+:ActorActivity a rdfs:Class ;
+  rdfs:subClassOf crm:E7_Activity ;
+  skos:prefLabel "Actor activity" ;
+  .
+
+:ManuscriptActivity a rdfs:Class ;
+  rdfs:subClassOf crm:E7_Activity ;
+  skos:prefLabel "Manuscript related activity" ;
+  .
+

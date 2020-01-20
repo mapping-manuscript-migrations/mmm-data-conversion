@@ -70,7 +70,7 @@ class TestLinkerSDBM(unittest.TestCase):
             owl:sameAs                    <http://vocab.getty.edu/tgn/7024079> ;
             wgs:lat                       "32"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
             wgs:long                      "56"^^<http://www.w3.org/2001/XMLSchema#decimal> ;
-            skos:prefLabel                "Persia" .       
+            skos:prefLabel                "Persia" .
     """
 
     def test_handle_tgn_places_sdbm(self):
@@ -517,9 +517,9 @@ France,652,Paris,2988507
         @prefix ecrm:   <http://erlangen-crm.org/current/> .
         @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
 
-        <http://ldf.fi/mmm/manifestation_singleton/18044> 
+        <http://ldf.fi/mmm/manifestation_singleton/18044>
             ecrm:P46i_forms_part_of <http://ldf.fi/mmm/source/sdbm_34056> .
-        
+
         <http://ldf.fi/mmm/event/sdbm_source_observation_11348>
             a                           ecrm:E7_Activity ;
             ecrm:P4_has_time-span       <http://ldf.fi/mmm/time/sdbm_sources_19640000> ;
@@ -548,17 +548,17 @@ France,652,Paris,2988507
                     <http://ldf.fi/mmm/schema/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "15" .
-                        
+
     <http://ldf.fi/mmm/time/sdbm_sources_19640000>
             a                             ecrm:E52_Time-Span ;
             ecrm:P82a_begin_of_the_begin  "1964-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
             ecrm:P82b_end_of_the_end      "1964-12-31"^^<http://www.w3.org/2001/XMLSchema#date> ;
             <http://purl.org/dc/terms/source>
                     mmms:SDBM ;
-            skos:prefLabel                "1964" .     
+            skos:prefLabel                "1964" .
 
     <http://ldf.fi/mmm/event/sdbm_actor_activity_8780>
-            a                         ecrm:E7_Activity , mmms:PlaceNationality ;
+            a                         mmms:PlaceNationality ;
             ecrm:P11_had_participant  <http://ldf.fi/mmm/actor/sdbm_11674> ;
             ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8780> ;
             ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7003765> ;
@@ -577,7 +577,7 @@ France,652,Paris,2988507
                     "1949 - 1951" .
 
     <http://ldf.fi/mmm/event/sdbm_actor_activity_3143>
-            a                         ecrm:E7_Activity , mmms:PlaceNationality ;
+            a                         mmms:PlaceNationality ;
             ecrm:P11_had_participant  <http://ldf.fi/mmm/actor/sdbm_11674> ;
             ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_3143> ;
             ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7004333> ;
@@ -585,7 +585,7 @@ France,652,Paris,2988507
                     <http://ldf.fi/mmm/schema/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "Place/nationality activity event" .
-    
+
     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_3143>
             a                             ecrm:E52_Time-Span ;
             ecrm:P82a_begin_of_the_begin  "1920-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
@@ -596,7 +596,7 @@ France,652,Paris,2988507
                     "1920 - 1939" .
 
     <http://ldf.fi/mmm/event/sdbm_actor_activity_8486>
-            a                         ecrm:E7_Activity , mmms:PlaceNationality ;
+            a                         mmms:PlaceNationality ;
             ecrm:P11_had_participant  <http://ldf.fi/mmm/actor/sdbm_11674> ;
             ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8486> ;
             ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7007567> ;
@@ -604,7 +604,7 @@ France,652,Paris,2988507
                     <http://ldf.fi/mmm/schema/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "Place/nationality activity event" .
-    
+
     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8486>
             a                             ecrm:E52_Time-Span ;
             ecrm:P82a_begin_of_the_begin  "1951-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
