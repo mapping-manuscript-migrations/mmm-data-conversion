@@ -1,0 +1,57 @@
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix ldf-schema: <http://ldf.fi/schema/ldf/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ssd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+
+<http://ldf.fi/mmm> a ssd:Dataset , void:Dataset , dcat:Dataset ;
+    ldf-schema:dataVisualization <http://www.ldf.fi/visualization/mmm> ;
+    ldf-schema:starRating 6 ;
+    dct:description """<p>The Mapping Manuscript Migrations project (MMM) transformed 
+        three separate datasets into a unified knowledge graph. The source databases include
+        </p>
+        <ul>
+            <li><i>Schoenberg Database of Manuscripts</i> from the University of Pennsylvania,</li>
+            <li><i>Bibale database</i> from the Institut de recherche et d’histoire des textes, and</li> 
+            <li><i>Medieval Manuscripts Catalogue</i> from the University of Oxford.</li>
+        </ul>
+        <p>To test and demonstrate its usefulness, the MMM Knowledge Graph is in use in the 
+        <a target=\"_blank\" href=\"https://mappingmanuscriptmigrations.org/\">MMM Semantic Portal</a>, 
+        explained in more detail in the 
+        <a target=\"_blank\" href=\"https://seco.cs.aalto.fi/projects/mmm/\">project page</a>.</p>"""@en ;
+    dct:license <https://creativecommons.org/licenses/by-nc/4.0/> ;
+    dct:title "Mapping Manuscript Migrations"@en ;
+    dct:publisher <http://seco.cs.aalto.fi> ;
+    dct:rightsHolder <http://seco.cs.aalto.fi> ;
+    dct:creator <http://seco.cs.aalto.fi> ;
+    void:sparqlEndpoint <http://ldf.fi/mmm/sparql> ;
+    void:uriLookupEndPoint <http://ldf.fi/data?uri=> ;
+    void:uriSpace "http://ldf.fi/mmm/" ;
+    # void:dataDump <https://zenodo.org/record/3431122/files/warsampo.zip> ;
+    foaf:homepage <http://www.ldf.fi/dataset/mmm> .
+
+<http://ldf.fi/mmm/sparql> a ssd:Service ;
+    ssd:defaultDataset <http://ldf.fi/mmm> ;
+    ssd:defaultEntailmentRegime <http://www.w3.org/ns/entailment/Simple> ;
+    ssd:endpoint <http://ldf.fi/mmm/sparql> ;
+    ssd:feature ssd:DereferencesURIs,
+        ssd:UnionDefaultGraph ;
+    ssd:resultFormat <http://www.w3.org/ns/formats/N-Triples>,
+        <http://www.w3.org/ns/formats/N3>,
+        <http://www.w3.org/ns/formats/RDF_XML>,
+        <http://www.w3.org/ns/formats/Turtle> ;
+    ssd:supportedLanguage ssd:SPARQL11Query .
+
+
+<http://seco.cs.aalto.fi> a foaf:Organization ;
+    skos:prefLabel "Semantic Computing Research Group (SeCo)"@en , "Semanttisen laskennan tutkimusryhmä (SeCo)"@fi ;
+	foaf:mbox "seco-help@list.aalto.fi" ;
+	foaf:homepage "http://seco.cs.aalto.fi" ;
+	foaf:phone "+358 50 4316071" .
+

@@ -16,4 +16,6 @@ $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-cidoc/ $FUSEKI_HOME/cidoc-crm.r
 $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/schema/mmm/ $FUSEKI_HOME/frbroo.rdf
 $FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm-cidoc/ $FUSEKI_HOME/frbroo.rdf
 
+$FUSEKI_HOME/tdbloader --graph=http://ldf.fi/mmm/void/ $FUSEKI_HOME/mmm-void.ttl
+
 $FUSEKI_HOME/tdbindexer
