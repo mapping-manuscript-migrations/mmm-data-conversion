@@ -6,6 +6,7 @@ import argparse
 import logging
 import re
 from itertools import chain
+from operator import itemgetter
 from typing import Iterable, DefaultDict
 
 import os
@@ -154,6 +155,8 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
     for manuscript in bodley.subjects(RDF.type, FRBR.F4_Manifestation_Singleton):
         bodley.add((manuscript, MMMS.last_known_location_bodley, MMMP.tgn_7011931))
 
+    # BIBALE
+
     csv_data = pd.read_csv(csv, header=0, keep_default_na=False, names=["pays", "ville_id", "ville", "geonames_id"])
 
     cities = DefaultDict(dict)
@@ -168,8 +171,6 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
         log.debug('Got a Bibale shelfmark city link for %s: %s' % (city, geonames_id))
 
-    # BIBALE
-
     for manuscript in bibale.subjects(RDF.type, FRBR.F4_Manifestation_Singleton):
         label = str(bibale.value(manuscript, SKOS.prefLabel))
         shelfmark_city = label.split(',')[0].strip().lower() if ',' in label else None
@@ -177,6 +178,8 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
         tgn_uri = cities.get(shelfmark_city, {}).get('tgn')
         geonames_uri = cities.get(shelfmark_city, {}).get('geonames')
         country = cities.get(shelfmark_city, {}).get('country')
+
+        log.info('City %s, country %s, TGN %s, GeoNames %s' % (shelfmark_city, country, tgn_uri, geonames_uri))
 
         if not tgn_uri:
             if geonames_uri:
@@ -187,11 +190,11 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
                 tgn_match, geo_match = place_linker.link_geonames_place_to_tgn(
                     country=country, settlement=shelfmark_city)
 
-        if tgn_match and tgn_match['uri']:
-            tgn_uri = place_linker.tgn.mint_mmm_tgn_uri(tgn_match['uri'])
-            cities[shelfmark_city]['tgn'] = tgn_uri
-        else:
-            log.warning('No TGN match for %s (%s)' % (shelfmark_city, geonames_uri))
+            if tgn_match and tgn_match['uri']:
+                tgn_uri = place_linker.tgn.mint_mmm_tgn_uri(tgn_match['uri'])
+                cities[shelfmark_city]['tgn'] = tgn_uri
+            else:
+                log.warning('No TGN match for %s (%s)' % (shelfmark_city, geonames_uri))
 
         if tgn_uri:
             log.info('Adding manuscript %s last known location %s' % (manuscript, tgn_uri))
@@ -201,13 +204,16 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
     for manuscript in sdbm.subjects(RDF.type, FRBR.F4_Manifestation_Singleton):
 
+        # TODO: Create tuples (location, date) and order by date and pick all with the most recent date. date = end_of_end or begin_of_begin (plus other 2)
+
         sources = chain(sdbm.objects(manuscript, CRM.P46i_forms_part_of),
                         sdbm.objects(manuscript, CRM.P70i_is_documented_in))
 
         # events = chain(sdbm.subjects(CRM.P30_transferred_custody_of, manuscript),
         #                sdbm.subjects(MMMS.observed_manuscript, manuscript))
 
-        valid_places = []
+        valid_undated_places = []
+        valid_date_places = []
 
         for source in sources:
             actors = chain(sdbm.objects(source, CRM.P51_has_former_or_current_owner),
@@ -219,6 +225,7 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
             log.debug('SDBM source %s times %s - %s' % (source, source_time_begin, source_time_end))
 
+            # Get location from actors place/nationality events
             for actor in actors:
                 events = sdbm.subjects(CRM.P11_had_participant, actor)
                 for event in events:
@@ -237,11 +244,19 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
                     place_triples = sdbm.triples((event, CRM.P7_took_place_at, None))
                     for (_, _, place) in place_triples:
-                        valid_places.append(place)
+                        source_date = event_time_end or source_time_end or event_time_begin or source_time_begin or None
+                        if source_date:
+                            valid_date_places.append((place, source_date))
+                        else:
+                            valid_undated_places.append(place)
 
-        log.info('SDBM last known locations for %s are %s' % (manuscript, valid_places))
-        for place in valid_places:
+        log.info('SDBM last known locations for %s are %s' % (manuscript, valid_undated_places + valid_date_places))
+        if valid_date_places:
+            place = sorted(valid_date_places, key=itemgetter(1), reverse=True)[0]
             sdbm.add((manuscript, MMMS.last_known_location_sdbm, URIRef(place)))
+        else:
+            for place in valid_undated_places:
+                sdbm.add((manuscript, MMMS.last_known_location_sdbm, URIRef(place)))
 
     # Get a last known location with a priority list
 

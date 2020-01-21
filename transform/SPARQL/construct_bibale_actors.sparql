@@ -61,7 +61,7 @@ CONSTRUCT {
     dct:source mmms:Bibale ;
     .
 
-  ?religion_event_mmm a ecrm:E7_Activity ;
+  ?religion_event_mmm a mmms:ActorActivity ;
     ecrm:P11_had_participant ?actor_mmm ;
     skos:prefLabel "Religion event" ;
     ecrm:P3_has_note ?religion_text, ?religious_order ;
@@ -78,14 +78,14 @@ CONSTRUCT {
     dct:source mmms:Bibale ;
     .
 
-  ?domicile_activity_event_mmm a ecrm:E7_Activity , mmms:PlaceNationality ;
+  ?domicile_activity_event_mmm a mmms:PlaceNationality ;
     ecrm:P11_had_participant ?actor_mmm ;
     skos:prefLabel "Domicile activity event" ;
     ecrm:P7_took_place_at ?place_mmm ;
     dct:source mmms:Bibale ;
     .
 
-  ?activity_event_mmm a ecrm:E7_Activity ;
+  ?activity_event_mmm a mmms:ActorActivity ;
     ecrm:P11_had_participant ?actor_mmm ;
     skos:prefLabel "Activity event" ;
     ecrm:P4_has_time-span ?activity_timespan_mmm ;

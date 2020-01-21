@@ -74,9 +74,18 @@ WHERE
     # ?entry :entries_transaction_type "sale" or "gift"
     ?sales_entry :sales_entry_id ?entry .
 
-    OPTIONAL { ?sales_entry :sales_price ?sales_price }
-    OPTIONAL { ?sales_entry :sales_currency ?sales_currency }
-    OPTIONAL { ?sales_entry :sales_other_currency ?sales_other_currency }
+    OPTIONAL {
+      ?sales_entry :sales_price ?sales_price .
+      FILTER(STR(?sales_price) != "")
+    }
+    OPTIONAL {
+      ?sales_entry :sales_currency ?sales_currency .
+      FILTER(STR(?sales_currency) != "")
+  }
+    OPTIONAL {
+      ?sales_entry :sales_other_currency ?sales_other_currency .
+      FILTER(STR(?sales_other_currency) != "")
+  }
     OPTIONAL {
       ?sales_entry :sales_sold "Yes"
       BIND(ecrm:E10_Transfer_of_Custody as ?event_type)
@@ -110,7 +119,7 @@ WHERE
     }
   }
   OPTIONAL {
-    BIND(ecrm:E7_Activity as ?event_type)
+    BIND(mmms:ManuscriptActivity as ?event_type)
     BIND(mmms:observed_manuscript as ?event_property)
     BIND(mmms:ownership_attributed_to as ?event_seller_or_holder_property)
   }
