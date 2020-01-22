@@ -13,7 +13,7 @@
 <http://ldf.fi/mmm> a ssd:Dataset , void:Dataset , dcat:Dataset ;
     ldf-schema:dataVisualization <http://www.ldf.fi/visualization/mmm> ;
     ldf-schema:starRating 6 ;
-    dct:description """<p>The Mapping Manuscript Migrations project (MMM) transformed 
+    dct:description """<p>The Mapping Manuscript Migrations (MMM) project transformed 
         three separate datasets into a unified knowledge graph. The source databases include
         </p>
         <ul>
