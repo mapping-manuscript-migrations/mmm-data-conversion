@@ -278,6 +278,21 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
     return bibale, bodley, sdbm
 
 
+def annotate_decades(bibale: Graph, bodley: Graph, sdbm: Graph):
+    for g in [bibale, bodley, sdbm]:
+        for sub in g.subjects(RDF.type, CRM['E52_Time-Span']):
+
+            # TODO: If time-span is open-ended, assume 100 years as the maximum length, add this to data
+
+            # TODO: decades_start = begin_begin or begin_end
+            # TODO: decades_end = end_end or end_begin
+
+            # TODO: Loop over decades from start to end (YYY_), annotate each to time-span
+            pass
+
+    return bibale, bodley, sdbm
+
+
 def main():
     argparser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars='@')
 
@@ -347,6 +362,10 @@ def main():
 
     linker = PlaceLinker(geonames_apikeys)
     bibale, bodley, sdbm = get_last_known_locations(bibale, bodley, sdbm, linker)
+
+    log.info('Improving time-spans and annotating decades')
+
+    bibale, bodley, sdbm = annotate_decades(bibale, bodley, sdbm)
 
     log.info('Serializing output files...')
     filename_suffix = '_all.ttl'
