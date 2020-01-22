@@ -10,6 +10,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX bod-roles: <https://medieval.bodleian.ox.ac.uk/catalog/authority/roles/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 # TODO: crm:P12i_was_present_at, crm:P46i_forms_part_of
 
@@ -41,7 +42,7 @@ CONSTRUCT {
     skos:prefLabel ?manifestation_singleton_preflabel ;
     ecrm:P128_carries ?expression_mmm ;
     ecrm:P52_has_current_owner ?prov_agent_mmm ;
-    ecrm:P45_consists_of ?material_uri ;
+    ecrm:P45_consists_of ?material_uri_mmm ;
     mmms:data_provider_url ?manifestation_singleton ;
     mmms:manuscript_author ?work_conception_author_mmm ;  # shortcut
     mmms:manuscript_work ?work_mmm ;  # shortcut
@@ -57,8 +58,9 @@ CONSTRUCT {
     dct:source mmms:Bodley ;
     .
 
-  ?material_uri a ecrm:E57_Material ;
-    skos:prefLabel ?material_label ;
+  ?material_uri_mmm a ecrm:E57_Material ;
+    # skos:prefLabel ?material_label ;
+    owl:sameAs ?material_uri ;  # AAT link
     .
 
 }
@@ -246,4 +248,6 @@ WHERE
 
   BIND(REPLACE(STR(?collection), "^.*\\/(.+)", "$1") as ?collection_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/collection/bodley_", ?collection_local_id)) as ?collection_mmm)
+
+  BIND(IRI(CONCAT(STR(mmm:), "material/", LCASE(REPLACE(?material_uri, "[ \\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-")))) as ?material_uri_mmm)
 }

@@ -252,7 +252,7 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
         log.info('SDBM last known locations for %s are %s' % (manuscript, valid_undated_places + valid_date_places))
         if valid_date_places:
-            place = sorted(valid_date_places, key=itemgetter(1), reverse=True)[0]
+            place = sorted(valid_date_places, key=itemgetter(1), reverse=True)[0][0]
             sdbm.add((manuscript, MMMS.last_known_location_sdbm, URIRef(place)))
         else:
             for place in valid_undated_places:
