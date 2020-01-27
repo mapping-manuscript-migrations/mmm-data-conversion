@@ -17,24 +17,44 @@
         three separate datasets into a unified knowledge graph. The source databases include
         </p>
         <ul>
-            <li><i>Schoenberg Database of Manuscripts</i> from the University of Pennsylvania,</li>
-            <li><i>Bibale database</i> from the Institut de recherche et d’histoire des textes, and</li> 
-            <li><i>Medieval Manuscripts Catalogue</i> from the University of Oxford.</li>
+            <li><i>Schoenberg Database of Manuscripts</i> from the Schoenberg Institute for Manuscript Studies,</li>
+            <li><i>Bibale database</i> from the Institute for Research and History of Texts, and</li> 
+            <li><i>Medieval Manuscripts Catalogue</i> from the Bodleian Libraries.</li>
         </ul>
         <p>To test and demonstrate its usefulness, the MMM Knowledge Graph is in use in the 
-        <a target=\"_blank\" href=\"https://mappingmanuscriptmigrations.org/\">MMM Semantic Portal</a>, 
+        <a target='blank' href='https://mappingmanuscriptmigrations.org/'>MMM Semantic Portal</a>, 
         explained in more detail in the 
-        <a target=\"_blank\" href=\"https://seco.cs.aalto.fi/projects/mmm/\">project page</a>.</p>"""@en ;
-    dct:license <https://creativecommons.org/licenses/by-nc/4.0/> ;
+        <a target='blank' href='https://seco.cs.aalto.fi/projects/mmm/'>project page</a>.</p>"""@en ;
+    dct:license <http://creativecommons.org/licenses/by-nc/4.0/> ;
     dct:title "Mapping Manuscript Migrations"@en ;
     dct:publisher <http://seco.cs.aalto.fi> ;
-    dct:rightsHolder <http://seco.cs.aalto.fi> ;
+    dct:rightsHolder <http://seco.cs.aalto.fi>, 
+        <https://schoenberginstitute.org>,
+        <https://www.bodleian.ox.ac.uk>,
+        <https://www.irht.cnrs.fr> ;
     dct:creator <http://seco.cs.aalto.fi> ;
     void:sparqlEndpoint <http://ldf.fi/mmm/sparql> ;
     void:uriLookupEndPoint <http://ldf.fi/data?uri=> ;
     void:uriSpace "http://ldf.fi/mmm/" ;
     # void:dataDump <https://zenodo.org/record/3431122/files/warsampo.zip> ;
+    ssd:namedGraph [
+		a ssd:NamedGraph ;
+		ssd:name <http://ldf.fi/mmm/> ;
+		ssd:graph <http://ldf.fi/mmm/> ;
+	] ;
     foaf:homepage <http://www.ldf.fi/dataset/mmm> .
+
+<http://ldf.fi/mmm/> a ssd:Graph ;
+    dct:title "Mapping Manuscript Migrations"@en ;
+    void:exampleResource <http://ldf.fi/mmm/manifestation_singleton/sdbm_784> ;
+    void:uriSpace "http://ldf.fi/mmm/" ;
+    void:vocabulary <http://ldf.fi/schema/mmm>, 
+        <http://erlangen-crm.org/current/>,
+        <http://erlangen-crm.org/efrbroo/>, 
+        <http://vocab.getty.edu/ontology#>,
+        rdf:,
+        rdfs:,
+        skos: .
 
 <http://ldf.fi/mmm/sparql> a ssd:Service ;
     ssd:defaultDataset <http://ldf.fi/mmm> ;
@@ -48,10 +68,20 @@
         <http://www.w3.org/ns/formats/Turtle> ;
     ssd:supportedLanguage ssd:SPARQL11Query .
 
-
 <http://seco.cs.aalto.fi> a foaf:Organization ;
-    skos:prefLabel "Semantic Computing Research Group (SeCo)"@en , "Semanttisen laskennan tutkimusryhmä (SeCo)"@fi ;
+    skos:prefLabel "Semantic Computing Research Group (SeCo)"@en ;
 	foaf:mbox "seco-help@list.aalto.fi" ;
 	foaf:homepage "http://seco.cs.aalto.fi" ;
 	foaf:phone "+358 50 4316071" .
 
+<https://schoenberginstitute.org> a foaf:Organization ;
+    skos:prefLabel "The Schoenberg Institute for Manuscript Studies"@en ;
+	foaf:homepage "https://schoenberginstitute.org" .
+
+<https://www.bodleian.ox.ac.uk> a foaf:Organization ;
+    skos:prefLabel "The Bodleian Libraries"@en ;
+	foaf:homepage "https://www.bodleian.ox.ac.uk" .
+
+<https://www.irht.cnrs.fr> a foaf:Organization ;
+    skos:prefLabel "The Institute for Research and History of Texts"@en ;
+	foaf:homepage "https://www.irht.cnrs.fr/?q=en" .
