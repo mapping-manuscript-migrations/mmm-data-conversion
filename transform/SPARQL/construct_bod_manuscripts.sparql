@@ -28,6 +28,7 @@ CONSTRUCT {
     mmms:carried_out_by_as_patron ?production_patron_mmm ;
     mmms:carried_out_by_as_scribe ?production_scribe_mmm ;
     mmms:carried_out_by_as_signer ?production_signer_mmm ;
+    skos:prefLabel ?production_label ;
     dct:source mmms:Bodley ;
     .
 
@@ -92,7 +93,10 @@ WHERE
   # PRODUCTION
   OPTIONAL {
     ?manifestation_singleton crm:P108i_was_produced_by ?production .
-    ?production rdfs:label ?production_label .
+    OPTIONAL {
+      ?production rdfs:label ?production_label_ .
+      BIND(STR(?production_label_) as ?production_label)
+    }
     OPTIONAL {
       ?production crm:P4_has_time-span ?production_timespan .
       ?production_timespan crm:P82a_begin_of_the_begin ?production_timespan_begin .
@@ -207,8 +211,8 @@ WHERE
   BIND(REPLACE(STR(?child_manifestation_singleton), "^.*\\/(.+)", "$1") as ?child_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/manifestation_singleton/bodley_", ?child_local_id)) as ?child_manifestation_singleton_mmm)
 
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bodley_production", ?manifestation_singleton_local_id)) as ?production_mmm)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_production", ?manifestation_singleton_local_id)) as ?production_timespan_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/event/bodley_production_", ?manifestation_singleton_local_id)) as ?production_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_production_", ?manifestation_singleton_local_id)) as ?production_timespan_mmm)
 
   BIND(REPLACE(STR(?production_place), "^.*\\/(.+)", "$1") as ?production_place_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bodley_", REPLACE(?production_place_local_id, ":", "_"))) as ?production_place_mmm)

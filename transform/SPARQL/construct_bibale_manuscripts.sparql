@@ -42,6 +42,7 @@ CONSTRUCT {
    mmms:carried_out_by_as_illuminator ?production_illuminator_mmm ;
    mmms:carried_out_by_as_printer ?production_printer_mmm ;
    mmms:carried_out_by_as_scribe ?production_scribe_mmm ;
+   skos:prefLabel ?production_label ;
    dct:source mmms:Bibale ;
    .
 
@@ -333,6 +334,8 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_printer_local_id)) as ?production_printer_mmm)
   BIND(REPLACE(STR(?production_scribe), "^.*\\/(.+)", "$1") as ?production_scribe_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?production_scribe_local_id)) as ?production_scribe_mmm)
+
+  BIND(CONCAT("Production of ", ?preflabel) as ?production_label)
 
   BIND(REPLACE(STR(?expression), "^.*\\/(.+)", "$1") as ?expression_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/expression/bibale_", ?expression_local_id)) as ?expression_mmm)

@@ -11,8 +11,6 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-# TODO: Material URIs etc. to be based on the material to avoid duplicates
-
 # TODO: prefLabels for measurements
 
 # TODO: Separate production events for each time-span (manuscript date in SDBM), see e.g. http://ldf.fi/mmm/manifestation_singleton/sdbm_orphan_254076
@@ -62,7 +60,7 @@ CONSTRUCT {
     dct:source mmms:SDBM .
 
   ?production a ecrm:E12_Production ;
-    # skos:prefLabel # TODO
+    skos:prefLabel ?production_label ;
     ecrm:P108_has_produced ?manifestation_singleton ;
     ecrm:P4_has_time-span ?production_timespan ;
     ecrm:P7_took_place_at ?production_place_mmm ;
@@ -480,4 +478,6 @@ WHERE {
 
   BIND(REPLACE(STR(?provenance_entry), "^.*\\/(.+)", "$1") as ?provenance_entry_id)
   BIND(IRI(CONCAT(STR(mmm:), "event/sdbm_provenance", ?provenance_entry_id)) as ?observation_mmm)
+
+  BIND(CONCAT("Production of ", ?manuscript_preflabel) as ?production_label)
 }
