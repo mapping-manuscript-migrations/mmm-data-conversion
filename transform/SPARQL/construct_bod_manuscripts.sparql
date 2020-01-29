@@ -46,6 +46,7 @@ CONSTRUCT {
     ecrm:P45_consists_of ?material_uri_mmm ;
     mmms:data_provider_url ?manifestation_singleton ;
     mmms:manuscript_author ?work_conception_author_mmm ;  # shortcut
+    mmms:manuscript_author ?production_author_mmm ;  # shortcut
     mmms:manuscript_work ?work_mmm ;  # shortcut
     mmms:shelfmark_buchanan ?shelfmark_buchanan ;
     mmms:shelfmark_christ_church ?shelfmark_christ_church ;

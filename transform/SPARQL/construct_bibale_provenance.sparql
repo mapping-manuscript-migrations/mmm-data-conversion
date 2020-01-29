@@ -25,7 +25,7 @@ CONSTRUCT {
     .
 
   ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
-    ecrm:P51_has_former_or_current_owner ?prov_agent ;
+    ecrm:P51_has_former_or_current_owner ?actor_mmm ;
     dct:source mmms:Bibale ;
     .
 }

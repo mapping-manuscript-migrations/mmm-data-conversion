@@ -25,7 +25,7 @@ CONSTRUCT {
   ?work_conception_mmm a frbroo:F27_Work_Conception ;
     skos:prefLabel ?work_conception_pref_label ;
     frbroo:R16_initiated ?work_mmm ;
-    mmms:carried_out_by_as_author ?author_mmm ;  # TODO: P14 carried out by
+    mmms:carried_out_by_as_author ?author_mmm ;
     mmms:carried_out_by_as_translator ?translator_mmm ;
     mmms:carried_out_by_as_editor ?editor_mmm ;
     mmms:carried_out_by_as_commissioner ?commissioner_mmm ;

@@ -438,7 +438,6 @@ WHERE {
 
   BIND(REPLACE(STR(?entry_title), "^.*\\/(.+)", "$1") as ?title_id)
   BIND(IRI(CONCAT(STR(mmm:), "work/", ?title_id)) as ?work)
-  BIND(IRI(CONCAT(STR(mmm:), "event/sdbm_work_conception_", ?title_id)) as ?work_conception)
   BIND(IRI(CONCAT(STR(mmm:), "expression/", ?title_id)) as ?expression)
   BIND(IRI(CONCAT(STR(mmm:), "event/sdbm_expression_creation_", ?title_id)) as ?expression_creation)
 
@@ -452,7 +451,7 @@ WHERE {
   BIND(IRI(CONCAT(?source_namespace, ?source_id)) as ?source_mmm)
 
   BIND(REPLACE(STR(?author_), "^.*\\/(.+)", "$1") as ?author_id)
-  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?author_id)) as ?author)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", STR(?author_id))) as ?author)
 
   BIND(REPLACE(STR(?artist_), "^.*\\/(.+)", "$1") as ?artist_id)
   BIND(IRI(CONCAT(STR(mmm:), "actor/sdbm_", ?artist_id)) as ?artist)
