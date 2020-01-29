@@ -5,7 +5,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmms: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/schema/mmm/>
 PREFIX mmm-actors: <http://ldf.fi/mmm/actor/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

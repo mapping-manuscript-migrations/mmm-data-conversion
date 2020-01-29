@@ -4,7 +4,7 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX ecrm: <http://erlangen-crm.org/current/>
 PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
 PREFIX mmm: <http://ldf.fi/mmm/>
-PREFIX mmms: <http://ldf.fi/mmm/schema/>
+PREFIX mmms: <http://ldf.fi/schema/mmm/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -67,5 +67,5 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/place/bibale_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
 
   BIND(REPLACE(STR(?place_type), "^.*\\/(.+)", "$1") as ?place_type_local_id)
-  BIND(IRI(CONCAT("http://ldf.fi/mmm/schema/bibale_", REPLACE(?place_type_local_id, ":", "_"))) as ?place_type_mmm)
+  BIND(IRI(CONCAT("http://ldf.fi/schema/mmm/bibale_", REPLACE(?place_type_local_id, ":", "_"))) as ?place_type_mmm)
 }

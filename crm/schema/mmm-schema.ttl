@@ -1,10 +1,205 @@
-@prefix : <http://ldf.fi/mmm/schema/> .
+@prefix : <http://ldf.fi/schema/mmm/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix crm: <http://erlangen-crm.org/current/> .
 @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix mmmp: <http://ldf.fi/mmm/place/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+## Schema metadata
+
+: a owl:Ontology ;
+  skos:prefLabel "Mapping Manuscript Migrations Metadata Schema" ;
+  dct:license <https://creativecommons.org/licenses/by-nc/4.0/> ;
+  dct:publisher <http://seco.cs.aalto.fi> ;
+  dct:rightsHolder <http://seco.cs.aalto.fi> ;
+  dct:creator <http://seco.cs.aalto.fi> ;
+  dct:modified "2020-01-29"^^xsd:date .
+
+# RDF
+
+rdf:type a rdf:Property ;
+	rdfs:isDefinedBy <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ;
+	rdfs:label "type" ;
+	rdfs:comment "The subject is an instance of a class." ;
+	rdfs:range rdfs:Class ;
+	rdfs:domain rdfs:Resource .
+
+rdf:Property a rdfs:Class ;
+	rdfs:isDefinedBy <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ;
+	rdfs:label "Property" ;
+	rdfs:comment "The class of RDF properties." ;
+	rdfs:subClassOf rdfs:Resource .
+
+
+# RDF Schema
+
+rdfs:Resource a rdfs:Class ;
+	rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#> ;
+	rdfs:label "Resource" ;
+	rdfs:comment "The class resource, everything." .
+
+rdfs:Class a rdfs:Class ;
+	rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#> ;
+	rdfs:label "Class" ;
+	rdfs:comment "The class of classes." ;
+	rdfs:subClassOf rdfs:Resource .
+
+rdfs:subClassOf a rdf:Property ;
+	rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#> ;
+	rdfs:label "subClassOf" ;
+	rdfs:comment "The subject is a subclass of a class." ;
+	rdfs:range rdfs:Class ;
+	rdfs:domain rdfs:Class .
+
+rdfs:comment a rdf:Property ;
+	rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#> ;
+	rdfs:label "comment" ;
+	rdfs:comment "A description of the subject resource." ;
+	rdfs:domain rdfs:Resource ;
+	rdfs:range rdfs:Literal .
+
+rdfs:label a rdf:Property ;
+	rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#> ;
+	rdfs:label "label" ;
+	rdfs:comment "A human-readable name for the subject." ;
+	rdfs:domain rdfs:Resource ;
+	rdfs:range rdfs:Literal .
+
+rdfs:domain a rdf:Property ;
+	rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#> ;
+	rdfs:label "domain" ;
+	rdfs:comment "A domain of the subject property." ;
+	rdfs:range rdfs:Class ;
+	rdfs:domain rdf:Property .
+
+rdfs:range a rdf:Property ;
+	rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#> ;
+	rdfs:label "range" ;
+	rdfs:comment "A range of the subject property." ;
+	rdfs:range rdfs:Class ;
+	rdfs:domain rdf:Property .
+
+rdfs:Literal a rdfs:Class ;
+	rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#> ;
+	rdfs:label "Literal" ;
+	rdfs:comment "The class of literal values, eg. textual strings and integers." ;
+	rdfs:subClassOf rdfs:Resource .
+
+# OWL
+
+owl:Class a rdfs:Class ;
+     rdfs:label "Class" ;
+     rdfs:comment "The class of OWL classes." ;
+     rdfs:isDefinedBy <http://www.w3.org/2002/07/owl#> ;
+     rdfs:subClassOf rdfs:Class .
+
+owl:DatatypeProperty a rdfs:Class ;
+     rdfs:label "DatatypeProperty" ;
+     rdfs:comment "The class of data properties." ;
+     rdfs:isDefinedBy <http://www.w3.org/2002/07/owl#> ;
+     rdfs:subClassOf rdf:Property .
+
+ owl:AnnotationProperty a rdfs:Class ;
+      rdfs:label "AnnotationProperty" ;
+      rdfs:comment "The class of annotation properties." ;
+      rdfs:isDefinedBy <http://www.w3.org/2002/07/owl#> ;
+      rdfs:subClassOf rdf:Property .
+
+owl:ObjectProperty a rdfs:Class ;
+     rdfs:label "ObjectProperty" ;
+     rdfs:comment "The class of object properties." ;
+     rdfs:isDefinedBy <http://www.w3.org/2002/07/owl#> ;
+     rdfs:subClassOf rdf:Property .
+
+# SKOS
+
+skos:Concept
+    a owl:Class ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "Concept" ;
+    skos:definition "An idea or notion; a unit of thought."@en .
+
+skos:prefLabel
+    a rdf:Property, owl:AnnotationProperty ;
+    rdfs:comment """A resource has no more than one value of skos:prefLabel per
+      language tag, and no more than one value of skos:prefLabel without language tag."""@en ;
+    rdfs:comment "The range of skos:prefLabel is the class of RDF plain literals."@en ;
+    rdfs:comment """skos:prefLabel, skos:altLabel and skos:hiddenLabel are pairwise
+      disjoint properties."""@en ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "preferred label" ;
+    rdfs:subPropertyOf rdfs:label ;
+    skos:definition "The preferred lexical label for a resource, in a given language."@en .
+
+skos:altLabel
+    a rdf:Property, owl:AnnotationProperty ;
+    rdfs:comment "The range of skos:altLabel is the class of RDF plain literals."@en ;
+    rdfs:comment "skos:prefLabel, skos:altLabel and skos:hiddenLabel are pairwise disjoint properties."@en ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "alternative label" ;
+    rdfs:subPropertyOf rdfs:label ;
+    skos:definition "An alternative lexical label for a resource."@en ;
+    skos:example """Acronyms, abbreviations, spelling variants, and irregular plural/singular
+      forms may be included among the alternative labels for a concept. Mis-spelled terms
+      are normally included as hidden labels (see skos:hiddenLabel)."""@en .
+
+skos:hiddenLabel
+    a rdf:Property, owl:AnnotationProperty ;
+    rdfs:comment "The range of skos:hiddenLabel is the class of RDF plain literals."@en ;
+    rdfs:comment "skos:prefLabel, skos:altLabel and skos:hiddenLabel are pairwise disjoint properties."@en ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "hidden label" ;
+    rdfs:subPropertyOf rdfs:label ;
+    skos:definition """A lexical label for a resource that should be hidden when generating visual
+      displays of the resource, but should still be accessible to free text search operations."""@en .
+
+skos:definition
+    a rdf:Property, owl:AnnotationProperty ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "definition" ;
+    rdfs:subPropertyOf skos:note ;
+    skos:definition "A statement or formal explanation of the meaning of a concept."@en .
+
+skos:example
+    a rdf:Property, owl:AnnotationProperty ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "example" ;
+    rdfs:subPropertyOf skos:note ;
+    skos:definition "An example of the use of a concept."@en .
+
+skos:ConceptScheme
+    a owl:Class ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "Concept Scheme" ;
+    owl:disjointWith skos:Concept ;
+    skos:definition "A set of concepts, optionally including statements about semantic relationships between those concepts."@en ;
+    skos:example "Thesauri, classification schemes, subject heading lists, taxonomies, 'folksonomies', and other types of controlled vocabulary are all examples of concept schemes. Concept schemes are also embedded in glossaries and terminologies."@en ;
+    skos:scopeNote "A concept scheme may be defined to include concepts from different sources."@en .
+
+skos:hasTopConcept
+    a rdf:Property, owl:ObjectProperty ;
+    rdfs:domain skos:ConceptScheme ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "has top concept" ;
+    rdfs:range skos:Concept ;
+    owl:inverseOf skos:topConceptOf ;
+    skos:definition "Relates, by convention, a concept scheme to a concept which is topmost in the broader/narrower concept hierarchies for that scheme, providing an entry point to these hierarchies."@en .
+
+skos:note
+    a rdf:Property, owl:AnnotationProperty ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:label "note" ;
+    skos:definition "A general note, for any purpose."@en ;
+    skos:scopeNote "This property may be used directly, or as a super-property for more specific note types."@en .
+
+
+######
+
 
 :entry a rdf:Property;
   skos:prefLabel "Source entry in SDBM" .

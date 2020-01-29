@@ -120,7 +120,7 @@ Yolande de Bar,,,,,female,http://ldf.fi/mmm/actor/bibale_2013,Bibale
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
     @prefix dct:   <http://purl.org/dc/terms/> .
     @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-    @prefix mmms:  <http://ldf.fi/mmm/schema/> .
+    @prefix mmms:  <http://ldf.fi/schema/mmm/> .
     @prefix owl:   <http://www.w3.org/2002/07/owl#> .
     @prefix ecrm:  <http://erlangen-crm.org/current/> .
     @prefix mmma:  <http://ldf.fi/mmm/actor/> .

@@ -24,7 +24,7 @@ class TestLinkerSDBM(unittest.TestCase):
     test_sdbm_data = """
     @prefix :      <https://sdbm.library.upenn.edu/> .
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-    @prefix mmms: <http://ldf.fi/mmm/schema/> .
+    @prefix mmms: <http://ldf.fi/schema/mmm/> .
     @prefix dct:   <http://purl.org/dc/terms/> .
     @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -114,7 +114,7 @@ class TestLinkerBodley(unittest.TestCase):
     test_bodley_data = """
     @prefix :      <https://sdbm.library.upenn.edu/> .
     @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-    @prefix mmms: <http://ldf.fi/mmm/schema/> .
+    @prefix mmms: <http://ldf.fi/schema/mmm/> .
     @prefix dct:   <http://purl.org/dc/terms/> .
     @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -208,7 +208,7 @@ class TestLinkerBodley(unittest.TestCase):
 
 class TestLinkerBibale(unittest.TestCase):
     test_bibale_data = """
-    @prefix mmms: <http://ldf.fi/mmm/schema/> .
+    @prefix mmms: <http://ldf.fi/schema/mmm/> .
     @prefix dct:   <http://purl.org/dc/terms/> .
     @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -394,7 +394,7 @@ http://bibale.irht.cnrs.fr/10832,,https://sdbm.library.upenn.edu/manuscripts/180
         @base <http://ldf.fi/mmm/> .
         @prefix :      <https://sdbm.library.upenn.edu/> .
         @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-        @prefix mmms: <http://ldf.fi/mmm/schema/> .
+        @prefix mmms: <http://ldf.fi/schema/mmm/> .
         @prefix dct:   <http://purl.org/dc/terms/> .
         @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
         @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -506,7 +506,7 @@ France,652,Paris,2988507
     extra_sdbm = """
         @prefix :      <https://sdbm.library.upenn.edu/> .
         @prefix wgs:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-        @prefix mmms: <http://ldf.fi/mmm/schema/> .
+        @prefix mmms: <http://ldf.fi/schema/mmm/> .
         @prefix dct:   <http://purl.org/dc/terms/> .
         @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
         @prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -535,17 +535,17 @@ France,652,Paris,2988507
             skos:prefLabel              "15" .
 
     <http://ldf.fi/mmm/source/sdbm_34056>
-            a       <http://ldf.fi/mmm/schema/Source> ;
-            <http://ldf.fi/mmm/schema/data_provider_url>
+            a       <http://ldf.fi/schema/mmm/Source> ;
+            <http://ldf.fi/schema/mmm/data_provider_url>
                     <https://sdbm.library.upenn.edu/sources/34056> ;
-            <http://ldf.fi/mmm/schema/source_agent>
+            <http://ldf.fi/schema/mmm/source_agent>
                     <http://ldf.fi/mmm/actor/sdbm_11674> ;
-            <http://ldf.fi/mmm/schema/source_date>
+            <http://ldf.fi/schema/mmm/source_date>
                     <http://ldf.fi/mmm/time/sdbm_sources_19640000> ;
-            <http://ldf.fi/mmm/schema/source_location>
+            <http://ldf.fi/schema/mmm/source_location>
                     <http://ldf.fi/mmm/place/tgn_7004333> , <http://ldf.fi/mmm/place/tgn_7014456> , <http://ldf.fi/mmm/place/tgn_7003765> , <http://ldf.fi/mmm/place/tgn_7007567> ;
             <http://purl.org/dc/terms/source>
-                    <http://ldf.fi/mmm/schema/SDBM> ;
+                    <http://ldf.fi/schema/mmm/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "15" .
 
@@ -563,7 +563,7 @@ France,652,Paris,2988507
             ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8780> ;
             ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7003765> ;
             <http://purl.org/dc/terms/source>
-                    <http://ldf.fi/mmm/schema/SDBM> ;
+                    <http://ldf.fi/schema/mmm/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "Place/nationality activity event" .
 
@@ -572,7 +572,7 @@ France,652,Paris,2988507
             ecrm:P82a_begin_of_the_begin  "1949-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
             ecrm:P82b_end_of_the_end      "1951-12-31"^^<http://www.w3.org/2001/XMLSchema#date> ;
             <http://purl.org/dc/terms/source>
-                    <http://ldf.fi/mmm/schema/SDBM> ;
+                    <http://ldf.fi/schema/mmm/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "1949 - 1951" .
 
@@ -582,7 +582,7 @@ France,652,Paris,2988507
             ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_3143> ;
             ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7004333> ;
             <http://purl.org/dc/terms/source>
-                    <http://ldf.fi/mmm/schema/SDBM> ;
+                    <http://ldf.fi/schema/mmm/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "Place/nationality activity event" .
 
@@ -591,7 +591,7 @@ France,652,Paris,2988507
             ecrm:P82a_begin_of_the_begin  "1920-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
             ecrm:P82b_end_of_the_end      "1939-12-31"^^<http://www.w3.org/2001/XMLSchema#date> ;
             <http://purl.org/dc/terms/source>
-                    <http://ldf.fi/mmm/schema/SDBM> ;
+                    <http://ldf.fi/schema/mmm/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "1920 - 1939" .
 
@@ -601,7 +601,7 @@ France,652,Paris,2988507
             ecrm:P4_has_time-span     <http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8486> ;
             ecrm:P7_took_place_at     <http://ldf.fi/mmm/place/tgn_7007567> ;
             <http://purl.org/dc/terms/source>
-                    <http://ldf.fi/mmm/schema/SDBM> ;
+                    <http://ldf.fi/schema/mmm/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "Place/nationality activity event" .
 
@@ -610,7 +610,7 @@ France,652,Paris,2988507
             ecrm:P82a_begin_of_the_begin  "1951-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
             ecrm:P82b_end_of_the_end      "1970-12-31"^^<http://www.w3.org/2001/XMLSchema#date> ;
             <http://purl.org/dc/terms/source>
-                    <http://ldf.fi/mmm/schema/SDBM> ;
+                    <http://ldf.fi/schema/mmm/SDBM> ;
             <http://www.w3.org/2004/02/skos/core#prefLabel>
                     "1951 - 1970" .
     """
@@ -618,7 +618,7 @@ France,652,Paris,2988507
     test_sdbm_data = TestLinkerSDBM.test_sdbm_data + TestManuscriptLinking.test_sdbm + extra_sdbm
     test_bodley_data = TestLinkerBodley.test_bodley_data
     test_bibale_data = '''
-    @prefix mmms: <http://ldf.fi/mmm/schema/> .
+    @prefix mmms: <http://ldf.fi/schema/mmm/> .
     @prefix dct:   <http://purl.org/dc/terms/> .
     @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix owl:   <http://www.w3.org/2002/07/owl#> .
