@@ -8,6 +8,8 @@ import re
 from itertools import chain
 from operator import itemgetter
 from typing import Iterable, DefaultDict
+from dateutil import parser
+from dateutil.relativedelta import relativedelta
 
 import os
 import pandas as pd
@@ -279,16 +281,69 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
 
 
 def annotate_decades(bibale: Graph, bodley: Graph, sdbm: Graph):
+    """
+    Annotate decades as integers to all time-spans
+    """
     for g in [bibale, bodley, sdbm]:
-        for sub in g.subjects(RDF.type, CRM['E52_Time-Span']):
+        for ts in list(g.subjects(RDF.type, CRM['E52_Time-Span'])):
 
-            # TODO: If time-span is open-ended, assume 100 years as the maximum length, add this to data
+            ts_bb = g.value(ts, CRM.P82a_begin_of_the_begin, default='')
+            ts_eb = g.value(ts, CRM.P81a_end_of_the_begin, default='')
+            ts_be = g.value(ts, CRM.P81b_begin_of_the_end, default='')
+            ts_ee = g.value(ts, CRM.P82b_end_of_the_end, default='')
 
-            # TODO: decades_start = begin_begin or begin_end
-            # TODO: decades_end = end_end or end_begin
+            try:
+                bb = parser.parse(ts_bb)
+            except ValueError:
+                bb = None
+                g.remove((ts, None, ts_bb))
 
-            # TODO: Loop over decades from start to end (YYY_), annotate each to time-span
-            pass
+            try:
+                eb = parser.parse(ts_eb)
+            except ValueError:
+                eb = None
+                g.remove((ts, None, ts_eb))
+
+            try:
+                be = parser.parse(ts_be)
+            except ValueError:
+                be = None
+                g.remove((ts, None, ts_be))
+
+            try:
+                ee = parser.parse(ts_ee)
+            except ValueError:
+                ee = None
+                g.remove((ts, None, ts_ee))
+
+            if not (bb or eb or be or ee):
+                g.remove((ts, None, None))
+                g.remove((None, None, ts))
+                log.info('Removed unknown time-span %s' % ts)
+                continue
+
+            if bb and not ee:
+                ee = bb + relativedelta(years=100)
+                if be:
+                    assert ee > be
+                g.add((ts, CRM.P82b_end_of_the_end, ee))
+                log.info('Added time-span ending %s for %s' % (ee, ts))
+            elif ee and not bb:
+                bb = ee - relativedelta(years=100)
+                if eb:
+                    assert eb > bb
+                g.add((ts, CRM.P82a_begin_of_the_begin, bb))
+                log.info('Added time-span beginning %s for %s' % (bb, ts))
+
+            decades_start = bb or be
+            decades_end = ee or eb
+
+            year_start = decades_start.year
+            year_end = decades_end.year
+
+            for year in range(year_start, year_end + 1):
+                decade = year // 10 * 10
+                g.add((ts, MMMS.decade, Literal(decade)))
 
     return bibale, bodley, sdbm
 

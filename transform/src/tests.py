@@ -15,7 +15,8 @@ from io import StringIO
 from rdflib import URIRef, RDF, OWL, Literal
 
 from linker_places import PlaceLinker
-from linker import read_manuscript_links, link_by_shelfmark, link_manuscripts, get_last_known_locations
+from linker import read_manuscript_links, link_by_shelfmark, link_manuscripts, get_last_known_locations, \
+    annotate_decades
 from mmm import change_resource_uri
 from namespaces import *
 
@@ -655,3 +656,27 @@ France,652,Paris,2988507
         self.assertEqual(len(list(bod.triples((None, MMMS.last_known_location_bodley, None)))), 1)
         self.assertEqual(len(list(sdbm.triples((None, MMMS.last_known_location_sdbm, None)))), 1)
         self.assertEqual(len(list(sdbm.triples((None, MMMS.last_known_location, None)))), 3)
+
+    def test_annotate_decades(self):
+        bib = Graph()
+        bib.parse(data=self.test_bibale_data, format='turtle')
+        bod = Graph()
+        bod.parse(data=self.test_bodley_data, format='turtle')
+        sdbm = Graph()
+        sdbm.parse(data=self.test_sdbm_data, format='turtle')
+
+        bib, bod, sdbm = annotate_decades(bib, bod, sdbm)
+
+        decades = sdbm.objects(URIRef('http://ldf.fi/mmm/time/sdbm_sources_19640000'), MMMS.decade)
+        assert sorted(decades) == [Literal(1960)]
+
+        decades = sdbm.objects(URIRef('http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8780'), MMMS.decade)
+        assert sorted(decades) == [Literal(1940), Literal(1950)]
+
+        decades = sdbm.objects(URIRef('http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_3143'), MMMS.decade)
+        assert sorted(decades) == [Literal(1920), Literal(1930)]
+
+        decades = sdbm.objects(URIRef('http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8486'), MMMS.decade)
+        assert sorted(decades) == [Literal(1950), Literal(1960), Literal(1970)]
+
+
