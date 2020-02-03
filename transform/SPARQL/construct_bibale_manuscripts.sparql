@@ -26,8 +26,17 @@ CONSTRUCT {
    mmms:carried_out_by_as_author ?expression_author_mmm ;
    mmms:carried_out_by_as_scribe ?expression_scribe_mmm ;
    ecrm:P7_took_place_at ?expression_place_mmm ;
-   dct:source mmms:Bibale ;
+   ecrm:P4_has_time-span ?expression_timespan_mmm ;
    .
+
+  ?expression_timespan_mmm a ecrm:E52_Time-Span ;
+    skos:prefLabel ?expression_timespan_label ;
+    ecrm:P82a_begin_of_the_begin ?expression_timespan_bb ;
+    ecrm:P81a_end_of_the_begin ?expression_timespan_eb ;
+    ecrm:P81b_begin_of_the_end ?expression_timespan_be ;
+    ecrm:P82b_end_of_the_end ?expression_timespan_ee ;
+    dct:source mmms:Bibale ;
+    .
 
  ?production_mmm a ecrm:E12_Production ;
    ecrm:P108_has_produced ?manifestation_singleton_mmm ;
@@ -240,6 +249,15 @@ WHERE
                                                                crm:P02_has_range ?expression_scribe ;
                                                                ]
       }
+      OPTIONAL {
+        ?expression_creation crm:P4_has_time-span ?expression_timespan .
+
+        OPTIONAL { ?expression_timespan crm:P82a_begin_of_the_begin ?expression_timespan_bb }
+        OPTIONAL { ?expression_timespan crm:P81a_end_of_the_begin ?expression_timespan_eb }
+        OPTIONAL { ?expression_timespan crm:P81b_begin_of_the_end ?expression_timespan_be }
+        OPTIONAL { ?expression_timespan crm:P82b_end_of_the_end ?expression_timespan_ee }
+        OPTIONAL { ?expression_timespan rdfs:label ?expression_timespan_label_ }
+      }
     }
   }
 
@@ -350,6 +368,9 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?expression_author_local_id)) as ?expression_author_mmm)
   BIND(REPLACE(STR(?expression_scribe), "^.*\\/(.+)", "$1") as ?expression_scribe_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?expression_scribe_local_id)) as ?expression_scribe_mmm)
+
+  BIND(REPLACE(STR(?expression_timespan), "^.*\\/(.+)", "$1") as ?expression_timespan_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?expression_timespan_local_id, ":", "_"))) as ?expression_timespan_mmm)
 
   BIND(REPLACE(STR(?work), "^.*\\/(.+)", "$1") as ?work_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/work/bibale_", ?work_local_id)) as ?work_mmm)

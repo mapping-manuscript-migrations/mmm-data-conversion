@@ -32,7 +32,16 @@ CONSTRUCT {
     mmms:carried_out_by_as_recipient ?recipient_mmm ;
     ecrm:P7_took_place_at ?place_mmm ;
     dct:source mmms:Bibale ;
-    # TODO: ADD CREATION TIME-SPANS (here or to expression creation)
+    ecrm:P4_has_time-span ?timespan_mmm ;
+    .
+
+  ?timespan_mmm a ecrm:E52_Time-Span ;
+    skos:prefLabel ?timespan_label ;
+    ecrm:P82a_begin_of_the_begin ?timespan_bb ;
+    ecrm:P81a_end_of_the_begin ?timespan_eb ;
+    ecrm:P81b_begin_of_the_end ?timespan_be ;
+    ecrm:P82b_end_of_the_end ?timespan_ee ;
+    dct:source mmms:Bibale ;
     .
 }
 WHERE
@@ -81,6 +90,15 @@ WHERE
         crm:P02_has_range ?work_conception_recipient ;
       ] ;
     }
+    OPTIONAL {
+      ?work_conception crm:P4_has_time-span ?timespan .
+
+      OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?timespan_bb }
+      OPTIONAL { ?timespan crm:P81a_end_of_the_begin ?timespan_eb }
+      OPTIONAL { ?timespan crm:P81b_begin_of_the_end ?timespan_be }
+      OPTIONAL { ?timespan crm:P82b_end_of_the_end ?timespan_ee }
+      OPTIONAL { ?timespan rdfs:label ?timespan_label_ }
+    }
   }
 
   BIND(CONCAT("Work conception of ", ?work_pref_label) as ?work_conception_pref_label)
@@ -104,4 +122,7 @@ WHERE
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?commissioner_local_id)) as ?commissioner_mmm)
   BIND(REPLACE(STR(?work_conception_recipient), "^.*\\/(.+)", "$1") as ?recipient_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bibale_", ?recipient_local_id)) as ?recipient_mmm)
+
+  BIND(REPLACE(STR(?timespan), "^.*\\/(.+)", "$1") as ?timespan_local_id)
+  BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bibale_", REPLACE(?timespan_local_id, ":", "_"))) as ?timespan_mmm)
 }
