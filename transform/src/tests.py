@@ -12,6 +12,7 @@ import pprint
 import unittest
 from io import StringIO
 
+from datetime import date
 from rdflib import URIRef, RDF, OWL, Literal
 
 from linker_places import PlaceLinker
@@ -679,4 +680,19 @@ France,652,Paris,2988507
         decades = sdbm.objects(URIRef('http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8486'), MMMS.decade)
         assert sorted(decades) == [Literal(1950), Literal(1960), Literal(1970)]
 
+    def test_annotate_decades_timespan_end(self):
+        bib = Graph()
+        bib.parse(data=self.test_bibale_data, format='turtle')
+        bod = Graph()
+        bod.parse(data=self.test_bodley_data, format='turtle')
+        sdbm = Graph()
+        sdbm.parse(data=self.test_sdbm_data, format='turtle')
 
+        ts = URIRef('http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_8486')
+        sdbm.remove((ts, CRM.P82b_end_of_the_end, None))
+
+        bib, bod, sdbm = annotate_decades(bib, bod, sdbm)
+
+        assert sdbm.value(ts, CRM.P82b_end_of_the_end) == Literal(date(2051, 1, 1))
+
+        self.assertEqual(len(list(sdbm.objects(ts, MMMS.decade))), 11)

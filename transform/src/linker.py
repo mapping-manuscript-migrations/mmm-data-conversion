@@ -8,6 +8,8 @@ import re
 from itertools import chain
 from operator import itemgetter
 from typing import Iterable, DefaultDict
+
+from datetime import date
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
@@ -323,16 +325,16 @@ def annotate_decades(bibale: Graph, bodley: Graph, sdbm: Graph):
                 continue
 
             if bb and not ee:
-                ee = bb + relativedelta(years=100)
+                ee = (bb + relativedelta(years=100)).date()
                 if be:
                     assert ee > be
-                g.add((ts, CRM.P82b_end_of_the_end, ee))
+                g.add((ts, CRM.P82b_end_of_the_end, Literal(ee)))
                 log.info('Added time-span ending %s for %s' % (ee, ts))
             elif ee and not bb:
-                bb = ee - relativedelta(years=100)
+                bb = (ee - relativedelta(years=100)).date()
                 if eb:
                     assert eb > bb
-                g.add((ts, CRM.P82a_begin_of_the_begin, bb))
+                g.add((ts, CRM.P82a_begin_of_the_begin, Literal(bb)))
                 log.info('Added time-span beginning %s for %s' % (bb, ts))
 
             decades_start = bb or be
