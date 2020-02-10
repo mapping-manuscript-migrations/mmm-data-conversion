@@ -13,7 +13,7 @@ import unittest
 from io import StringIO
 
 from datetime import date
-from rdflib import URIRef, RDF, OWL, Literal
+from rdflib import URIRef, RDF, OWL, Literal, XSD
 
 from linker_places import PlaceLinker
 from linker import read_manuscript_links, link_by_shelfmark, link_manuscripts, get_last_known_locations, \
@@ -696,3 +696,22 @@ France,652,Paris,2988507
         assert sdbm.value(ts, CRM.P82b_end_of_the_end) == Literal(date(2051, 1, 1))
 
         self.assertEqual(len(list(sdbm.objects(ts, MMMS.decade))), 11)
+
+    def test_annotate_decades_bc_date(self):
+        bib = Graph()
+        bib.parse(data=self.test_bibale_data, format='turtle')
+        bod = Graph()
+        bod.parse(data=self.test_bodley_data, format='turtle')
+        sdbm = Graph()
+        sdbm.parse(data=self.test_sdbm_data, format='turtle')
+
+        ts = URIRef('http://ldf.fi/mmm/time/sdbm_actor_activity_timespan_007')
+        sdbm.add((ts, RDF.type, CRM['E52_Time-Span']))
+        sdbm.add((ts, CRM.P82a_begin_of_the_begin, Literal('-0056-10-23', datatype=XSD.date)))
+        sdbm.add((ts, CRM.P82b_end_of_the_end, Literal('-0026-03-01', datatype=XSD.date)))
+
+        bib, bod, sdbm = annotate_decades(bib, bod, sdbm)
+
+        assert sdbm.value(ts, CRM.P82b_end_of_the_end) == Literal('-0026-03-01', datatype=XSD.date)
+
+        self.assertEqual(len(list(sdbm.objects(ts, MMMS.decade))), 4)

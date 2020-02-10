@@ -9,8 +9,7 @@ from itertools import chain
 from operator import itemgetter
 from typing import Iterable, DefaultDict
 
-from datetime import date
-from dateutil import parser
+import arrow
 from dateutil.relativedelta import relativedelta
 
 import os
@@ -282,6 +281,26 @@ def get_last_known_locations(bibale: Graph, bodley: Graph, sdbm: Graph, place_li
     return bibale, bodley, sdbm
 
 
+def _parse_date(graph: Graph, timespan: URIRef, date_prop: URIRef):
+    """
+    Get date value and parse date from ISO 8601 string and remove invalid ones. Modify graph in place.
+    Return information whether the date is BC or not, and return BC dates as strings.
+    """
+    date_str = str(graph.value(timespan, date_prop, default=''))
+
+    # Check for BC dates as Python can't handle them
+    if str(date_str).startswith('-'):
+        return date_str, True
+
+    try:
+        parsed_date = arrow.get(date_str).date()
+    except ValueError:
+        parsed_date = None
+        graph.remove((timespan, None, date_str))
+
+    return parsed_date, False
+
+
 def annotate_decades(bibale: Graph, bodley: Graph, sdbm: Graph):
     """
     Annotate decades as integers to all time-spans
@@ -289,59 +308,49 @@ def annotate_decades(bibale: Graph, bodley: Graph, sdbm: Graph):
     for g in [bibale, bodley, sdbm]:
         for ts in list(g.subjects(RDF.type, CRM['E52_Time-Span'])):
 
-            ts_bb = g.value(ts, CRM.P82a_begin_of_the_begin, default='')
-            ts_eb = g.value(ts, CRM.P81a_end_of_the_begin, default='')
-            ts_be = g.value(ts, CRM.P81b_begin_of_the_end, default='')
-            ts_ee = g.value(ts, CRM.P82b_end_of_the_end, default='')
+            bb, bb_bc = _parse_date(g, ts, CRM.P82a_begin_of_the_begin)
+            eb, eb_bc = _parse_date(g, ts, CRM.P81a_end_of_the_begin)
+            be, be_bc = _parse_date(g, ts, CRM.P81b_begin_of_the_end)
+            ee, ee_bc = _parse_date(g, ts, CRM.P82b_end_of_the_end)
 
-            try:
-                bb = parser.parse(ts_bb)
-            except ValueError:
-                bb = None
-                g.remove((ts, None, ts_bb))
+            bc_dates = True in (bb_bc, eb_bc, be_bc, ee_bc)
 
-            try:
-                eb = parser.parse(ts_eb)
-            except ValueError:
-                eb = None
-                g.remove((ts, None, ts_eb))
+            if bc_dates:
+                log.info('Time-span with BC dates: %s' % ts)
 
-            try:
-                be = parser.parse(ts_be)
-            except ValueError:
-                be = None
-                g.remove((ts, None, ts_be))
-
-            try:
-                ee = parser.parse(ts_ee)
-            except ValueError:
-                ee = None
-                g.remove((ts, None, ts_ee))
-
-            if not (bb or eb or be or ee):
+            elif not (bb or eb or be or ee):
                 g.remove((ts, None, None))
                 g.remove((None, None, ts))
-                log.info('Removed unknown time-span %s' % ts)
+                log.info('Removed unknown time-span: %s' % ts)
                 continue
 
-            if bb and not ee:
-                ee = (bb + relativedelta(years=100)).date()
-                if be:
-                    assert ee > be
-                g.add((ts, CRM.P82b_end_of_the_end, Literal(ee)))
-                log.info('Added time-span ending %s for %s' % (ee, ts))
-            elif ee and not bb:
-                bb = (ee - relativedelta(years=100)).date()
-                if eb:
-                    assert eb > bb
-                g.add((ts, CRM.P82a_begin_of_the_begin, Literal(bb)))
-                log.info('Added time-span beginning %s for %s' % (bb, ts))
+            # Add endings to open time-spans with AD dates
+            if not bc_dates:
+                if bb and not ee:
+                    try:
+                        ee = (be or bb) + relativedelta(years=100)
+                        g.add((ts, CRM.P82b_end_of_the_end, Literal(ee)))
+                        log.info('Added time-span ending %s for %s' % (ee, ts))
+                    except ValueError:
+                        log.info('Unable to add a new time-span ending for %s' % (be or bb))
+                elif ee and not bb:
+                    try:
+                        bb = (eb or ee) - relativedelta(years=100)
+                        g.add((ts, CRM.P82a_begin_of_the_begin, Literal(bb)))
+                        log.info('Added time-span beginning %s for %s' % (bb, ts))
+                    except ValueError:
+                        log.info('Unable to add a new time-span beginning for %s' % (eb or ee))
 
-            decades_start = bb or be
-            decades_end = ee or eb
+            if bc_dates:
+                year_start = int(bb[:5] if bb else be[:5])
+                year_end = int(ee[:5] if bb else eb[:5])
+                log.info('Got start and end years %s - %s for BC date' % (year_start, year_end))
+            else:
+                decades_start = bb or be
+                decades_end = ee or eb
 
-            year_start = decades_start.year
-            year_end = decades_end.year
+                year_start = decades_start.year
+                year_end = decades_end.year
 
             for year in range(year_start, year_end + 1):
                 decade = year // 10 * 10
