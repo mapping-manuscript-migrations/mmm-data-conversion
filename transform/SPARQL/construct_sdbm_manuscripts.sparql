@@ -118,14 +118,15 @@ CONSTRUCT {
   #   # dct:source ?source .
   #   .
 
-  ?observation_mmm  # TODO: prefLabel
-    a ecrm:E7_Activity ;
+  ?observation_mmm
+    a mmms:ManuscriptActivity ;
     mmms:observed_manuscript ?manifestation_singleton ;
     mmms:ownership_attributed_to ?prov_agent ;
     mmms:order ?prov_order ;
     ecrm:P3_has_note ?prov_comment ;
     mmms:data_provider_url ?entry ;
     dct:source ?source ;
+    skos:prefLabel "Manuscript provenance" ;
     .
 
 }

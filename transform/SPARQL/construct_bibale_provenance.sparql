@@ -17,11 +17,11 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 CONSTRUCT {
   ?provenance_event_mmm a mmms:ManuscriptActivity ;
-    skos:prefLabel ?label ;
     mmms:observed_manuscript ?manifestation_singleton_mmm ;
     mmms:ownership_attributed_to ?actor_mmm ;
     ecrm:P3_has_note ?identifier ;
     dct:source mmms:Bibale ;
+    skos:prefLabel "Manuscript provenance" ;
     .
 
   ?manifestation_singleton_mmm a frbroo:F4_Manifestation_Singleton ;
