@@ -2,3 +2,4 @@ rdflib==4.2.2
 geocoder==1.38.1
 pycountry==18.12.8
 pandas==0.24.1
+arrow==0.15.5

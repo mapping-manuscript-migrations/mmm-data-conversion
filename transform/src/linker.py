@@ -301,6 +301,40 @@ def _parse_date(graph: Graph, timespan: URIRef, date_prop: URIRef):
     return parsed_date, False
 
 
+def _parse_bc_year(date_str: str):
+    """
+    Parse year from a BC date string (~ISO 8601)
+
+    >>> _parse_bc_year('-1007-01-01')
+    -1007
+    >>> _parse_bc_year('-0063-01-01')
+    -63
+    >>> _parse_bc_year('-063-01-01')
+    -63
+    >>> _parse_bc_year('-63-01-01')
+    -63
+    >>> _parse_bc_year('-3-01-01')
+    -3
+    """
+
+    try:
+        year = int(str(date_str)[:5])
+    except ValueError:
+        try:
+            year = int(str(date_str)[:4])
+        except ValueError:
+            try:
+                year = int(str(date_str)[:3])
+            except ValueError:
+                try:
+                    year = int(str(date_str)[:2])
+                except ValueError:
+                    year = None
+                    log.error('Unable to parse BC year from %s' % date_str)
+
+    return year
+
+
 def annotate_decades(bibale: Graph, bodley: Graph, sdbm: Graph):
     """
     Annotate decades as integers to all time-spans
@@ -342,19 +376,39 @@ def annotate_decades(bibale: Graph, bodley: Graph, sdbm: Graph):
                         log.info('Unable to add a new time-span beginning for %s' % (eb or ee))
 
             if bc_dates:
-                year_start = int(bb[:5] if bb else be[:5])
-                year_end = int(ee[:5] if bb else eb[:5])
+                if bb and bb_bc:
+                    year_start = _parse_bc_year(str(bb))
+                elif bb:
+                    year_start = bb.year
+                elif be and be_bc:
+                    year_start = _parse_bc_year(str(be))
+                elif be:
+                    year_start = be.year
+
+                if ee and ee_bc:
+                    year_end = _parse_bc_year(str(ee))
+                elif ee:
+                    year_end = ee.year
+                elif eb and eb_bc:
+                    year_end = _parse_bc_year(str(eb))
+                elif eb:
+                    year_end = eb.year
+
                 log.info('Got start and end years %s - %s for BC date' % (year_start, year_end))
-            else:
+            elif (bb or be) and (ee or eb):
                 decades_start = bb or be
                 decades_end = ee or eb
 
                 year_start = decades_start.year
                 year_end = decades_end.year
+            else:
+                year_start = None
+                year_end = None
 
-            for year in range(year_start, year_end + 1):
-                decade = year // 10 * 10
-                g.add((ts, MMMS.decade, Literal(decade)))
+            if year_start and year_end:
+                for year in range(year_start, year_end + 1):
+                    decade = year // 10 * 10
+                    g.add((ts, MMMS.decade, Literal(decade)))
 
     return bibale, bodley, sdbm
 
