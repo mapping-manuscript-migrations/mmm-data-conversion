@@ -466,11 +466,11 @@ WHERE {
   BIND(REPLACE(STR(?production_place), "^.*\\/(.+)", "$1") as ?production_place_id)
   BIND(IRI(CONCAT(STR(mmm:), "place/sdbm_", ?production_place_id)) as ?production_place_mmm)
 
-  BIND(IRI(CONCAT(STR(mmm:), "time/production_", ?entry_id)) as ?production_timespan)
-
   BIND(CONCAT(STR(?production_year_start_iso)," - ",STR(?production_year_end_iso)) as ?production_timespan_label)
   BIND("SDBM_MS_" + ?manuscript_id as ?manuscript_preflabel)
   BIND("SDBM_MS_" + ?manuscript_parent_id as ?parent_preflabel)
+
+  BIND(IRI(CONCAT(STR(mmm:), "time/production_", ?entry_id, '_', LCASE(REPLACE(?production_timespan_label, "[ \\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-")))) as ?production_timespan)
 
   BIND(COALESCE(?manuscript, ?entry) as ?provider_url)
 

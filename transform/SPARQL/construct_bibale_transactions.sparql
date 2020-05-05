@@ -84,7 +84,7 @@ WHERE
   # which are now left out (provenance, source, binding)
 
   BIND(REPLACE(STR(?transfer), "^.*\\/(.+)", "$1") as ?transfer_local_id)
-  BIND(IRI(CONCAT(STR(mmm:), "event/sdbm_transfer_", ?transfer_local_id)) as ?transfer_mmm)
+  BIND(IRI(CONCAT(STR(mmm:), "event/bibale_transfer_", ?transfer_local_id)) as ?transfer_mmm)
 
   BIND(REPLACE(STR(?manuscript_or_collection), "^.*\\/(.+)", "$1") as ?manuscript_or_collection_local_id)
   BIND(IRI(CONCAT(?manuscript_or_collection_prefix, ?manuscript_or_collection_local_id)) as ?manuscript_or_collection_mmm)
