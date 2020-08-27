@@ -11,7 +11,7 @@ Currently the pipeline includes the following steps:
 
           `cat *.ttl| rapper - "https://medieval.bodleian.ox.ac.uk/catalog/" -i turtle -o turtle > input.ttl`
 
-    * Bibale Database (bibale): http://bibale.irht.cnrs.fr/export/rdf/get
+    * Bibale Database (bibale): http://bibale.irht.cnrs.fr/exports/mmm/
     * CSV of Bibale shelfmark city locations to `data/additional/bibale_locations.csv`
     * CSV of manual manuscript links to `data/additional/manuscript_links.csv`
     * CSV of Bibale/Bodley Phillipps numbers to `data/additional/phillipps_numbers.csv`
