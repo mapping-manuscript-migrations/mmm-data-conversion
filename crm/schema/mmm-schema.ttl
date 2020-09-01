@@ -18,7 +18,7 @@
   dct:publisher <http://seco.cs.aalto.fi> ;
   dct:rightsHolder <http://seco.cs.aalto.fi> ;
   dct:creator <http://seco.cs.aalto.fi> ;
-  dct:modified "2020-01-29"^^xsd:date .
+  dct:modified "2020-09-01"^^xsd:date .
 
 # RDF
 
@@ -308,14 +308,17 @@ skos:note
 
 :SDBM a :Database ;
   skos:prefLabel "Schoenberg Database of Manuscripts" ;
+  dct:modified "2020-09-01"^^xsd:date ;
   :data_provider_url <https://sdbm.library.upenn.edu/> .
 
 :Bodley a :Database ;
   skos:prefLabel "Medieval Manuscripts in Oxford Libraries" ;
+  dct:modified "2019-10-31"^^xsd:date ;
   :data_provider_url <https://medieval.bodleian.ox.ac.uk/> .
 
 :Bibale a :Database ;
   skos:prefLabel "Bibale Database" ;
+  dct:modified "2020-09-01"^^xsd:date ;
   :data_provider_url <http://bibale.irht.cnrs.fr/> .
 
 :Source a rdfs:Class ;

@@ -1,3 +1,4 @@
+@prefix : <http://ldf.fi/schema/mmm/> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix ldf-schema: <http://ldf.fi/schema/ldf/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -13,26 +14,28 @@
 <http://ldf.fi/mmm> a ssd:Dataset , void:Dataset , dcat:Dataset ;
     ldf-schema:dataVisualization <http://www.ldf.fi/visualization/mmm> ;
     ldf-schema:starRating 6 ;
-    dct:description """<p>The Mapping Manuscript Migrations (MMM) project transformed 
+    dct:description """<p>The Mapping Manuscript Migrations (MMM) project transformed
         three separate datasets into a unified knowledge graph. The source databases include
         </p>
         <ul>
             <li><i>Schoenberg Database of Manuscripts</i> from the Schoenberg Institute for Manuscript Studies,</li>
-            <li><i>Bibale database</i> from the Institute for Research and History of Texts, and</li> 
+            <li><i>Bibale database</i> from the Institute for Research and History of Texts, and</li>
             <li><i>Medieval Manuscripts Catalogue</i> from the Bodleian Libraries.</li>
         </ul>
-        <p>To test and demonstrate its usefulness, the MMM Knowledge Graph is in use in the 
-        <a target='blank' href='https://mappingmanuscriptmigrations.org/'>MMM Semantic Portal</a>, 
-        explained in more detail in the 
+        <p>To test and demonstrate its usefulness, the MMM Knowledge Graph is in use in the
+        <a target='blank' href='https://mappingmanuscriptmigrations.org/'>MMM Semantic Portal</a>,
+        explained in more detail in the
         <a target='blank' href='https://seco.cs.aalto.fi/projects/mmm/'>project page</a>.</p>"""@en ;
     dct:license <http://creativecommons.org/licenses/by-nc/4.0/> ;
     dct:title "Mapping Manuscript Migrations"@en ;
     dct:publisher <http://seco.cs.aalto.fi> ;
-    dct:rightsHolder <http://seco.cs.aalto.fi>, 
+    dct:rightsHolder <http://seco.cs.aalto.fi>,
         <https://schoenberginstitute.org>,
         <https://www.bodleian.ox.ac.uk>,
         <https://www.irht.cnrs.fr> ;
     dct:creator <http://seco.cs.aalto.fi> ;
+    dct:modified "2020-09-01"^^xsd:date ;
+    dct:source :SDBM , :Bodley , :Bibale ;
     void:sparqlEndpoint <http://ldf.fi/mmm/sparql> ;
     void:uriLookupEndPoint <http://ldf.fi/data?uri=> ;
     void:uriSpace "http://ldf.fi/mmm/" ;
@@ -48,9 +51,9 @@
     dct:title "Mapping Manuscript Migrations"@en ;
     void:exampleResource <http://ldf.fi/mmm/manifestation_singleton/sdbm_784> ;
     void:uriSpace "http://ldf.fi/mmm/" ;
-    void:vocabulary <http://ldf.fi/schema/mmm>, 
+    void:vocabulary <http://ldf.fi/schema/mmm>,
         <http://erlangen-crm.org/current/>,
-        <http://erlangen-crm.org/efrbroo/>, 
+        <http://erlangen-crm.org/efrbroo/>,
         <http://vocab.getty.edu/ontology#>,
         rdf:,
         rdfs:,
