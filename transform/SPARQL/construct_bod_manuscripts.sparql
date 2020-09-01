@@ -103,11 +103,19 @@ WHERE
       ?production_timespan crm:P82a_begin_of_the_begin ?production_timespan_begin .
       ?production_timespan crm:P82b_end_of_the_end ?production_timespan_end .
 
-      BIND(STRDT(SUBSTR(STR(?production_timespan_begin), 0, 11), xsd:date) as ?production_timespan_begin_mmm)
-      BIND(STRDT(SUBSTR(STR(?production_timespan_end), 0, 11), xsd:date) as ?production_timespan_end_mmm)
+      BIND(STRDT(IF(STRSTARTS(?production_timespan_begin, "-"),
+                    SUBSTR(STR(?production_timespan_begin), 0, 12),
+                    SUBSTR(STR(?production_timespan_begin), 0, 11)), xsd:date) as ?production_timespan_begin_mmm)
+      BIND(STRDT(IF(STRSTARTS(?production_timespan_end, "-"),
+                    SUBSTR(STR(?production_timespan_end), 0, 12),
+                    SUBSTR(STR(?production_timespan_end), 0, 11)), xsd:date) as ?production_timespan_end_mmm)
 
-      BIND(SUBSTR(?production_timespan_begin, 1, 4) as ?begin_year)
-      BIND(SUBSTR(?production_timespan_end, 1, 4) as ?end_year)
+      BIND(IF(STRSTARTS(?production_timespan_begin, "-"),
+                    SUBSTR(STR(?production_timespan_begin), 0, 5),
+                    SUBSTR(?production_timespan_begin, 1, 4)) as ?begin_year)
+      BIND(IF(STRSTARTS(?production_timespan_end, "-"),
+                    SUBSTR(STR(?production_timespan_end), 0, 5),
+                    SUBSTR(?production_timespan_end, 1, 4)) as ?end_year)
       BIND(STR(?begin_year) + " - " + STR(?end_year) as ?production_timespan_label)
     }
     OPTIONAL { ?production crm:P7_took_place_at ?production_place }

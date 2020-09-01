@@ -89,11 +89,15 @@ WHERE
       #      ?birth_timespan rdfs:label ?birth_timespan_label .
       OPTIONAL {
         ?birth_timespan crm:P82a_begin_of_the_begin ?birth_timespan_begin_begin .
-        BIND(STRDT(SUBSTR(STR(?birth_timespan_begin_begin), 0, 11), xsd:date) as ?birth_timespan_begin_begin_mmm)
+        BIND(STRDT(IF(STRSTARTS(?birth_timespan_begin_begin, "-"),
+                      SUBSTR(STR(?birth_timespan_begin_begin), 0, 12),
+                      SUBSTR(STR(?birth_timespan_begin_begin), 0, 11)), xsd:date) as ?birth_timespan_begin_begin_mmm)
       }
       OPTIONAL {
         ?birth_timespan crm:P82b_end_of_the_end ?birth_timespan_end_end .
-        BIND(STRDT(SUBSTR(STR(?birth_timespan_end_end), 0, 11), xsd:date) as ?birth_timespan_end_end_mmm)
+        BIND(STRDT(IF(STRSTARTS(?birth_timespan_end_end, "-"),
+                      SUBSTR(STR(?birth_timespan_end_end), 0, 12),
+                      SUBSTR(STR(?birth_timespan_end_end), 0, 11)), xsd:date) as ?birth_timespan_end_end_mmm)
       }
       BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_birth_timespan")) as ?birth_timespan_mmm)
     }
@@ -109,11 +113,15 @@ WHERE
       #      ?death_timespan rdfs:label ?death_timespan_label .
       OPTIONAL {
         ?death_timespan crm:P82a_begin_of_the_begin ?death_timespan_begin_begin .
-        BIND(STRDT(SUBSTR(STR(?death_timespan_begin_begin), 0, 11), xsd:date) as ?death_timespan_begin_begin_mmm)
+        BIND(STRDT(IF(STRSTARTS(?death_timespan_begin_begin, "-"),
+                      SUBSTR(STR(?death_timespan_begin_begin), 0, 12),
+                      SUBSTR(STR(?death_timespan_begin_begin), 0, 11)), xsd:date) as ?death_timespan_begin_begin_mmm)
       }
       OPTIONAL {
         ?death_timespan crm:P82b_end_of_the_end ?death_timespan_end_end
-        BIND(STRDT(SUBSTR(STR(?death_timespan_end_end), 0, 11), xsd:date) as ?death_timespan_end_end_mmm)
+        BIND(STRDT(IF(STRSTARTS(?death_timespan_end_end, "-"),
+                      SUBSTR(STR(?death_timespan_end_end), 0, 12),
+                      SUBSTR(STR(?death_timespan_end_end), 0, 11)), xsd:date) as ?death_timespan_end_end_mmm)
       }
       BIND(IRI(CONCAT("http://ldf.fi/mmm/time/bodley_", REPLACE(STR(?actor), "^.*\\/(.+)", "$1"), "_death_timespan")) as ?death_timespan_mmm)
     }
@@ -138,11 +146,19 @@ WHERE
   BIND(REPLACE(STR(?actor), "^.*\\/(.+)", "$1") as ?actor_local_id)
   BIND(IRI(CONCAT("http://ldf.fi/mmm/actor/bodley_", ?actor_local_id)) as ?actor_mmm)
 
-  BIND(SUBSTR(?birth_timespan_begin_begin, 1, 4) as ?birth_begin_year)
-  BIND(SUBSTR(?birth_timespan_end_end, 1, 4) as ?birth_end_year)
+  BIND(IF(STRSTARTS(?birth_timespan_begin_begin, "-"),
+          SUBSTR(?birth_timespan_begin_begin, 1, 5),
+          SUBSTR(?birth_timespan_begin_begin, 1, 4)) as ?birth_begin_year)
+  BIND(IF(STRSTARTS(?birth_timespan_end_end, "-"),
+          SUBSTR(?birth_timespan_end_end, 1, 5),
+          SUBSTR(?birth_timespan_end_end, 1, 4)) as ?birth_end_year)
   BIND(STR(?birth_begin_year) + " - " + STR(?birth_end_year) as ?birth_timespan_label)
 
-  BIND(SUBSTR(?death_timespan_begin_begin, 1, 4) as ?death_begin_year)
-  BIND(SUBSTR(?death_timespan_end_end, 1, 4) as ?death_end_year)
+  BIND(IF(STRSTARTS(?death_timespan_begin_begin, "-"),
+          SUBSTR(?death_timespan_begin_begin, 1, 5),
+          SUBSTR(?death_timespan_begin_begin, 1, 4)) as ?death_begin_year)
+  BIND(IF(STRSTARTS(?death_timespan_end_end, "-"),
+          SUBSTR(?death_timespan_end_end, 1, 5),
+          SUBSTR(?death_timespan_end_end, 1, 4)) as ?death_end_year)
   BIND(STR(?death_begin_year) + " - " + STR(?death_end_year) as ?death_timespan_label)
 }
