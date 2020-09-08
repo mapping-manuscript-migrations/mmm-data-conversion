@@ -19,7 +19,7 @@
   dct:publisher <http://seco.cs.aalto.fi> ;
   dct:rightsHolder <http://seco.cs.aalto.fi> ;
   dct:creator <http://seco.cs.aalto.fi> ;
-  dct:modified "2020-09-01"^^xsd:date .
+  dct:modified "2020-09-08"^^xsd:date .
 
 # RDF
 
