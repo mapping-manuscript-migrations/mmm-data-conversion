@@ -39,7 +39,6 @@
     void:sparqlEndpoint <http://ldf.fi/mmm/sparql> ;
     void:uriLookupEndPoint <http://ldf.fi/data?uri=> ;
     void:uriSpace "http://ldf.fi/mmm/" ;
-    # void:dataDump <https://zenodo.org/record/3431122/files/warsampo.zip> ;
     ssd:namedGraph [
 		a ssd:NamedGraph ;
 		ssd:name <http://ldf.fi/mmm/> ;
@@ -88,3 +87,23 @@
 <https://www.irht.cnrs.fr> a foaf:Organization ;
     skos:prefLabel "The Institute for Research and History of Texts"@en ;
 	foaf:homepage "https://www.irht.cnrs.fr/?q=en" .
+
+:Database a rdfs:Class ;
+    skos:prefLabel "A database containing source information" .
+
+:SDBM a :Database ;
+    skos:prefLabel "Schoenberg Database of Manuscripts" ;
+    dct:modified "2020-09-01"^^xsd:date ;
+    foaf:page <https://sdbm.library.upenn.edu/> .
+
+:Bodley a :Database ;
+    skos:prefLabel "Medieval Manuscripts in Oxford Libraries" ;
+    dct:modified "2019-10-31"^^xsd:date ;
+    foaf:page <https://medieval.bodleian.ox.ac.uk/> .
+
+:Bibale a :Database ;
+    skos:prefLabel "Bibale Database" ;
+    dct:modified "2020-09-07"^^xsd:date ;
+    foaf:page <http://bibale.irht.cnrs.fr/> .
+
+

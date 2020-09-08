@@ -2,6 +2,7 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix crm: <http://erlangen-crm.org/current/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix frbroo: <http://erlangen-crm.org/efrbroo/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix mmmp: <http://ldf.fi/mmm/place/> .
@@ -298,6 +299,7 @@ skos:note
   rdfs:range :Database .
 
 :data_provider_url a rdfs:Property ;
+  rdfs:subPropertyOf foaf:page ;
   skos:prefLabel "URL link to find more information from" .
 
 :external_url a rdfs:Property ;
@@ -308,17 +310,14 @@ skos:note
 
 :SDBM a :Database ;
   skos:prefLabel "Schoenberg Database of Manuscripts" ;
-  dct:modified "2020-09-01"^^xsd:date ;
   :data_provider_url <https://sdbm.library.upenn.edu/> .
 
 :Bodley a :Database ;
   skos:prefLabel "Medieval Manuscripts in Oxford Libraries" ;
-  dct:modified "2019-10-31"^^xsd:date ;
   :data_provider_url <https://medieval.bodleian.ox.ac.uk/> .
 
 :Bibale a :Database ;
   skos:prefLabel "Bibale Database" ;
-  dct:modified "2020-09-01"^^xsd:date ;
   :data_provider_url <http://bibale.irht.cnrs.fr/> .
 
 :Source a rdfs:Class ;
