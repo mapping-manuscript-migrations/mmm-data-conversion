@@ -243,7 +243,7 @@ WHERE {
   # material
   OPTIONAL {
     ?entry_material :entry_materials_entry_id ?entry .
-    ?entry_material :entry_materials_material ?material_label .
+    ?entry_material :entry_materials_material ?material_label_ .
   }
 
   # use
@@ -474,7 +474,8 @@ WHERE {
 
   BIND(COALESCE(?manuscript, ?entry) as ?provider_url)
 
-  BIND(IRI(CONCAT(STR(mmm:), "material/", LCASE(REPLACE(?material_label, "[ \\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-")))) as ?material_uri_mmm)
+  BIND(IRI(CONCAT(STR(mmm:), "material/", LCASE(REPLACE(?material_label_, "[ \\\"\\~\\.\\-\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=\\/\\?\\@\\%\\_\\{\\}\\[\\]\\^\\s\\`]", "-")))) as ?material_uri_mmm)
+  BIND(CONCAT(UCASE(SUBSTR(?material_label_, 1, 1)), SUBSTR(?material_label_, 2)) as ?material_label)
 
   BIND(REPLACE(STR(?provenance_entry), "^.*\\/(.+)", "$1") as ?provenance_entry_id)
   BIND(IRI(CONCAT(STR(mmm:), "event/sdbm_provenance", ?provenance_entry_id)) as ?observation_mmm)
