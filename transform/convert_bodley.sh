@@ -26,8 +26,10 @@ printf '\nConstructing Bodley languages\n\n'
 curl -f --data-urlencode "query=$(cat /app/construct_bod_languages.sparql)" $INPUT_BODLEY_SPARQL_ENDPOINT -v > /output/_bodley_languages.ttl
 printf '\nConstructing Bodley collections\n\n'
 curl -f --data-urlencode "query=$(cat /app/construct_bod_collections.sparql)" $INPUT_BODLEY_SPARQL_ENDPOINT -v > /output/_bodley_collections.ttl
+printf '\nConstructing Bodley transactions\n\n'
+curl -f --data-urlencode "query=$(cat /app/construct_bod_transactions.sparql)" $INPUT_BODLEY_SPARQL_ENDPOINT -v > /output/_bodley_transactions.ttl
 
-cat /output/_bodley_phillipps.ttl /output/_bodley_manuscripts.ttl /output/_bodley_works.ttl /output/_bodley_expressions.ttl /output/_bodley_people.ttl /output/_bodley_places.ttl /output/_bodley_observations.ttl /output/_bodley_languages.ttl /output/_bodley_collections.ttl > /output/_bodley_combined.ttl
+cat /output/_bodley_phillipps.ttl /output/_bodley_manuscripts.ttl /output/_bodley_works.ttl /output/_bodley_expressions.ttl /output/_bodley_people.ttl /output/_bodley_places.ttl /output/_bodley_observations.ttl /output/_bodley_languages.ttl /output/_bodley_collections.ttl /output/_bodley_transactions.ttl > /output/_bodley_combined.ttl
 
 printf '\nLinking Bodley places\n\n'
 

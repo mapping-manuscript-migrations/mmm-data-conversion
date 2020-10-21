@@ -1,4 +1,3 @@
-PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>

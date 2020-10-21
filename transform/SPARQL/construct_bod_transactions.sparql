@@ -1,0 +1,78 @@
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
+PREFIX frbroo2: <http://www.cidoc-crm.org/frbroo/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX ecrm: <http://erlangen-crm.org/current/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX mmm: <http://ldf.fi/mmm/>
+PREFIX mmms: <http://ldf.fi/schema/mmm/>
+PREFIX mmm-actors: <http://ldf.fi/mmm/actor/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX bibale: <http://bibale.irht.cnrs.fr/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+CONSTRUCT {
+  ?transfer_mmm a ecrm:E10_Transfer_of_Custody ;
+    ecrm:P30_transferred_custody_of ?manuscript_mmm ;
+    ecrm:P28_custody_surrendered_by ?owner_old_mmm ;
+    ecrm:P29_custody_received_by ?owner_new_mmm ;
+    ecrm:P7_took_place_at ?place_mmm ;
+    ecrm:P4_has_time-span ?timespan_mmm ;
+    mmms:data_provider_url ?manuscript ;
+    skos:prefLabel ?transfer_label ;
+    dct:source mmms:Bodley ;
+    .
+
+  ?timespan_mmm a ecrm:E52_Time-Span ;
+    skos:prefLabel ?timespan_label ;
+    ecrm:P82a_begin_of_the_begin ?timespan_bb_mmm ;
+    ecrm:P82b_end_of_the_end ?timespan_ee_mmm ;
+    dct:source mmms:Bodley ;
+    .
+
+  ?manuscript_mmm ecrm:P51_has_former_or_current_owner ?owner_old_mmm , ?owner_new_mmm .
+}
+WHERE
+{
+  ?transfer a crm:E10_Transfer_of_Custody .
+  ?manuscript crm:P30i_custody_transferred_through ?transfer .
+  OPTIONAL { ?transfer crm:P28_custody_surrendered_by ?owner_old }
+  OPTIONAL { ?transfer crm:P29_custody_received_by ?owner_new }
+  OPTIONAL { ?transfer rdfs:label ?transfer_label }
+  OPTIONAL { ?transfer crm:P7_took_place_at ?place }
+  OPTIONAL {
+    ?transfer crm:P4_has_time-span ?timespan .
+    OPTIONAL {
+      ?timespan crm:P82a_begin_of_the_begin ?timespan_bb
+      BIND(STRDT(SUBSTR(STR(?timespan_bb), 0, 11), xsd:date) as ?timespan_bb_mmm)
+    }
+    OPTIONAL {
+      ?timespan crm:P82b_end_of_the_end ?timespan_ee
+      BIND(STRDT(SUBSTR(STR(?timespan_ee), 0, 11), xsd:date) as ?timespan_ee_mmm)
+    }
+    BIND(SUBSTR(?timespan_bb, 1, 4) as ?begin_year)
+    BIND(SUBSTR(?timespan_ee, 1, 4) as ?end_year)
+    BIND(CONCAT(STR(COALESCE(?begin_year, "")), " - ", STR(?end_year)) as ?timespan_label)
+  }
+
+  BIND(REPLACE(STR(?transfer), "^.*\\/(.+)/transfer-of-custody", "$1") as ?transfer_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "event/bodley_transfer_", ?transfer_local_id)) as ?transfer_mmm)
+
+  BIND(REPLACE(STR(?manuscript), "^.*\\/(.+)", "$1") as ?manuscript_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "manifestation_singleton/bodley_", ?manuscript_local_id)) as ?manuscript_mmm)
+
+  BIND(REPLACE(STR(?owner_old), "^.*\\/(.+)", "$1") as ?owner_old_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/bodley_", ?owner_old_local_id)) as ?owner_old_mmm)
+
+  BIND(REPLACE(STR(?owner_new), "^.*\\/(.+)", "$1") as ?owner_new_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "actor/bodley_", ?owner_new_local_id)) as ?owner_new_mmm)
+
+  BIND(REPLACE(STR(?place), "^.*\\/(.+)", "$1") as ?place_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "place/bodley_", REPLACE(?place_local_id, ":", "_"))) as ?place_mmm)
+
+  BIND(REPLACE(STR(?timespan), "^.*\\/(.+)/transfer-of-custody", "$1") as ?timespan_local_id)
+  BIND(IRI(CONCAT(STR(mmm:), "time/bodley_transfer_timespan_", REPLACE(?timespan_local_id, ":", "_"))) as ?timespan_mmm)
+}

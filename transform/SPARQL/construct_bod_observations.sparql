@@ -1,4 +1,3 @@
-PREFIX : <https://sdbm.library.upenn.edu/>
 PREFIX frbr: <http://www.cidoc-crm.org/frbr/>
 PREFIX frbroo: <http://erlangen-crm.org/efrbroo/>
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
@@ -16,7 +15,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT
 {
-  ?provenance_event_mmm a mmms:ManuscriptActivity ;  # Data contains only observations of manifestation singletons
+  ?provenance_event_mmm a mmms:ManuscriptActivity ;
     skos:prefLabel ?label ;
     mmms:observed_manuscript ?manifestation_singleton_mmm ;
     mmms:ownership_attributed_to ?actor_mmm ;
