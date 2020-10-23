@@ -27,6 +27,7 @@ CONSTRUCT {
    mmms:carried_out_by_as_scribe ?expression_scribe_mmm ;
    ecrm:P7_took_place_at ?expression_place_mmm ;
    ecrm:P4_has_time-span ?expression_timespan_mmm ;
+   dct:source mmms:Bibale ;
    .
 
   ?expression_timespan_mmm a ecrm:E52_Time-Span ;

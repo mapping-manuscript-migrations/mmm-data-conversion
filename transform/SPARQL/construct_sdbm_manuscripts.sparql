@@ -125,7 +125,7 @@ CONSTRUCT {
     mmms:order ?prov_order ;
     ecrm:P3_has_note ?prov_comment ;
     mmms:data_provider_url ?entry ;
-    dct:source ?source ;
+    dct:source mmms:SDBM ;
     skos:prefLabel "Manuscript provenance" ;
     .
 
