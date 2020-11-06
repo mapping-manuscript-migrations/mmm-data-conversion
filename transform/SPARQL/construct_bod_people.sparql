@@ -76,7 +76,8 @@ WHERE
   }
 
   OPTIONAL {
-    ?actor rdfs:label ?actor_label .
+    ?actor rdfs:label ?actor_label_ .
+    BIND(STR(?actor_label_) as ?actor_label)
   }
 
   OPTIONAL {
@@ -134,7 +135,6 @@ WHERE
       ?appellation crm:P139_has_alternative_form/rdfs:label ?altlabel_
       FILTER(?altlabel_ != "")
     }
-    BIND(COALESCE(?preflabel_, ?altlabel_) as ?preflabel)
     BIND(CONCAT(SUBSTR(?preflabel_, 0, 0), ?altlabel_) as ?altlabel)
   }
 
@@ -160,4 +160,6 @@ WHERE
           SUBSTR(?death_timespan_end_end, 1, 5),
           SUBSTR(?death_timespan_end_end, 1, 4)) as ?death_end_year)
   BIND(STR(?death_begin_year) + " - " + STR(?death_end_year) as ?death_timespan_label)
+
+  BIND(COALESCE(?preflabel_, ?altlabel_, ?actor_label) as ?preflabel)
 }
