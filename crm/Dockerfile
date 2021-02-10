@@ -1,4 +1,4 @@
-FROM secoresearch/fuseki
+FROM secoresearch/fuseki:spatial-legacy
 
 USER root
 

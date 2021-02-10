@@ -1,4 +1,4 @@
-FROM secoresearch/fuseki
+FROM secoresearch/fuseki:spatial-legacy
 
 ENV PATH "$PATH:/jena-fuseki/bin"
 ENV ASSEMBLER "$FUSEKI_BASE/configuration/assembler.ttl"
