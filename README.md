@@ -16,27 +16,31 @@ Currently the pipeline includes the following steps:
     * CSV of manual manuscript links to `data/additional/manuscript_links.csv`
     * CSV of Bibale/Bodley Phillipps numbers to `data/additional/phillipps_numbers.csv`
     * CSVs of actor Recon runs to `data/additional/recon_actors_{LETTER}_{DATE}.csv`
-    ** where {LETTER} corresponds to actor name starting letter
-    ** and {DATE} corresponds to date in format YYYY-MM-DD 
-    ** (e.g., `recon_actors_A_2019-05-22.csv`)
+      * where {LETTER} corresponds to actor name starting letter
+      * and {DATE} corresponds to date in format YYYY-MM-DD 
+      * (e.g., `recon_actors_A_2019-05-22.csv`)
     * CSVs of work Recon runs to `data/additional/recon_works_{LETTERS}_{DATE}.csv`
-    ** similarly, e.g., `recon_works_J-P_2019_06_10.csv`
+      * similarly, e.g., `recon_works_J-P_2019_06_10.csv`
 
 2. Set up input databases (automated)
     * Load `data/sdbm/input.ttl` to `http://localhost:3051/ds/sparql`
     * Load `data/bodley/input.ttl` to `http://localhost:3052/ds/sparql`
     * Load `data/bibale/input.ttl` to `http://localhost:3053/ds/sparql`
 
-3. Convert input datasets to unified data model using SPARQL CONSTRUCTs (automated)
+3. Convert input datasets to unified data model and reconcile some of the contained entities (automated)
+    * Transform data using SPARQL CONSTRUCTs
     * Link Bibale places to GeoNames (You'll need GeoNames API key(s) for this)
-    ** You can add GeoNames API keys to `.env` in format 
-    ** `GEONAMES_KEY=<key>`
-    ** `GEONAMES_KEY2=<key 2>`
-    ** `GEONAMES_KEY3=<key 3>`
-    ** ...
-    ** Keys are throttled when the API temporal query limit is exhausted  
+      * You can add GeoNames API keys to `.env` in format 
+        `GEONAMES_KEY=<key>`
+        `GEONAMES_KEY2=<key 2>`
+        `GEONAMES_KEY3=<key 3>`
+        ...
+      * Keys are throttled when the API temporal query limit is exhausted
+    * Reconcile all place references, fetch place information from TGN
+    * Link manuscripts and works that have shared identifiers or manual links
+    * Link actors that have shared identifiers or manual links
 
-4. Load the final result into `http://localhost:3050/ds/sparql`
+4. Deploy the final RDF files into SPARQL endpoint `http://localhost:3050/ds/sparql`
 
 ## Build, convert, and run
 
