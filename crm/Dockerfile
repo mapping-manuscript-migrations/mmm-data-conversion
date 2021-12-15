@@ -23,8 +23,3 @@ COPY crm/schema/* $FUSEKI_HOME/
 
 COPY --chown=9008 tdbloader tdbindexer crm/deploy.sh crm/prune.sh $FUSEKI_HOME/
 RUN chmod +x $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbindexer $FUSEKI_HOME/deploy.sh $FUSEKI_HOME/prune.sh
-
-EXPOSE 3030
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["java", "-cp", "*:/javalibs/*", "org.apache.jena.fuseki.cmd.FusekiCmd"]
